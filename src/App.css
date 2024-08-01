@@ -1,0 +1,96 @@
+/* App.css */
+
+/* Ensure no horizontal scroll on mobile */
+body {
+  overflow-x: hidden;
+}
+
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #141414;
+  padding: 10px 20px;
+  transition: top 0.3s;
+  position: fixed;
+  width: 100%;
+  top: 0;
+  z-index: 10;
+}
+
+.navbar.hidden {
+  top: -60px; /* Adjust based on navbar height */
+}
+
+.navbar-header {
+  display: flex;
+  align-items: center;
+}
+
+.hamburger-icon {
+  font-size: 24px;
+  cursor: pointer;
+  color: white;
+}
+
+.cart-link {
+  font-size: 24px;
+  cursor: pointer;
+  color: white;
+  text-decoration: none;
+}
+
+/* Navbar links */
+.navbar-links {
+  display: none;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.navbar-links.open {
+  display: flex;
+  flex-direction: column;
+  position: absolute;
+  top: 40px;
+  left: 0;
+  right: 0;
+  background-color: #141414;
+  height: calc(100vh - 30px);
+  justify-content: center;
+  align-items: center;
+}
+
+.navbar-links li {
+  margin: 10px 0;
+}
+
+.navbar-links a {
+  color: white;
+  text-decoration: none;
+  font-size: 18px;
+}
+
+/* For larger screens */
+@media (min-width: 768px) {
+  .navbar-header {
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  .hamburger-icon {
+    display: none;
+  }
+
+  .navbar-links {
+    display: flex;
+    /* flex-direction: row; */
+    margin: 0;
+    padding: 0;
+  }
+
+
+  .cart-link {
+    margin-left: auto;
+  }
+}

@@ -1,0 +1,80 @@
+.product_section {
+    max-width: 600px;
+    margin: 0 auto;
+    padding: 20px;
+    background-color: #f9f9f9;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.product_section h1 {
+    text-align: center;
+    margin-bottom: 20px;
+    color: #333;
+}
+
+.form-container {
+    display: grid;
+    gap: 20px;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+}
+
+.form-group label {
+    margin-bottom: 5px;
+    font-weight: bold;
+    color: #555;
+}
+
+.form-group .form-control {
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    margin-bottom: 10px;
+    width: 100%; /* Ensure full width */
+}
+/* 
+.custom-input-picker .rs-picker-toggle {
+    width: 100%; 
+    box-sizing: border-box;
+} */
+
+.rs-picker.rs-picker-inline {
+    width: 100% !important; /* Force the dropdown to match the parent's width */
+}
+
+.rs-picker-menu {
+    width: 100% !important; /* Force the menu to match the parent's width */
+}
+
+.btn.btn-warning {
+    width: 100%;
+    padding: 10px;
+    background-color: #ffcc00;
+    color: #333;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.btn.btn-warning:disabled {
+    background-color: #ffd966;
+    cursor: not-allowed;
+}
+
+.loading-screen {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(255, 255, 255, 0.8);
+    z-index: 1000;
+}
