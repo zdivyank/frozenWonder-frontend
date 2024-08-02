@@ -52,7 +52,7 @@ export const AuthProvider = ({ children }) =>{
                 }
             }
          catch (error) {
-            console.error("Error Fetching user data")
+            console.error("Error Fetching user data",error)
         }
     }
 

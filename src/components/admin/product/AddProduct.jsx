@@ -137,7 +137,6 @@
 
 // export default AddProduct;
 
-
 import React, { useState } from 'react';
 import { CONFIGS } from '../../../../config';
 import { toast } from 'react-toastify';
@@ -150,8 +149,7 @@ function AddProduct() {
   const [formData, setFormData] = useState({
     name: '',
     desc: '',
-    discount: 0,
-    packs: [{ ml: '', unit: '', price: '' }]
+    packs: [{ ml: '', unit: '', price: '', discount: '', inventory: '' }]
   });
   const [loading, setLoading] = useState(false);
 
@@ -169,7 +167,7 @@ function AddProduct() {
   const addPack = () => {
     setFormData({
       ...formData,
-      packs: [...formData.packs, { ml: '', unit: '', price: '' }]
+      packs: [...formData.packs, { ml: '', unit: '', price: '', discount: '', inventory: '' }]
     });
   };
 
@@ -189,7 +187,6 @@ function AddProduct() {
     const form = new FormData();
     form.append('name', formData.name);
     form.append('desc', formData.desc);
-    form.append('discount', formData.discount);
     form.append('packs', JSON.stringify(formData.packs));
     if (file) {
       form.append('image', file);
@@ -215,8 +212,7 @@ function AddProduct() {
         setFormData({
           name: '',
           desc: '',
-          discount: 0,
-          packs: [{ ml: '', unit: '', price: '' }]
+          packs: [{ ml: '', unit: '', price: '', discount: 0, inventory: 0 }]
         });
         setFile(null);
       } else {
@@ -245,12 +241,7 @@ function AddProduct() {
         </label>
 
         <label>
-          Discount:
-          <input type="number" name="discount" value={formData.discount} className='form-control' onChange={handleChange} required disabled={loading} />
-        </label>
-
-        <label>
-        Packs:
+          Packs:
         </label>
         {formData.packs.map((pack, index) => (
           <div key={index} className="pack-inputs">
@@ -275,6 +266,22 @@ function AddProduct() {
               placeholder="Price"
               value={pack.price}
               onChange={(e) => handlePackChange(index, 'price', e.target.value)}
+              required
+              disabled={loading}
+            />
+            <input
+              type="number"
+              placeholder="Discount"
+              value={pack.discount}
+              onChange={(e) => handlePackChange(index, 'discount', e.target.value)}
+              required
+              disabled={loading}
+            />
+            <input
+              type="number"
+              placeholder="Inventory"
+              value={pack.inventory}
+              onChange={(e) => handlePackChange(index, 'inventory', e.target.value)}
               required
               disabled={loading}
             />

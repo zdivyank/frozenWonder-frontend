@@ -233,7 +233,7 @@ function Admin_product() {
                         <th>Name</th>
                         <th>Image</th>
                         <th>Description</th>
-                        <th>Discount</th>
+                        {/* <th>Discount</th> */}
                         <th>Packs</th>
                         <th>Actions</th>
                     </tr>
@@ -241,14 +241,15 @@ function Admin_product() {
                 <tbody>
                     {products.map((product) => (
                         <tr key={product._id}>
-                            <td>{product.name}</td>
+                            <td>{product.name}{product.inventory}</td>
                             <td><img src={product.image} height={50} alt={product.name} /></td>
                             <td>{product.desc}</td>
-                            <td>{product.discount}%</td>
+                            {/* <td>{product.discount}%</td> */}
                             <td>
                                 {product.packs.map((pack, index) => (
                                     <div key={index}>
                                         {pack.ml}ml x {pack.unit} - ₹{pack.price}
+                                       stock- {pack.inventory}, discount-{pack.discount}
                                     </div>
                                 ))}
                             </td>
