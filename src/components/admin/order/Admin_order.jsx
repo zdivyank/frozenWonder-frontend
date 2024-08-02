@@ -6,11 +6,11 @@ import { CONFIGS } from '../../../../config/index';
 import './admin_order.css';
 import { MdDelete } from 'react-icons/md';
 
-function Admin_order() {
+function AdminOrder() {
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
-  const [ordersPerPage] = useState(9); // Number of orders per page
+  const [ordersPerPage] = useState(9);
   const [selectedOrderId, setSelectedOrderId] = useState(null);
   const [showModal, setShowModal] = useState(false);
   const { isLoggedIn } = useAuth();
@@ -34,8 +34,6 @@ function Admin_order() {
       }
 
       const data = await response.json();
-      
-      // Sort orders by date in descending order
       const sortedOrders = data.message.sort((a, b) => new Date(b.order_date) - new Date(a.order_date));
       setOrders(sortedOrders);
     } catch (error) {
@@ -51,18 +49,18 @@ function Admin_order() {
 
   const handleDelete = async () => {
     try {
-        const response = await fetch(`${CONFIGS.API_BASE_URL}/deleteorder/${selectedOrderId}`, {
-            method: 'DELETE',
-        });
+      const response = await fetch(`${CONFIGS.API_BASE_URL}/deleteorder/${selectedOrderId}`, {
+        method: 'DELETE',
+      });
 
-        if (response.ok) {
-            setOrders(orders.filter(order => order._id !== selectedOrderId));
-            setShowModal(false);
-        } else {
-            console.error('Error deleting order');
-        }
+      if (response.ok) {
+        setOrders(orders.filter(order => order._id !== selectedOrderId));
+        setShowModal(false);
+      } else {
+        console.error('Error deleting order');
+      }
     } catch (error) {
-        console.error('Error deleting order:', error);
+      console.error('Error deleting order:', error);
     }
   };
 
@@ -76,7 +74,6 @@ function Admin_order() {
     setSelectedOrderId(null);
   };
 
-  // Pagination logic
   const indexOfLastOrder = currentPage * ordersPerPage;
   const indexOfFirstOrder = indexOfLastOrder - ordersPerPage;
   const currentOrders = orders.slice(indexOfFirstOrder, indexOfLastOrder);
@@ -84,54 +81,54 @@ function Admin_order() {
   const paginate = (pageNumber) => setCurrentPage(pageNumber);
 
   return (
-    <section>
+    <section className="admin-order-section">
       <Container>
-        <h1>Orders List</h1>
+        <h1 className="admin-order-title">Orders List</h1>
         {loading ? (
-          <p>Loading...</p>
+          <p className="admin-order-loading">Loading...</p>
         ) : (
           <>
             <Row>
               {currentOrders.length > 0 ? (
                 currentOrders.map((order) => (
-                  <Col key={order._id} md={4} sm={6} xs={12} className="mb-3">
-                    <Card className="order-card">
+                  <Col key={order._id} md={4} sm={6} xs={12} className="admin-order-col">
+                    <Card className="admin-order-card">
                       <Card.Body>
-                        <div className="order-info">
-                          <div className="d-flex mb-2">
-                            <b className="w-25 font-weight-bold">Name:</b>
-                            <div className="w-75">{order.cust_name}</div>
+                        <div className="admin-order-info">
+                          <div className="admin-order-detail">
+                            <b className="admin-order-label">Name:</b>
+                            <div className="admin-order-value">{order.cust_name}</div>
                           </div>
-                          <div className="d-flex mb-2">
-                            <b className="w-25 font-weight-bold">Address:</b>
-                            <div className="w-75">{order.cust_address}</div>
+                          <div className="admin-order-detail">
+                            <b className="admin-order-label">Address:</b>
+                            <div className="admin-order-value">{order.cust_address}</div>
                           </div>
-                          <div className="d-flex mb-2">
-                            <b className="w-25 font-weight-bold">Phone Number:</b>
-                            <div className="w-75">{order.cust_number}</div>
+                          <div className="admin-order-detail">
+                            <b className="admin-order-label">Phone Number:</b>
+                            <div className="admin-order-value">{order.cust_number}</div>
                           </div>
-                          <div className="d-flex mb-2">
-                            <b className="w-25 font-weight-bold">Order Date:</b>
-                            <div className="w-75">{new Date(order.order_date).toLocaleDateString()}</div>
+                          <div className="admin-order-detail">
+                            <b className="admin-order-label">Order Date:</b>
+                            <div className="admin-order-value">{new Date(order.order_date).toLocaleDateString()}</div>
                           </div>
-                          <div className="d-flex mb-2">
-                            <b className="w-25 font-weight-bold">Status:</b>
-                            <div className="w-75">{order.status}</div>
+                          <div className="admin-order-detail">
+                            <b className="admin-order-label">Status:</b>
+                            <div className="admin-order-value">{order.status}</div>
                           </div>
-                          <div className="d-flex mb-2">
-                            <b className="w-25 font-weight-bold">Total Amount:</b>
-                            <div className="w-75">RS.{order.total_amount}</div>
+                          <div className="admin-order-detail">
+                            <b className="admin-order-label">Total Amount:</b>
+                            <div className="admin-order-value">RS.{order.total_amount}</div>
                           </div>
-                          <div className="mt-3">
-                            <b className="font-weight-bold">Products:</b>
-                            <div className="product-details">
+                          <div className="admin-order-products">
+                            <b className="admin-order-products-title">Products:</b>
+                            <div className="admin-order-product-details">
                               {order.order_product.length > 0 ? (
-                                <ul className="list-unstyled">
+                                <ul className="admin-order-product-list">
                                   {order.order_product.map((product, index) => (
-                                    <li key={index} className="product-item">
+                                    <li key={index} className="admin-order-product-item">
                                       <div className="d-flex justify-content-between">
-                                        <span className="font-weight-bold">{product.name}</span>
-                                        <span>RS.{product.price}</span>
+                                        <span className="admin-order-product-name">{product.name}</span>
+                                        <span className="admin-order-product-price">RS.{product.price}</span>
                                       </div>
                                       <div className="d-flex justify-content-between">
                                         <span>Quantity:</span>
@@ -142,7 +139,7 @@ function Admin_order() {
                                   ))}
                                 </ul>
                               ) : (
-                                <p>No products found</p>
+                                <p className="admin-order-no-products">No products found</p>
                               )}
                             </div>
                           </div>
@@ -150,7 +147,7 @@ function Admin_order() {
                         <Button
                           onClick={() => openModal(order._id)}
                           variant="danger"
-                          className='mt-2'
+                          className='admin-order-delete-btn'
                         >
                           <MdDelete /> Delete
                         </Button>
@@ -160,13 +157,13 @@ function Admin_order() {
                 ))
               ) : (
                 <Col xs={12}>
-                  <p className="text-center">No Orders Available</p>
+                  <p className="admin-order-no-orders">No Orders Available</p>
                 </Col>
               )}
             </Row>
 
             {/* Pagination Controls */}
-            <Pagination>
+            <Pagination className="admin-order-pagination">
               {[...Array(Math.ceil(orders.length / ordersPerPage)).keys()].map((number) => (
                 <Pagination.Item
                   key={number + 1}
@@ -200,4 +197,4 @@ function Admin_order() {
   );
 }
 
-export default Admin_order;
+export default AdminOrder;

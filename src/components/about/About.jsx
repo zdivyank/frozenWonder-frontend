@@ -4,7 +4,7 @@ import './about.css';
 function About() {
   return (
     <div className="blur-background">
-      <div className="content">
+      <div className="about_content">
         
         <div className="about_container">
           <h1>About Us</h1>

@@ -28,9 +28,9 @@
 {
     display: flex;
     justify-content: center;
-    margin-left: 25%;
-    height: 200px;
-    width: 200px;
+    margin-left: 20%;
+    height: 300px;
+    width: 300px;
 }
 
 .left_container h1{

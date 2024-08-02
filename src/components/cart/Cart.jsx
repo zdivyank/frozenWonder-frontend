@@ -171,20 +171,158 @@
 
 // export default Cart;
 
-import React from 'react';
+// import React from 'react';
+
+// function Cart({ cartItems, setCartItems }) {
+//   const updateQuantity = (productId, packIndex, newQuantity) => {
+//     setCartItems(prevItems => {
+//       const updatedItems = prevItems.map(item => {
+//         if (item.product._id === productId && item.packIndex === packIndex) {
+//           return { ...item, quantity: Math.max(0, newQuantity) };
+//         }
+//         return item;
+//       });
+//       return updatedItems.filter(item => item.quantity > 0);
+//     });
+//   };
+
+//   const calculateTotal = () => {
+//     return cartItems.reduce((total, item) => {
+//       const price = item.product.packs[item.packIndex].price;
+//       return total + price * item.quantity;
+//     }, 0);
+//   };
+
+//   const addToCart = (product, selectedPack, quantity) => {
+//     setCartItems(prevItems => {
+//       const existingItemIndex = prevItems.findIndex(
+//         item => item.product._id === product._id && item.packIndex === selectedPack
+//       );
+//       if (existingItemIndex !== -1) {
+//         const updatedItems = [...prevItems];
+//         updatedItems[existingItemIndex].quantity += quantity;
+//         return updatedItems;
+//       }
+//       return [...prevItems, { product, packIndex: selectedPack, quantity }];
+//     });
+//   };
+
+//   return (
+//     <div>
+//       {cartItems.length === 0 ? (
+//         <p>Your cart is empty.</p>
+//       ) : (
+//         <div>
+//           {cartItems.map((item, index) => (
+//             <div key={index}>
+//               <h3>{item.product.name}</h3>
+//               <p>
+//                 {item.product.packs[item.packIndex].ml}ML *{' '}
+//                 {item.product.packs[item.packIndex].unit} - RS.
+//                 {item.product.packs[item.packIndex].price}
+//               </p>
+//               <div className="quantity-control">
+//                 <button onClick={() => updateQuantity(item.product._id, item.packIndex, item.quantity - 1)}>
+//                   -
+//                 </button>
+//                 <span>{item.quantity}</span>
+//                 <button onClick={() => updateQuantity(item.product._id, item.packIndex, item.quantity + 1)}>
+//                   +
+//                 </button>
+//               </div>
+//               <p>Total: RS.{item.product.packs[item.packIndex].price * item.quantity}</p>
+//             </div>
+//           ))}
+//           <h3>Total: RS.{calculateTotal()}</h3>
+//         </div>
+//       )}
+//     </div>
+//   );
+// }
+
+// export default Cart;
+
+
+// import React from 'react';
+
+// function Cart({ cartItems, setCartItems }) {
+//   const calculateTotal = () => {
+//     return cartItems.reduce((total, item) => {
+//       const price = item.product.packs[item.packIndex].price;
+//       return total + price * item.quantity;
+//     }, 0);
+//   };
+
+//   const removeFromCart = (productId, packIndex) => {
+//     setCartItems(prevItems => 
+//       prevItems.filter(item => 
+//         !(item.product._id === productId && item.packIndex === packIndex)
+//       )
+//     );
+//   };
+
+//   // Group cart items by product
+//   const groupedItems = cartItems.reduce((acc, item) => {
+//     if (!acc[item.product._id]) {
+//       acc[item.product._id] = {
+//         product: item.product,
+//         packs: []
+//       };
+//     }
+//     acc[item.product._id].packs.push({
+//       packIndex: item.packIndex,
+//       quantity: item.quantity
+//     });
+//     return acc;
+//   }, {});
+
+//   return (
+//     <div>
+//       {Object.keys(groupedItems).length === 0 ? (
+//         <p>Your cart is empty.</p>
+//       ) : (
+//         <div>
+//           {Object.values(groupedItems).map((group, index) => (
+//             <div key={index} className="cart-item-group">
+//               <h3>{group.product.name}</h3>
+//               {group.packs.map((pack, packIndex) => (
+//                 <div key={packIndex} className="cart-item-pack">
+//                   <p>
+//                     {group.product.packs[pack.packIndex].ml}ML *{' '}
+//                     {group.product.packs[pack.packIndex].unit} - RS.
+//                     {group.product.packs[pack.packIndex].price}
+//                   </p>
+//                   <p>Quantity: {pack.quantity}</p>
+//                   <p>
+//                     Total: RS.
+//                     {group.product.packs[pack.packIndex].price * pack.quantity}
+//                   </p>
+//                   <button 
+//                     className="btn btn-danger btn-sm" 
+//                     onClick={() => removeFromCart(group.product._id, pack.packIndex)}
+//                   >
+//                     Remove
+//                   </button>
+//                 </div>
+//               ))}
+//             </div>
+//           ))}
+//           <h3>Total: RS.{calculateTotal()}</h3>
+//           <button className="btn btn-primary mt-3">Save & Proceed</button>
+//         </div>
+//       )}
+//     </div>
+//   );
+// }
+
+// export default Cart;
+
+
+import React, { useState } from 'react';
+import OrderModal from './OrderModal';
 
 function Cart({ cartItems, setCartItems }) {
-  const updateQuantity = (productId, packIndex, newQuantity) => {
-    setCartItems(prevItems => {
-      const updatedItems = prevItems.map(item => {
-        if (item.product._id === productId && item.packIndex === packIndex) {
-          return { ...item, quantity: Math.max(0, newQuantity) };
-        }
-        return item;
-      });
-      return updatedItems.filter(item => item.quantity > 0);
-    });
-  };
+  const [showModal, setShowModal] = useState(false);
 
   const calculateTotal = () => {
     return cartItems.reduce((total, item) => {
@@ -193,48 +331,80 @@ function Cart({ cartItems, setCartItems }) {
     }, 0);
   };
 
-  const addToCart = (product, selectedPack, quantity) => {
-    setCartItems(prevItems => {
-      const existingItemIndex = prevItems.findIndex(
-        item => item.product._id === product._id && item.packIndex === selectedPack
-      );
-      if (existingItemIndex !== -1) {
-        const updatedItems = [...prevItems];
-        updatedItems[existingItemIndex].quantity += quantity;
-        return updatedItems;
-      }
-      return [...prevItems, { product, packIndex: selectedPack, quantity }];
+  const removeFromCart = (productId, packIndex) => {
+    setCartItems(prevItems =>
+      prevItems.filter(item =>
+        !(item.product._id === productId && item.packIndex === packIndex)
+      )
+    );
+  };
+
+  // Group cart items by product
+  const groupedItems = cartItems.reduce((acc, item) => {
+    if (!acc[item.product._id]) {
+      acc[item.product._id] = {
+        product: item.product,
+        packs: []
+      };
+    }
+    acc[item.product._id].packs.push({
+      packIndex: item.packIndex,
+      quantity: item.quantity
     });
+    return acc;
+  }, {});
+
+  const handleProceed = () => {
+    setShowModal(true);
+  };
+
+  const handleCloseModal = () => {
+    setShowModal(false);
   };
 
   return (
     <div>
-      {cartItems.length === 0 ? (
+      {Object.keys(groupedItems).length === 0 ? (
         <p>Your cart is empty.</p>
       ) : (
         <div>
-          {cartItems.map((item, index) => (
-            <div key={index}>
-              <h3>{item.product.name}</h3>
-              <p>
-                {item.product.packs[item.packIndex].ml}ML *{' '}
-                {item.product.packs[item.packIndex].unit} - RS.
-                {item.product.packs[item.packIndex].price}
-              </p>
-              <div className="quantity-control">
-                <button onClick={() => updateQuantity(item.product._id, item.packIndex, item.quantity - 1)}>
-                  -
-                </button>
-                <span>{item.quantity}</span>
-                <button onClick={() => updateQuantity(item.product._id, item.packIndex, item.quantity + 1)}>
-                  +
-                </button>
-              </div>
-              <p>Total: RS.{item.product.packs[item.packIndex].price * item.quantity}</p>
+          {Object.values(groupedItems).map((group, index) => (
+            <div key={index} className="cart-item-group">
+              <h3>{group.product.name}</h3>
+              {group.packs.map((pack, packIndex) => (
+                <div key={packIndex} className="cart-item-pack">
+                  <p>
+                    {group.product.packs[pack.packIndex].ml}ML *{' '}
+                    {group.product.packs[pack.packIndex].unit} - RS.
+                    {group.product.packs[pack.packIndex].price}
+                  </p>
+                  <p>Quantity: {pack.quantity}</p>
+                  <p>
+                    Total: RS.
+                    {group.product.packs[pack.packIndex].price * pack.quantity}
+                  </p>
+                  <button
+                    className="btn btn-danger btn-sm"
+                    onClick={() => removeFromCart(group.product._id, pack.packIndex)}
+                  >
+                    Remove
+                  </button>
+                  <hr />
+                </div>
+              ))}
             </div>
           ))}
           <h3>Total: RS.{calculateTotal()}</h3>
+          <button className="btn btn-primary mt-3" onClick={handleProceed}>Save & Proceed</button>
         </div>
+      )}
+      {showModal && (
+        <OrderModal
+          cartItems={cartItems}
+          total={calculateTotal()}
+          onClose={handleCloseModal}
+          setCartItems={setCartItems}
+        />
       )}
     </div>
   );
