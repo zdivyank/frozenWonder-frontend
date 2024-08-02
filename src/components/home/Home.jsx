@@ -8,7 +8,7 @@ function Home() {
    <div className="home_container">
     <div className="left_container">
       {/* <h1>Welcome  to  </h1> */}
-      <img src="../../../public/img/logo.png" className='logo' alt="" />
+      <img src="/img/logo.png" className='logo' alt="" />
       {/* <p className='home_content'>
       Discover the future of frozen delights with Frozen Wonders, a revolutionary product that brings the freshest, real fruit flavors straight to your freezer.</p>
       <p>
@@ -28,7 +28,7 @@ function Home() {
       <source src="../../../img/vid.mp4" type="video/mp4"/>
 </video> */}
 
-<img src="../../../public/img/pack1.jpg" alt="" className='home_video'/>
+<img src="/img/pack1.jpg" alt="" className='home_video'/>
     </div>
    </div>
 </section>
