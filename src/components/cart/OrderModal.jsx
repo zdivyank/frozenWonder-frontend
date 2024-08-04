@@ -2,39 +2,78 @@ import React, { useState } from 'react';
 import { CONFIGS } from '../../../config';
 import { toast } from 'react-toastify';
 
-function OrderModal({ cartItems, total, onClose, setCartItems }) {
-  const [customerInfo, setCustomerInfo] = useState({
-    cust_name: '',
-    cust_address: '',
-    cust_number: '',
-    pincode: '',
-  });
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    const orderData = {
-      ...customerInfo,
-      order_product: cartItems.map(item => ({
-        name: item.product.name,
-        quantity: item.quantity,
-        price: item.product.packs[item.packIndex].price
-      })),
-      order_date: new Date().toISOString(),
-      status: 'Pending',
-      total_amount: total,
-    };
-
-    try {
-      const response = await fetch(`${CONFIGS.API_BASE_URL}/addorder`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(orderData),
-      });
-
-      if (response.ok) {
-        toast.success('Order placed successfully!', {
+  function OrderModal({ cartItems, total, onClose, setCartItems }) {
+    const [customerInfo, setCustomerInfo] = useState({
+      cust_name: '',
+      cust_address: '',
+      cust_number: '',
+      pincode: '',
+    });
+  
+    const handleSubmit = async (e) => {
+      e.preventDefault();
+      const orderData = {
+        ...customerInfo,
+        order_product: cartItems.map(item => ({
+          name: item.product.name,
+          quantity: item.quantity,
+          price: item.product.packs[item.packIndex].price
+        })),
+        order_date: new Date().toISOString(),
+        status: 'Pending',
+        total_amount: total,
+      };
+  
+      try {
+        const response = await fetch(`${CONFIGS.API_BASE_URL}/addorder`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(orderData),
+        });
+  
+        if (response.ok) {
+          // Order placed successfully, now update stock for each item
+          for (const item of cartItems) {
+            const stockUpdateResponse = await fetch(`${CONFIGS.API_BASE_URL}/updatestock`, {
+              method: 'PUT',
+              headers: {
+                'Content-Type': 'application/json',
+              },
+              body: JSON.stringify({
+                productId: item.product._id,
+                packIndex: item.packIndex,
+                quantity: item.quantity,
+              }),
+            });
+  
+            if (!stockUpdateResponse.ok) {
+              const errorData = await stockUpdateResponse.json();
+              console.error('Failed to update stock:', errorData.error);
+              // You might want to handle this error more gracefully
+            }
+          }
+  
+          toast.success('Order placed successfully!', {
+            position: 'top-center',
+            autoClose: 5000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+          });
+          setCartItems([]); // Clear the cart
+          onClose(); // Close the modal
+        } else {
+          const errorData = await response.json();
+          throw new Error(errorData.error || 'Failed to create order');
+        }
+      } catch (error) {
+        console.error('Error creating order:', error);
+        toast.error(`Failed to place order: ${error.message}`, {
           position: 'top-center',
           autoClose: 5000,
           hideProgressBar: false,
@@ -43,31 +82,13 @@ function OrderModal({ cartItems, total, onClose, setCartItems }) {
           draggable: true,
           progress: undefined,
         });
-        setCartItems([]); // Clear the cart
-        onClose(); // Close the modal
-      } else {
-        const errorData = await response.json();
-        throw new Error(errorData.error || 'Failed to create order');
       }
-    } catch (error) {
-      console.error('Error creating order:', error);
-      toast.error(`Failed to place order: ${error.message}`, {
-        position: 'top-center',
-        autoClose: 5000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-      });
-    }
-  };
-
-  const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    setCustomerInfo(prev => ({ ...prev, [name]: value }));
-  };
-
+    };
+  
+    const handleInputChange = (e) => {
+      const { name, value } = e.target;
+      setCustomerInfo(prev => ({ ...prev, [name]: value }));
+    };
   return (
     <div className="modal" style={{ display: 'block', backgroundColor: 'rgba(0,0,0,0.5)' }}>
       <div className="modal-dialog">

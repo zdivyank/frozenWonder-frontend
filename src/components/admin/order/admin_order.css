@@ -16,7 +16,7 @@
 .admin-order-loading {
   text-align: center;
   font-size: 1.5rem;
-  color: #007bff;
+  color: #002144;
 }
 
 .admin-order-col {
@@ -47,7 +47,7 @@
 }
 
 .admin-order-label {
-  color: #007bff;
+  color: #002954;
   font-weight: bold;
   flex: 1;
 }
@@ -79,7 +79,7 @@
 
 .admin-order-product-name {
   font-weight: bold;
-  color: #007bff;
+  color: #002954;
 }
 
 .admin-order-product-price {
@@ -107,13 +107,14 @@
 }
 
 .admin-order-pagination .page-item.active .page-link {
-  background-color: #007bff;
-  border-color: #007bff;
+  background-color: #002954;
+  border-color: #002954;
 }
 
 .admin-order-pagination .page-link:hover {
-  background-color: #0056b3;
+  background-color: #004792;
   border-color: #0056b3;
+  color: white;
 }
 
 /* Modal */

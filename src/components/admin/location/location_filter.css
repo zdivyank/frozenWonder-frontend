@@ -1,0 +1,40 @@
+/* Grid Layout for Orders */
+.order-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr); /* 4 columns */
+    gap: 16px; /* Gap between grid items */
+}
+
+.pincode_item {
+    border: 1px solid #ddd;
+    padding: 16px;
+    border-radius: 4px;
+    background-color: #f9f9f9;
+}
+
+/* Pagination Controls */
+.pagination {
+    margin-top: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.pagination button {
+    background-color: #007bff;
+    border: none;
+    color: white;
+    padding: 8px 16px;
+    margin: 0 4px;
+    cursor: pointer;
+    border-radius: 4px;
+}
+
+.pagination button:disabled {
+    background-color: #ccc;
+    cursor: not-allowed;
+}
+
+.pagination span {
+    margin: 0 10px;
+}

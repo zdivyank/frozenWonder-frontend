@@ -115,10 +115,7 @@ function AdminOrder() {
                             <b className="admin-order-label">Status:</b>
                             <div className="admin-order-value">{order.status}</div>
                           </div>
-                          <div className="admin-order-detail">
-                            <b className="admin-order-label">Total Amount:</b>
-                            <div className="admin-order-value">RS.{order.total_amount}</div>
-                          </div>
+
                           <div className="admin-order-products">
                             <b className="admin-order-products-title">Products:</b>
                             <div className="admin-order-product-details">
@@ -134,9 +131,13 @@ function AdminOrder() {
                                         <span>Quantity:</span>
                                         <span>{product.quantity}</span>
                                       </div>
-                                      <hr />
                                     </li>
                                   ))}
+                                  <hr />
+                                      <div className="d-flex justify-content-between">
+                                        <b className="admin-order-product-name">Total Amount:</b>
+                                        <div className="admin-order-product-price">RS.{order.total_amount}</div>
+                                      </div>
                                 </ul>
                               ) : (
                                 <p className="admin-order-no-products">No products found</p>

@@ -213,7 +213,6 @@
 // }
 
 // export default App;
-
 import React, { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Route, Routes, Navigate, Link } from 'react-router-dom';
 import { ToastContainer } from 'react-toastify';
@@ -231,23 +230,78 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import AddProduct from './components/admin/product/AddProduct';
 import UpdateProduct from './components/admin/product/UpdateProduct';
 import Cart from './components/cart/Cart';
-import { BsCart2 } from 'react-icons/bs';
+import { HiMiniShoppingCart } from 'react-icons/hi2';
 import { FaBars, FaTimes } from 'react-icons/fa';
 import Admin_order from './components/admin/order/Admin_order';
-import { Offcanvas } from 'react-bootstrap';
+import Location_filter from './components/admin/location/Location_filter';
 
 function App() {
+  // const [showNav, setShowNav] = useState(true);
+  // const [lastScrollY, setLastScrollY] = useState(0);
+  // const { isLoggedIn } = useAuth();
+  // const [isNavOpen, setIsNavOpen] = useState(false);
+  // const [showCart, setShowCart] = useState(false);
+
+  // const [cartItems, setCartItems] = useState(() => {
+  //   const savedCart = localStorage.getItem('cart');
+  //   return savedCart ? JSON.parse(savedCart) : [];
+  // });
+
+  // useEffect(() => {
+  //   localStorage.setItem('cart', JSON.stringify(cartItems));
+  // }, [cartItems]);
+
+  // const addToCart = (product, packIndex, quantity) => {
+  //   setCartItems(prevItems => {
+  //     const existingItemIndex = prevItems.findIndex(
+  //       item => item.product._id === product._id && item.packIndex === packIndex
+  //     );
+
+  //     if (existingItemIndex !== -1) {
+  //       const updatedItems = [...prevItems];
+  //       updatedItems[existingItemIndex].quantity += quantity;
+  //       return updatedItems;
+  //     } else {
+  //       return [...prevItems, { product, packIndex, quantity }];
+  //     }
+  //   });
+  // };
+
+  // const controlNavbar = () => {
+  //   if (window.scrollY > lastScrollY) {
+  //     setShowNav(false);
+  //   } else {
+  //     setShowNav(true);
+  //   }
+  //   setLastScrollY(window.scrollY);
+  // };
+
+  // useEffect(() => {
+  //   window.addEventListener('scroll', controlNavbar);
+  //   return () => {
+  //     window.removeEventListener('scroll', controlNavbar);
+  //   };
+  // }, [lastScrollY]);
+
+  // useEffect(() => {
+  //   if (isNavOpen) {
+  //     document.body.style.overflow = 'hidden';
+  //   } else {
+  //     document.body.style.overflow = 'auto';
+  //   }
+  // }, [isNavOpen]);
+
+
   const [showNav, setShowNav] = useState(true);
   const [lastScrollY, setLastScrollY] = useState(0);
   const { isLoggedIn } = useAuth();
   const [isNavOpen, setIsNavOpen] = useState(false);
+  const [showCart, setShowCart] = useState(false);
 
   const [cartItems, setCartItems] = useState(() => {
     const savedCart = localStorage.getItem('cart');
     return savedCart ? JSON.parse(savedCart) : [];
   });
-
-  const [showCart, setShowCart] = useState(false);
 
   useEffect(() => {
     localStorage.setItem('cart', JSON.stringify(cartItems));
@@ -267,10 +321,7 @@ function App() {
         return [...prevItems, { product, packIndex, quantity }];
       }
     });
-    setShowCart(true);
   };
-
-  const handleCloseCart = () => setShowCart(false);
 
   const controlNavbar = () => {
     if (window.scrollY > lastScrollY) {
@@ -296,6 +347,10 @@ function App() {
     }
   }, [isNavOpen]);
 
+  const toggleCart = () => {
+    setShowCart(!showCart);
+  };
+
   return (
     <Router>
       <div className="App">
@@ -307,6 +362,7 @@ function App() {
               <FaBars className="hamburger-icon" onClick={() => setIsNavOpen(!isNavOpen)} />
             )}
           </div>
+          <img src="/img/logo.png" className='' height={80} alt="" />
           <ul className={`navbar-links ${isNavOpen ? 'open' : ''}`}>
             {!isLoggedIn ? (
               <>
@@ -314,19 +370,13 @@ function App() {
                 <li><a href="/#about" onClick={() => setIsNavOpen(false)}>About Us</a></li>
                 <li><a href="/#products" onClick={() => setIsNavOpen(false)}>Products</a></li>
                 <li><a href="/admin" onClick={() => setIsNavOpen(false)}>Login</a></li>
-                <li>
-                  <Link onClick={() => setShowCart(true)} className="cart-link">
-                    <BsCart2 />
-                    ({cartItems.reduce((total, item) => total + item.quantity, 0)})
-                  </Link>
-                </li>
               </>
             ) : null}
             {isLoggedIn ? (
               <>
                 <li><a href="/admin/product" onClick={() => setIsNavOpen(false)}>Products</a></li>
                 <li><a href="/admin/order" onClick={() => setIsNavOpen(false)}>Order Summary</a></li>
-                <li><a href="/#products" onClick={() => setIsNavOpen(false)}>Location Filter</a></li>
+                <li><a href="/admin/location" onClick={() => setIsNavOpen(false)}>Location Filter</a></li>
                 <li><a href="/logout" onClick={() => setIsNavOpen(false)}>Logout</a></li>
                 <li><a href="/#products" onClick={() => setIsNavOpen(false)}>Home</a></li>
               </>
@@ -339,14 +389,6 @@ function App() {
               <Home />
               <About />
               <Product addToCart={addToCart} />
-              <Offcanvas show={showCart} onHide={handleCloseCart} placement="end">
-                <Offcanvas.Header closeButton>
-                  <Offcanvas.Title>Cart</Offcanvas.Title>
-                </Offcanvas.Header>
-                <Offcanvas.Body>
-                  <Cart cartItems={cartItems} setCartItems={setCartItems} />
-                </Offcanvas.Body>
-              </Offcanvas>
             </>
           } />
           <Route path="/admin" element={<Admin />} />
@@ -355,8 +397,25 @@ function App() {
           <Route path="/admin/order" element={<Admin_order />} />
           <Route path="/admin/product/:_id/update" element={<UpdateProduct />} />
           <Route path="/admin/addproduct" element={<AddProduct />} />
+          <Route path="/admin/location" element={<Location_filter />} />
           <Route path="*" element={<Navigate to="/" />} />
         </Routes>
+
+        
+        <div className="cart-container">
+          <div className="cart_icon" onClick={toggleCart}>
+            <HiMiniShoppingCart size={42} className='cart_bottom' />
+            <span className="cart-count">{cartItems.reduce((total, item) => total + item.quantity, 0)}</span>
+          </div>
+          {showCart && (
+            <div className="cart-popup">
+              {/* <button className="close-cart" onClick={() => setShowCart(false)}>
+                <FaTimes />
+              </button> */}
+              <Cart cartItems={cartItems} setCartItems={setCartItems} />
+            </div>
+          )}
+        </div>
       </div>
       <ToastContainer
         position="top-center"
