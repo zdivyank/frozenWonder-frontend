@@ -5,6 +5,7 @@ import { useAuth } from '../../../store/Auth';
 import { CONFIGS } from '../../../../config/index';
 import './admin_order.css';
 import { MdDelete } from 'react-icons/md';
+import { FaExchangeAlt } from 'react-icons/fa';
 
 function AdminOrder() {
   const [orders, setOrders] = useState([]);
@@ -64,6 +65,30 @@ function AdminOrder() {
     }
   };
 
+  const handleStatusUpdate = async (orderId, currentStatus) => {
+    const newStatus = currentStatus === "pending" ? "delivered" : "pending";
+    try {
+      const response = await fetch(`${CONFIGS.API_BASE_URL}/updatestatus/${orderId}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ status: newStatus }),
+      });
+
+      if (response.ok) {
+        const updatedOrder = await response.json();
+        setOrders(orders.map(order => 
+          order._id === orderId ? { ...order, status: updatedOrder.Order.status } : order
+        ));
+      } else {
+        console.error('Error updating order status');
+      }
+    } catch (error) {
+      console.error('Error updating order status:', error);
+    }
+  };
+
   const openModal = (orderId) => {
     setSelectedOrderId(orderId);
     setShowModal(true);
@@ -113,7 +138,9 @@ function AdminOrder() {
                           </div>
                           <div className="admin-order-detail">
                             <b className="admin-order-label">Status:</b>
-                            <div className="admin-order-value">{order.status}</div>
+                            <div className=   {order.status === "pending" ? "text-warning" : "text-success"}>{order.status}</div>
+
+                         
                           </div>
 
                           <div className="admin-order-products">
@@ -134,10 +161,10 @@ function AdminOrder() {
                                     </li>
                                   ))}
                                   <hr />
-                                      <div className="d-flex justify-content-between">
-                                        <b className="admin-order-product-name">Total Amount:</b>
-                                        <div className="admin-order-product-price">RS.{order.total_amount}</div>
-                                      </div>
+                                  <div className="d-flex justify-content-between">
+                                    <b className="admin-order-product-name">Total Amount:</b>
+                                    <div className="admin-order-product-price">RS.{order.total_amount}</div>
+                                  </div>
                                 </ul>
                               ) : (
                                 <p className="admin-order-no-products">No products found</p>
@@ -146,9 +173,17 @@ function AdminOrder() {
                           </div>
                         </div>
                         <Button
+                          onClick={() => handleStatusUpdate(order._id, order.status)}
+                          variant={order.status === "pending" ? "success" : "dark"}
+                          className='me-2'
+                        >
+                          <FaExchangeAlt className='me-2' />
+                          {order.status === "pending" ? "Delivered" : "Pending"}
+                        </Button>
+                        <Button
                           onClick={() => openModal(order._id)}
                           variant="danger"
-                          className='admin-order-delete-btn'
+                          className=''
                         >
                           <MdDelete /> Delete
                         </Button>
