@@ -97,6 +97,10 @@ function App() {
                   {isNavOpen ? <FaTimes /> : <FaBars />}
                 </button>
               </div>
+
+              <button className="navbar-toggle" onClick={toggleNav}>
+  {isNavOpen ? <FaTimes /> : <FaBars />}
+</button>
               <ul className={`navbar-links ${isNavOpen ? 'open' : ''} stroke`}>
                 <img src="/img/logo.png" className='navbar-logo' alt="" />
                 <div className="space">

@@ -863,8 +863,8 @@ function Product({ addToCart, cart = [] }) {
   };
 
   return (
-    <div id='products'>
-      <h1>Products</h1>
+    <div className='product_container' id='products'>
+      <h1 className='text-center'>Products</h1>
       {products.length > 0 ? (
         <div className="product-list">
           {products.map((product) => (
@@ -901,7 +901,7 @@ function Product({ addToCart, cart = [] }) {
                           {getAvailableQuantity(product, index) > 0 && (
                             <div className="quantity-controls">
                               <button 
-                                className='btn btn-dark m-3' 
+                                className='btn btn-dark me-3' 
                                 onClick={() => handleQuantityChange(product._id, index, -1)}
                                 disabled={quantities[product._id]?.[index] <= 1}
                               >
@@ -917,7 +917,7 @@ function Product({ addToCart, cart = [] }) {
                               </button>
                               <br />
                               <button 
-                                className='btn btn-dark' 
+                                className='btn btn-dark mb-3' 
                                 onClick={() => handleAddToCart(product, index)}
                                 disabled={getAvailableQuantity(product, index) === 0}
                               >

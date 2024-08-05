@@ -8,7 +8,7 @@ function Home() {
    <div className="home_container">
     <div className="left_container">
       {/* <h1>Welcome  to  </h1> */}
-      <img src="/img/logo.png" className='logo' alt="" />
+      <img src="/img/logo.png" className='logo text-center' alt="" />
       
           <p>
          

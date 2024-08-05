@@ -107,9 +107,10 @@ function Cart({ cartItems, setCartItems, onClose }) {
             <tbody>
               {cartItems.map((item, index) => (
                 <tr className='cart_tr' key={`${item.product._id}-${item.packIndex}`}>
+                  <hr />
                   <td className="product-cell">
                     <img src={item.product.image} height={50} alt={item.product.name} className="cart-item-image" />
-                    <span>{item.product.name}</span>
+                    {/* <span>{item.product.name}</span> */}
                   </td>
                   <td>{item.product.packs[item.packIndex].ml}ML * {item.product.packs[item.packIndex].unit}</td>
                   <td>{item.quantity}</td>
@@ -123,7 +124,7 @@ function Cart({ cartItems, setCartItems, onClose }) {
           </table>
               
           <div className="cart-summary">
-            {/* <h3>Order Summary</h3> */}
+            <h3>Order Summary</h3>
             <div className="summary-line">
               <span>Subtotal</span>
               <span>{subtotal.toFixed(2)}</span>
