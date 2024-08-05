@@ -94,7 +94,7 @@ function Cart({ cartItems, setCartItems, onClose }) {
         </div>
       ) : (
         <>
-          <table className="cart-table">
+          {/* <table className="cart-table">
             <thead>
               <tr>
                 <th className='cart_head m-3'>Product</th>
@@ -107,22 +107,49 @@ function Cart({ cartItems, setCartItems, onClose }) {
             <tbody>
               {cartItems.map((item, index) => (
                 <tr className='cart_tr' key={`${item.product._id}-${item.packIndex}`}>
-                  <hr />
+                
                   <td className="product-cell">
-                    <img src={item.product.image} height={50} alt={item.product.name} className="cart-item-image" />
-                    {/* <span>{item.product.name}</span> */}
+                    <img src={item.product.image} height={50} alt={item.product.name} className="cart-item-image cart_info" />
+                  
                   </td>
-                  <td>{item.product.packs[item.packIndex].ml}ML * {item.product.packs[item.packIndex].unit}</td>
-                  <td>{item.quantity}</td>
-                  <td>{item.product.packs[item.packIndex].price.toFixed(2)}</td>
-                  <td>
+                  <td className='cart_info'>{item.product.packs[item.packIndex].ml}ML * {item.product.packs[item.packIndex].unit}</td>
+                  <td className='cart_info'>{item.quantity}</td>
+                  <td className='cart_info'>{item.product.packs[item.packIndex].price.toFixed(2)}</td>
+                  <td className='cart_info'>
                     <MdDelete onClick={() => removeFromCart(item.product._id, item.packIndex)} />
                   </td>
                 </tr>
               ))}
             </tbody>
           </table>
-              
+               */}
+
+<table className="cart-table">
+  <thead>
+    <tr>
+      <th className='cart_head'>PRODUCT</th>
+      <th className='cart_head'>PACK SIZE</th>
+      <th className='cart_head'>QUANTITY</th>
+      <th className='cart_head'>PRICE</th>
+      <th className='cart_head'>REMOVE</th>
+    </tr>
+  </thead>
+  <tbody>
+    {cartItems.map((item, index) => (
+      <tr className='cart_tr' key={`${item.product._id}-${item.packIndex}`}>
+        <td className="product-cell">
+          <img src={item.product.image} alt={item.product.name} className="cart-item-image" />
+        </td>
+        <td>{item.product.packs[item.packIndex].ml}ML * {item.product.packs[item.packIndex].unit}</td>
+        <td>{item.quantity}</td>
+        <td>{item.product.packs[item.packIndex].price.toFixed(2)}</td>
+        <td>
+          <MdDelete onClick={() => removeFromCart(item.product._id, item.packIndex)} />
+        </td>
+      </tr>
+    ))}
+  </tbody>
+</table>
           <div className="cart-summary">
             <h3>Order Summary</h3>
             <div className="summary-line">
