@@ -164,8 +164,8 @@ function Cart({ cartItems, setCartItems, onClose }) {
               <span>Total</span>
               <span>RS {total.toFixed(2)}</span>
             </div>
-          </div>
           <button className="place-order-btn" onClick={handlePlaceOrder}>Place Order →</button>
+          </div>
         </>
       )}
       {showOrderModal && (
