@@ -254,14 +254,14 @@ function Admin_product() {
                                 ))}
                             </td>
                             <td className='actions-column'>
-                                <Link to={`/admin/product/${product._id}/update`} className='btn btn-primary action-btn'>
+                                <Link to={`/admin/product/${product._id}/update`} className='btn btn-outline-success me-3  action-btn'>
                                     <GrDocumentUpdate />
                                 </Link>
                                 <button
-                                    className='btn btn-danger action-btn'
+                                    className='btn btn-danger  action-btn'
                                     onClick={() => openModal(product._id)}
                                 >
-                                    <MdDelete />
+                                    <MdDelete className='' />
                                 </button>
                             </td>
                         </tr>

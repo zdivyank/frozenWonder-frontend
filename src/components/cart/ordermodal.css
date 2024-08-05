@@ -1,0 +1,126 @@
+/* Modal background styling */
+.modal {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: rgba(0, 0, 0, 0.5);
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 1050;
+  }
+  
+  /* Modal dialog styling */
+  .modal-dialog {
+    max-width: 600px;
+    width: 90%;
+    margin: 1.75rem auto;
+  }
+  
+  /* Modal content styling */
+  .modal-content {
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+    overflow: hidden;
+  }
+  
+  /* Modal header styling */
+  .modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1.5rem;
+    border-bottom: 1px solid #e9ecef;
+  }
+  
+  .modal-title {
+    margin: 0;
+    font-size: 1.5rem;
+  }
+  
+  .close {
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    cursor: pointer;
+  }
+  
+  /* Modal body styling */
+  .modal-body {
+    padding: 1.5rem;
+  }
+  
+  /* Form group styling */
+  .form-group {
+    margin-bottom: 1.5rem;
+  }
+  
+  .form-group label {
+    /* display: block; */
+    /* margin-bottom: 0.5rem; */
+    /* font-weight: bold; */
+    /* float: left; */
+    /* border: 1px solid ; */
+    display: flex;
+    width: 100%;
+    float: left;
+    margin-right: 100%;
+  }
+  
+  .order_info {
+    width: 100%;
+    padding: 0.5rem 0;
+    background-color:  #9ec9ed15;
+    border: none !important;
+    border-bottom: 2px solid #bbbbbb !important;
+    outline: none !important;
+    transition: border-color 0.3s, box-shadow 0.3s;
+}
+
+/* Focus state for input fields */
+.order_info:focus {
+    
+    border-bottom: 2px solid #2b2b2b !important;
+    box-shadow: 0 0 10px #9ecaed;
+    /* border-color: #ff0000; */
+    /* border-bottom: 2px solid #ff0000 !important; */
+    /* box-shadow: 0 1px 0 0 #495E70; */
+  }
+  
+  /* Submit button styling */
+  .btn-primary {
+    display: inline-block;
+    padding: 0.75rem 1.5rem;
+    color: #fff;
+    background-color: #495E70;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+  }
+  
+  .btn-primary:hover {
+    background-color: #3a4a59;
+  }
+  
+  /* Responsive adjustments */
+  @media (max-width: 576px) {
+    .modal-dialog {
+      width: 95%;
+      margin: 1rem auto;
+    }
+  
+    .modal-header, .modal-body {
+      padding: 1rem;
+    }
+  
+    .btn-primary {
+      width: 100%;
+    }
+  }
+
+
+  

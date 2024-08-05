@@ -3,6 +3,7 @@ import { Dropdown } from 'rsuite';
 import { FaEdit } from 'react-icons/fa'; // Importing the edit icon
 import { CONFIGS } from '../../../../config';
 import './location_filter.css';
+import { MdPendingActions } from 'react-icons/md';
 
 function LocationFilter() {
     const [pincodeData, setPincodeData] = useState([]);
@@ -157,7 +158,9 @@ function LocationFilter() {
                                         <hr />
                                         <b>Update Status:</b>
                                         <Dropdown title={orderStatus[order._id] || "Select Status"} color="orange" className='ms-2' searchble  onSelect={handleDropdownSelect}>
-                                            <Dropdown.Item  eventKey="Pending">Pending</Dropdown.Item>
+                                            <Dropdown.Item  eventKey="Pending"> <MdPendingActions className='btn btn-danger' />
+                                            Pending</Dropdown.Item>
+                                            
                                             <Dropdown.Item eventKey="Delivered">Delivered</Dropdown.Item>
                                         </Dropdown>
                                         </>

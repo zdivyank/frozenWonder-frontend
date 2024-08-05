@@ -784,6 +784,8 @@
 import React, { useEffect, useState } from 'react';
 import './product.css';
 import { CONFIGS } from '../../../config';
+import { MdCardTravel } from 'react-icons/md';
+import { IoMdCart } from 'react-icons/io';
 
 function Product({ addToCart, cart = [] }) {
   const [products, setProducts] = useState([]);
@@ -919,6 +921,8 @@ function Product({ addToCart, cart = [] }) {
                                 onClick={() => handleAddToCart(product, index)}
                                 disabled={getAvailableQuantity(product, index) === 0}
                               >
+                                <IoMdCart />
+
                                 Add to Cart
                               </button>
                             </div>
