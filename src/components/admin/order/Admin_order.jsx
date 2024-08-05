@@ -83,7 +83,7 @@ function AdminOrder() {
   return (
     <section className="admin-order-section">
       <Container>
-        <h1 className="admin-order-title">Orders List</h1>
+        <h1 className="">Orders List</h1>
         {loading ? (
           <p className="admin-order-loading">Loading...</p>
         ) : (
