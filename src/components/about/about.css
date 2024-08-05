@@ -10,19 +10,7 @@
     padding: 25px;
 }
 
-/* height: auto; */
-  .blur-background::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    /* background: rgba(255, 255, 255, 0.3);  */
-    /* backdrop-filter: blur(1px);  */
-    /* filter: brightness(50%); */
-    z-index: 0; /* Place it behind the content */
-}
+
 
 .about_content {
     position: relative;
@@ -45,7 +33,21 @@
     border: 2px solid;
     height: 100%;
     width: 50%;
-
     padding: 25px;
     border-radius: 25px;
   }
+
+
+  @media only screen and (max-width: 450px) {
+
+   
+  .about_container
+  {
+   
+    margin-left: 0%;
+    height: 100%;
+    width: 100%;
+    padding: 25px;
+    border-radius: 25px;
+  }
+}

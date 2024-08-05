@@ -89,7 +89,7 @@ function App() {
     <Router>
       <div className="app-container">
         {isLoggedIn && <AdminSidebar />}
-        <div className="main-content">
+        <div className={`main-content ${isLoggedIn ? 'admin-page' : ''}`}>
           {!isLoggedIn && (
             <nav className={`navbar ${showNav ? 'visible' : 'hidden'} ${isNavOpen ? 'open' : ''}`}>
               <div className="navbar-header">

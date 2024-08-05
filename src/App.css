@@ -1,12 +1,17 @@
 .app-container {
+  /* border: 3px solid aqua; */
+  
+  overflow-y: hidden;
   display: flex;
-  min-height: 100vh;
+  flex-direction: column;
+  padding:  0;
+  /* min-height: 100vh; */
 }
 
 .main-content {
   flex-grow: 1;
-  padding: 20px;
-  overflow-x: auto;
+  padding: 0;
+  overflow: hidden;
 }
 
 /* For logged-out state */
@@ -31,13 +36,11 @@
   }
 }
 
-/* Adjust other existing styles as needed */
-
 .navbar {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 1rem;
+  /* padding: 1rem; */
   background-color: #333;
   color: white;
   width: 100%;
@@ -47,6 +50,7 @@
   right: 0;
   z-index: 1000;
   transition: top 0.3s;
+  margin: 0;
 }
 
 .navbar.hidden {
@@ -80,10 +84,7 @@
   padding: 0;
 }
 
-.navbar-links li {
-  /* border: 1px seagreen solid; */
-  /* margin-left: 15px; */
-}
+
 
 .navbar-links a {
   margin-top: 25px;
@@ -106,41 +107,6 @@ margin-left: auto ;
 }
 
 
-
-@media (max-width: 768px) {
-  .navbar-toggle {
-    display: block;
-  }
-
-  .navbar.open {
-    height: 100vh;
-    overflow-y: hidden;
-    flex-direction: column;
-    justify-content: flex-start;
-  }
-  
-  .navbar-links {
-    display: none;
-    flex-direction: column;
-    width: 100%;
-    text-align: center;
-    margin-top: 1rem;
-  }
-  
-  .navbar-links.open {
-    display: flex;
-  }
-
-  .navbar-links li {
-    margin: 1rem 0;
-  }
-
-  .navbar-logo {
-    height: 190px;
-    width: 50%;
-    margin-left: 25%;
-  }
-}
 
 /* New styles for cart */
 .cart-container {

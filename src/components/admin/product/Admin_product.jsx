@@ -219,7 +219,7 @@ function Admin_product() {
     };
 
     return (
-        <div>
+        <div className='m-3'>
             <button
                 className='btn btn-success m-3'
                 onClick={() => navigate('/admin/addproduct')}

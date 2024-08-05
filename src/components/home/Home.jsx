@@ -9,13 +9,7 @@ function Home() {
     <div className="left_container">
       {/* <h1>Welcome  to  </h1> */}
       <img src="/img/logo.png" className='logo' alt="" />
-      {/* <p className='home_content'>
-      Discover the future of frozen delights with Frozen Wonders, a revolutionary product that brings the freshest, real fruit flavors straight to your freezer.</p>
-      <p>
-       Our innovative process locks in the natural goodness and vibrant taste of fresh fruits, delivering a refreshing and healthy treat every time.</p>
-       <p>
-        Experience the perfect blend of convenience and quality with our range of frozen juices, smoothies, and more. Dive into a world where freshness meets innovation, and every sip is a burst of real fruit flavor.</p> */}
-
+      
           <p>
          
           Discover the future of frozen delights with Frozen Wonders, a revolutionary product that brings the freshest, real fruit flavors straight to your freezer. Our innovative process locks in the natural goodness and vibrant taste of fresh fruits, delivering a refreshing and healthy treat every time. Experience the perfect blend of convenience and quality with our range of frozen juices, smoothies, and more. Dive into a world where freshness meets innovation, and every sip is a burst of real fruit flavor.
