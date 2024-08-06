@@ -22,11 +22,11 @@
 
 /* Navbar styles */
 .navbar {
-  background-color: #fff421;
+  background-color: #921A40;
   display: flex;
   justify-content: center;
   align-items: center;
-  font-size: 1.2rem;
+  font-size: 26px;
   position: fixed;
   top: 0;
   left: 0;
@@ -35,6 +35,9 @@
   width: 100%;
   transition: top 0.3s;
   margin: 0;
+  font-family: "sugarpunchDEMO";
+  color: #fff;
+
 }
 
 .navbar-container {
@@ -59,7 +62,7 @@
 }
 
 .navbar-logo img {
-  height: 60px;
+  height: 120px;
 }
 
 .nav-menu {
@@ -73,9 +76,6 @@
 
 }
 
-.nav-item {
-  /* height: 80px; */
-}
 
 .nav-link {
   color: #000;
