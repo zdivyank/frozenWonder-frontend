@@ -12,6 +12,7 @@ function Admin() {
     password: "",
   });
 
+  const [isclicked,setIsClicked] = useState(false);
   const URL = `${CONFIGS.API_BASE_URL}/login`;
 
   const { userAuthentication, storeTokenInLS } = useAuth();
@@ -42,6 +43,7 @@ function Admin() {
 
       if (response.ok) {
         storeTokenInLS(res_data.token);
+        setIsClicked(true);
         setUser({
           email: "",
           password: "",
@@ -61,6 +63,7 @@ function Admin() {
         navigate('/admin/product');
 
       } else {
+        setIsClicked(false);
         toast.error(res_data.extraDetails || res_data.message, {
           style: {
             background: '#212121',
@@ -117,7 +120,7 @@ function Admin() {
         </div>
 
         <div className="form_div text-center">
-          <button type="submit">Login</button>
+          <button type="submit" disabled={isclicked}>Login</button>
         </div>
       </form>
     </section>

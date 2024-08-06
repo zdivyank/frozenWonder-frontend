@@ -1,8 +1,7 @@
 import React, { useState } from 'react';
 import { CONFIGS } from '../../../config';
 import { toast } from 'react-toastify';
-import './ordermodal.css'
-
+import './ordermodal.css';
 
 function OrderModal({ cartItems, total, onClose, setCartItems }) {
   const [customerInfo, setCustomerInfo] = useState({
@@ -12,8 +11,11 @@ function OrderModal({ cartItems, total, onClose, setCartItems }) {
     pincode: '',
   });
 
+  const [isOrderPlaced, setIsOrderPlaced] = useState(false);
+
   const handleSubmit = async (e) => {
     e.preventDefault();
+    
     const orderData = {
       ...customerInfo,
       order_product: cartItems.map(item => ({
@@ -36,6 +38,7 @@ function OrderModal({ cartItems, total, onClose, setCartItems }) {
       });
 
       if (response.ok) {
+        setIsOrderPlaced(true);
         // Order placed successfully, now update stock for each item
         for (const item of cartItems) {
           const stockUpdateResponse = await fetch(`${CONFIGS.API_BASE_URL}/updatestock`, {
@@ -90,8 +93,8 @@ function OrderModal({ cartItems, total, onClose, setCartItems }) {
     const { name, value } = e.target;
     setCustomerInfo(prev => ({ ...prev, [name]: value }));
   };
+
   return (
-    
     <div className="modal" style={{ display: 'block', backgroundColor: 'rgba(0,0,0,0.5)' }}>
       <div className="modal-dialog">
         <div className="modal-content">
@@ -114,18 +117,8 @@ function OrderModal({ cartItems, total, onClose, setCartItems }) {
             <hr />
             <form onSubmit={handleSubmit}>
               <div className="order_container">
-
                 <div className="form-group">
                   <label>Name:</label>
-                  {/* <input
-                  type="text"
-                  name="cust_name"
-                  value={customerInfo.cust_name}
-                  onChange={handleInputChange}
-                  className="order_info"
-                  required
-                  /> */}
-
                   <input
                     type="text"
                     name="cust_name"
@@ -167,7 +160,7 @@ function OrderModal({ cartItems, total, onClose, setCartItems }) {
                     required
                   />
                 </div>
-                <button type="submit" className="btn btn-primary">Place Order</button>
+                <button type="submit" className="btn btn-primary" disabled={isOrderPlaced}>Place Order</button>
               </div>
             </form>
           </div>

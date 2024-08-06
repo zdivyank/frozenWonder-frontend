@@ -1,11 +1,8 @@
 .app-container {
-  /* border: 3px solid aqua; */
-  
-  overflow-y: hidden;
+  overflow-x: hidden;
   display: flex;
   flex-direction: column;
-  padding:  0;
-  /* min-height: 100vh; */
+  padding: 0;
 }
 
 .main-content {
@@ -14,101 +11,98 @@
   overflow: hidden;
 }
 
-/* For logged-out state */
 .app-container:not(:has(.admin-sidebar)) .main-content {
   width: 100%;
 }
 
-/* For logged-in state */
 .app-container:has(.admin-sidebar) .main-content {
-  width: calc(100% - 250px); /* Adjust based on your sidebar width */
-  margin-left: 250px; /* Should match sidebar width */
+  width: calc(100% - 250px);
+  margin-left: 250px;
 }
 
-@media (max-width: 768px) {
-  .app-container {
-    flex-direction: column;
-  }
-
-  .main-content {
-    width: 100% !important;
-    margin-left: 0 !important;
-  }
-}
-
+/* Navbar styles */
 .navbar {
+  background-color: #fff421;
   display: flex;
-  justify-content: space-between;
+  justify-content: center;
   align-items: center;
-  /* padding: 1rem; */
-  background-color: #333;
-  color: white;
-  width: 100%;
+  font-size: 1.2rem;
   position: fixed;
   top: 0;
   left: 0;
   right: 0;
-  z-index: 1000;
+  z-index: 999;
+  width: 100%;
   transition: top 0.3s;
   margin: 0;
 }
 
-.navbar.hidden {
-  top: -100%;
-}
-
-.navbar-header {
+.navbar-container {
   display: flex;
-  align-items: center;
   justify-content: space-between;
+  align-items: center;
   width: 100%;
+  height: 80px;
+  max-width: 1500px;
+  padding: 0 50px;
+  
 }
 
 .navbar-logo {
-  height: 110px;
-}
-
-.navbar-toggle {
-  display: none;
-  background: none;
-  border: none;
-  color: white;
-  font-size: 1.5rem;
+  color: #000;
+  justify-self: start;
   cursor: pointer;
+  text-decoration: none;
+  font-size: 2rem;
+  display: flex;
+  align-items: center;
 }
 
-.navbar-links {
+.navbar-logo img {
+  height: 60px;
+}
+
+.nav-menu {
   display: flex;
+  align-items: center;
+  justify-content: center;
   list-style: none;
-  margin: 0;
-  padding: 0;
+  text-align: center;
+  margin-right: -22px;
+  /* padding-top: 15px; */
+
 }
 
-
-
-.navbar-links a {
-  margin-top: 25px;
-  right: 0;
-  color: rgb(255, 255, 255);
-  text-decoration: none;
+.nav-item {
+  /* height: 80px; */
 }
 
-.navbar-links a:hover {
-  background-color: transparent;
-  text-decoration: none;
-}
-
-
-.space
-{
-  /* border: 2px solid sandybrown; */
+.nav-link {
+  color: #000;
   display: flex;
-margin-left: auto ;
+  align-items: center;
+  text-decoration: none;
+  padding: 0.5rem 1rem;
+  height: 100%;
+  transition: all 0.3s ease;
+  /* border: 2px solid black; */
 }
 
+/* Improved hover effect for larger screens */
+@media screen and (min-width: 961px) {
+  .nav-link:hover {
+    color: #994200;
+    background-color: rgba(239, 104, 0, 0.1);
+    /* border-bottom: 3px solid #ef6800; */
+    padding: 5px;
+  }
+}
 
+.menu-icon {
+  display: none;
+}
 
-/* New styles for cart */
+/* Original Cart styles */
 .cart-container {
   position: fixed;
   bottom: 20px;
@@ -124,11 +118,11 @@ margin-left: auto ;
   cursor: pointer;
   transition: 0.7s ease;
 }
+
 .cart_icon:hover {
   border: 1px solid #ef6800;
   background-color: #ef680000;
   color: rgb(0, 0, 0);
-
 }
 
 .cart-count {
@@ -231,135 +225,103 @@ margin-left: auto ;
   background-color: #ff8800;
 }
 
-
-.navbar-toggle {
-  display: none;
-  background: none;
-  border: none;
-  color: white;
-  font-size: 1.5rem;
-  cursor: pointer;
-  position: absolute;
-  right: 1rem;
-  top: 1rem;
-}
-
-.navbar-links {
-  display: flex;
-  list-style: none;
-  margin: 0;
-  padding: 0;
-  transition: all 0.3s ease-in-out;
-}
-
-/* Responsive design */
-@media (max-width: 768px) {
-  .navbar-toggle {
-    display: block;
+/* Responsive styles */
+@media screen and (max-width: 960px) {
+  .navbar-container {
+    padding: 0 30px;
   }
 
-  .navbar-links {
-    position: fixed;
+  .nav-menu {
+    display: flex;
     flex-direction: column;
-    background-color: #333;
     width: 100%;
-    height: 100vh;
-    top: 0;
+    height: 90vh;
+    position: absolute;
+    top: 80px;
     left: -100%;
-    padding-top: 60px;
-    transition: all 0.3s ease-in-out;
+    opacity: 1;
+    transition: all 0.5s ease;
   }
 
-  .navbar-links.open {
+  .nav-menu.active {
+    background: #fff421;
     left: 0;
+    opacity: 1;
+    transition: all 0.5s ease;
+    z-index: 1;
   }
 
-  .navbar-links li {
-    margin: 15px 0;
+  .nav-item {
+    height: auto;
+  }
+
+  .nav-link {
     text-align: center;
+    padding: 2rem;
+    width: 100%;
+    display: table;
   }
 
-  .space {
-    flex-direction: column;
-    margin-left: 0;
+  .nav-link:hover {
+    background-color: #fff;
+    color: #ef6800;
+    border-radius: 0;
   }
 
   .navbar-logo {
-    height: 80px;
-    margin-left: 1rem;
+    position: absolute;
+    top: 0;
+    left: 0;
+    transform: translate(25%, 50%);
   }
 
-  .navbar {
-    justify-content: flex-start;
-    padding: 0.5rem 1rem;
-  }
-  .cart-card {
-    width: 90%;
-    right: 5%;
-    left: 5%;
-  }
-}
-
-/* Responsive design */
-@media (max-width: 768px) {
-  .navbar-links {
-    flex-direction: column;
-  }
-
-  .navbar-links li {
-    margin: 5px 0;
+  .menu-icon {
+    display: block;
+    position: absolute;
+    top: 0;
+    right: 0;
+    transform: translate(-100%, 60%);
+    font-size: 1.8rem;
+    cursor: pointer;
   }
 
   .cart-card {
-    width: 90%;
-    right: 5%;
-    left: 5%;
-  }
-
-  .cart-card {
-    
-    /* width: 330px; */
     left: -190px;
     background-color: white;
-    /* border: 2px saddlebrown solid; */
     border-radius: 8px;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    /* margin-right: -30%; */
     padding: 20px;
   }
 
   .cart-container {
     position: fixed;
-    /* bottom: 2px; */
     right: 0px;
     margin-right: 25px;
-    /* z-index: 1000; */
+  }
+}
+
+@media screen and (max-width: 768px) {
+  .navbar-container {
+    padding: 0 20px;
   }
 
-
+  .navbar-logo img {
+    height: 50px;
+  }
 }
-@media (max-width: 320px) {
 
+@media (max-width: 320px) {
   .cart-card {
-    
-    /* width: 330px; */
-    /* overflow-x:auto ; */
     left: -170px;
     background-color: white;
-    /* border: 2px rgb(19, 55, 139) solid; */
     border-radius: 8px;
     width: 300px;
     margin: 40px;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    /* margin-right: -30%; */
     margin-left: 25px;
     padding: 40px;
   }
-
-
 }
-
-
 
 @media (min-width: 769px) and (max-width: 1024px) {
   .navbar-toggle {

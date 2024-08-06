@@ -8,7 +8,7 @@ import Product from './components/product/Product';
 import './App.css';
 import Admin from './components/admin/login/Admin';
 import { useAuth } from './store/Auth';
-import { Logout } from './components/logout/Logout';
+import Logout from './components/logout/Logout';
 import 'rsuite/dist/rsuite.min.css';
 import Admin_product from './components/admin/product/Admin_product';
 import 'bootstrap/dist/css/bootstrap.min.css';
@@ -22,10 +22,8 @@ import Location_filter from './components/admin/location/Location_filter';
 import AdminSidebar from './components/admin/AdminSidebar';
 
 function App() {
-  const [showNav, setShowNav] = useState(true);
-  const [lastScrollY, setLastScrollY] = useState(0);
-  const { isLoggedIn } = useAuth();
   const [isNavOpen, setIsNavOpen] = useState(false);
+  const { isLoggedIn } = useAuth();
   const [showCart, setShowCart] = useState(false);
 
   const [cartItems, setCartItems] = useState(() => {
@@ -53,22 +51,6 @@ function App() {
     });
   };
 
-  const controlNavbar = () => {
-    if (window.scrollY > lastScrollY) {
-      setShowNav(false);
-    } else {
-      setShowNav(true);
-    }
-    setLastScrollY(window.scrollY);
-  };
-
-  useEffect(() => {
-    window.addEventListener('scroll', controlNavbar);
-    return () => {
-      window.removeEventListener('scroll', controlNavbar);
-    };
-  }, [lastScrollY]);
-
   useEffect(() => {
     if (isNavOpen) {
       document.body.style.overflow = 'hidden';
@@ -91,25 +73,29 @@ function App() {
         {isLoggedIn && <AdminSidebar />}
         <div className={`main-content ${isLoggedIn ? 'admin-page' : ''}`}>
           {!isLoggedIn && (
-            <nav className={`navbar ${showNav ? 'visible' : 'hidden'} ${isNavOpen ? 'open' : ''}`}>
-              <div className="navbar-header">
-                <button className="navbar-toggle" onClick={toggleNav}>
+            <nav className={`navbar ${isNavOpen ? 'open' : ''}`}>
+              <div className="navbar-container">
+                <Link to="/" className="navbar-logo">
+                  <img src="/img/logo.png" alt="Logo" />
+                </Link>
+                <div className="menu-icon" onClick={toggleNav}>
                   {isNavOpen ? <FaTimes /> : <FaBars />}
-                </button>
-              </div>
-
-              <button className="navbar-toggle" onClick={toggleNav}>
-  {isNavOpen ? <FaTimes /> : <FaBars />}
-</button>
-              <ul className={`navbar-links ${isNavOpen ? 'open' : ''} stroke`}>
-                <img src="/img/logo.png" className='navbar-logo' alt="" />
-                <div className="space">
-                  <li><a href="/#home" onClick={() => setIsNavOpen(false)}>Home</a></li>
-                  <li><a href="/#about" onClick={() => setIsNavOpen(false)}>About Us</a></li>
-                  <li><a href="/#products" onClick={() => setIsNavOpen(false)}>Products</a></li>
-                  <li><a href="/admin" onClick={() => setIsNavOpen(false)}>Login</a></li>
                 </div>
-              </ul>
+                <ul className={`nav-menu ${isNavOpen ? 'active' : ''}`}>
+                  <li className="nav-item">
+                    <Link to="/" className="nav-link" onClick={() => setIsNavOpen(false)}>Home</Link>
+                  </li>
+                  <li className="nav-item">
+                    <Link to="/#about" className="nav-link" onClick={() => setIsNavOpen(false)}>About Us</Link>
+                  </li>
+                  <li className="nav-item">
+                    <Link to="/#products" className="nav-link" onClick={() => setIsNavOpen(false)}>Products</Link>
+                  </li>
+                  <li className="nav-item">
+                    <Link to="/admin" className="nav-link" onClick={() => setIsNavOpen(false)}>Login</Link>
+                  </li>
+                </ul>
+              </div>
             </nav>
           )}
 

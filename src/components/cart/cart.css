@@ -306,7 +306,7 @@
 
   .cart-table th,
   .cart-table td {
-    padding: 8px 4px;
+    padding: 0px 4px;
   }
 
   .cart-item-image {
