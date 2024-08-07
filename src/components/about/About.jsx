@@ -6,8 +6,8 @@ const About = () => {
   const { scrollYProgress } = useViewportScroll();
   
   // Define the scale and opacity transforms based on scroll position
-  const scale = useTransform(scrollYProgress, [0, 0.5, 1], [0.8, 1, 1.4]);
-  const opacity = useTransform(scrollYProgress, [0, 1, 1], [1, 1, 0]);
+  const scale = useTransform(scrollYProgress, [0, 0.5, 0.5], [0.2, 1, 1.2]);
+  const opacity = useTransform(scrollYProgress, [0, 1, 0], [1, 1, 0]);
 
   return (
     <motion.div
