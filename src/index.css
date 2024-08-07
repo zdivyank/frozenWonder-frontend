@@ -73,12 +73,6 @@ nav ul li a:hover {
   background-color: #f9f9f9;
 }
 
-#about {
-  background:url(../public//img/1000_F_116007705_Snb0erYpbTbvfa36T7cUSeur8QeE32UL.jpg) ;
-  filter: blur(3px);
-  /* backdrop-filter: blur(20px); */
-}
-
 
 
 #products {

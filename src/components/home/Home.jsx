@@ -25,6 +25,8 @@ function Home() {
 <img src="/img/pack1.jpg" alt="" className='home_video'/>
     </div>
    </div>
+
+   {/* <img src="/img/lower1.svg" alt="" /> */}
 </section>
   )
 }

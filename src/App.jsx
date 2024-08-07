@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { BrowserRouter as Router, Route, Routes, Navigate, Link } from 'react-router-dom';
+import { BrowserRouter as Router, Route, Routes, Navigate, Link, useLocation } from 'react-router-dom';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import Home from './components/home/Home';
@@ -20,6 +20,7 @@ import { FaBars, FaTimes } from 'react-icons/fa';
 import Admin_order from './components/admin/order/Admin_order';
 import Location_filter from './components/admin/location/Location_filter';
 import AdminSidebar from './components/admin/AdminSidebar';
+import { Link as ScrollLink, Element } from 'react-scroll';
 
 function App() {
   const [isNavOpen, setIsNavOpen] = useState(false);
@@ -67,54 +68,75 @@ function App() {
     setShowCart(!showCart);
   };
 
+  const NavBar = () => {
+    const location = useLocation();
+    const isAdminRoute = location.pathname.startsWith('/admin');
+
+    return (
+      <nav className={`navbar ${isNavOpen ? 'open' : ''}`}>
+        <div className="navbar-container">
+          <Link to="/" className="navbar-logo">
+            <img src="/img/logo.png" alt="Logo" />
+          </Link>
+          <div className="menu-icon" onClick={toggleNav}>
+            {isNavOpen ? <FaTimes /> : <FaBars />}
+          </div>
+          <ul className={`nav-menu ${isNavOpen ? 'active' : ''}`}>
+            {!isAdminRoute && (
+              <>
+                <li className="nav-item">
+                  <ScrollLink to="home" smooth={true} duration={500} className="nav-link" onClick={() => setIsNavOpen(false)}>Home</ScrollLink>
+                </li>
+                <li className="nav-item">
+                  <ScrollLink to="about" smooth={true} duration={500} className="nav-link" onClick={() => setIsNavOpen(false)}>About Us</ScrollLink>
+                </li>
+                <li className="nav-item">
+                  <ScrollLink to="products" smooth={true} duration={500} className="nav-link" onClick={() => setIsNavOpen(false)}>Products</ScrollLink>
+                </li>
+              </>
+            )}
+            {/* <li className="nav-item">
+              {isLoggedIn ? (
+                <Link to="/logout" className="nav-link" onClick={() => setIsNavOpen(false)}>Logout</Link>
+              ) : (
+                <Link to="/admin" className="nav-link" onClick={() => setIsNavOpen(false)}>Login</Link>
+              )}
+            </li> */}
+          </ul>
+        </div>
+      </nav>
+    );
+  };
+
   return (
     <Router>
       <div className="app-container">
         {isLoggedIn && <AdminSidebar />}
         <div className={`main-content ${isLoggedIn ? 'admin-page' : ''}`}>
-          {!isLoggedIn && (
-            <nav className={`navbar ${isNavOpen ? 'open' : ''}`}>
-              <div className="navbar-container">
-                <Link to="/" className="navbar-logo">
-                  <img src="/img/logo.png" alt="Logo" />
-                </Link>
-                <div className="menu-icon" onClick={toggleNav}>
-                  {isNavOpen ? <FaTimes /> : <FaBars />}
-                </div>
-                <ul className={`nav-menu ${isNavOpen ? 'active' : ''}`}>
-                  <li className="nav-item">
-                    <Link to="/" className="nav-link" onClick={() => setIsNavOpen(false)}>Home</Link>
-                  </li>
-                  <li className="nav-item">
-                    <Link to="/#about" className="nav-link" onClick={() => setIsNavOpen(false)}>About Us</Link>
-                  </li>
-                  <li className="nav-item">
-                    <Link to="/#products" className="nav-link" onClick={() => setIsNavOpen(false)}>Products</Link>
-                  </li>
-                  <li className="nav-item">
-                    <Link to="/admin" className="nav-link" onClick={() => setIsNavOpen(false)}>Login</Link>
-                  </li>
-                </ul>
-              </div>
-            </nav>
-          )}
+          <NavBar />
 
           <Routes>
             <Route path="/" element={
               <>
-                <Home />
-                <About />
-                <Product addToCart={addToCart} />
+                <Element name="home">
+                  <Home />
+                </Element>
+                <Element name="about">
+                  <About />
+                </Element>
+                <Element name="products">
+                  <Product addToCart={addToCart} />
+                </Element>
               </>
             } />
             <Route path="/admin" element={<Admin />} />
             <Route path="/logout" element={<Logout />} />
-            <Route path="/admin/product" element={<Admin_product />} />
-            <Route path="/admin/order" element={<Admin_order />} />
-            <Route path="/admin/product/:_id/update" element={<UpdateProduct />} />
-            <Route path="/admin/addproduct" element={<AddProduct />} />
-            <Route path="/admin/location" element={<Location_filter />} />
-            <Route path="*" element={<Navigate to="/" />} />
+            <Route path="/admin/product" element={isLoggedIn ? <Admin_product /> : <Navigate to="/admin" />} />
+            <Route path="/admin/order" element={isLoggedIn ? <Admin_order /> : <Navigate to="/admin" />} />
+            <Route path="/admin/product/:_id/update" element={isLoggedIn ? <UpdateProduct /> : <Navigate to="/admin" />} />
+            <Route path="/admin/addproduct" element={isLoggedIn ? <AddProduct /> : <Navigate to="/admin" />} />
+            <Route path="/admin/location" element={isLoggedIn ? <Location_filter /> : <Navigate to="/admin" />} />
+            <Route path="*" element={<Navigate to={isLoggedIn ? "/admin/product" : "/"} />} />
           </Routes>
 
           {!isLoggedIn && (
