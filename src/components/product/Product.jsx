@@ -277,24 +277,21 @@ function Product({ addToCart, cart = [] }) {
       {products.length > 0 ? (
         <div className="product-list">
           {products.map((product) => (
+<div className="product-item">
 
             <motion.div
-              className="product-item"
-              whileTap={{
-                scale: 1.1,
-                rotate: 15,
-              }}
-              transition={{ duration: 0.4 }}
-              key={product._id}
-              style={{ "--product-color": productColors[product._id] || 'transparent' }}
-
+            
+            whileTap={{
+              scale: 1.1,
+              rotate: 2,
+            }}
+            transition={{ duration: 0.1 }}
+            key={product._id}
+            style={{ "--product-color": productColors[product._id] || 'transparent' }}
             >
-              {/* <div 
-              key={product._id} 
-              className="product-item"
-              style={{"--product-color": productColors[product._id] || 'transparent'}}
-            > */}
+          
               <img src={product.image} alt={product.name} />
+                  </motion.div>
               <div className="content">
                 <h3>{product.name}</h3>
                 <p>{product.desc}</p>
@@ -308,8 +305,8 @@ function Product({ addToCart, cart = [] }) {
                         {getAvailableQuantity(product, index) === 0
                           ? 'Out of Stock'
                           : getAvailableQuantity(product, index) <= 10
-                            ? `Hurry up! Only ${getAvailableQuantity(product, index)} left in stock!`
-                            : null}
+                          ? `Hurry up! Only ${getAvailableQuantity(product, index)} left in stock!`
+                          : null}
                       </p>
                       {getAvailableQuantity(product, index) > 0 && (
                         <div className="quantity-controls">
@@ -325,13 +322,13 @@ function Product({ addToCart, cart = [] }) {
                             className='btn btn-dark m-3'
                             onClick={() => handleQuantityChange(product._id, index, 1)}
                             disabled={quantities[product._id]?.[index] >= getAvailableQuantity(product, index)}
-                          >
+                            >
                             +
                           </button>
                           <button
                             className='btn btn-dark mb-3'
                             onClick={() => handleAddToCart(product, index)}
-                          >
+                            >
                             <IoMdCart />
                             Add to Cart
                           </button>
@@ -339,11 +336,11 @@ function Product({ addToCart, cart = [] }) {
                       )}
                     </div>
                   ))}
+                  </div>
                 </div>
 
                 {/* </div> */}
               </div>
-            </motion.div>
           ))}
         </div>
       ) : (

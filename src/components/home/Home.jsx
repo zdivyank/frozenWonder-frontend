@@ -65,7 +65,7 @@ function Home() {
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
         transition={{ duration: 0.6 }}
-        className="animate_text m-5"
+        className="animate_text"
         style={{ scale, opacity }}
         ref={constraintsRef}
         variants={containerVariants}

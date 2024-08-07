@@ -1,9 +1,11 @@
 import React, { useRef, useEffect, useState } from 'react';
-import { MdDelete } from 'react-icons/md';
+import { MdBlindsClosed, MdDelete, MdOutlineBlindsClosed } from 'react-icons/md';
 import emptyCartGif from '/img/cart.jpg';
 import './cart.css';
 import OrderModal from './OrderModal';
 import { toast } from 'react-toastify';
+import { Tooltip } from 'rsuite';
+import { IoMdClose } from 'react-icons/io';
 
 function Cart({ cartItems, setCartItems, onClose }) {
   const cartRef = useRef(null);
@@ -85,8 +87,16 @@ function Cart({ cartItems, setCartItems, onClose }) {
   };
 
   return (
+      <div className="cart-wrap">
     <div className="cart-card" ref={cartRef}>
-      <h2 className="cart-header">Your Cart</h2>
+      <div className="cart-header">
+        <h2 className="text-center">Your Cart</h2>
+        <button className="close-cart-btn" onClick={onClose}>
+          <IoMdClose />
+        </button>
+      </div>
+      <hr />
+      <h5 className='ms-3'>Order Summary</h5>
       {cartItems.length === 0 ? (
         <div className="empty-cart">
           <img src={emptyCartGif} height={150} alt="Empty Cart" className="empty-cart-gif" />
@@ -96,7 +106,7 @@ function Cart({ cartItems, setCartItems, onClose }) {
         <>
 
           <table className="cart-table">
-            <thead>
+            {/* <thead>
               <tr>
                 <th className='cart_head'>PRODUCT</th>
                 <th className='cart_head'>PACK SIZE</th>
@@ -104,12 +114,14 @@ function Cart({ cartItems, setCartItems, onClose }) {
                 <th className='cart_head'>PRICE</th>
                 <th className='cart_head'>REMOVE</th>
               </tr>
-            </thead>
+            </thead> */}
             <tbody>
               {cartItems.map((item, index) => (
                 <tr className='cart_tr' key={`${item.product._id}-${item.packIndex}`}>
                   <td className="product-cell">
+            
                     <img src={item.product.image} alt={item.product.name} className="cart-item-image" />
+                    {item.product.name}
                   </td>
                   <td>{item.product.packs[item.packIndex].ml}ML * {item.product.packs[item.packIndex].unit}</td>
                   <td>{item.quantity}</td>
@@ -122,7 +134,6 @@ function Cart({ cartItems, setCartItems, onClose }) {
             </tbody>
           </table>
           <div className="cart-summary">
-            <h3>Order Summary</h3>
             <div className="summary-line">
               <span>Subtotal</span>
               <span>{subtotal.toFixed(2)}</span>
@@ -147,6 +158,7 @@ function Cart({ cartItems, setCartItems, onClose }) {
           setCartItems={setCartItems}
         />
       )}
+    </div>
     </div>
   );
 }

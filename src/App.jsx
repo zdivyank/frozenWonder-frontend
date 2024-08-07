@@ -70,6 +70,10 @@ function App() {
     setShowCart(!showCart);
   };
 
+  const closeCart = () => {
+    setShowCart(false);
+  };
+
   const NavBar = () => {
     const location = useLocation();
     const isAdminRoute = location.pathname.startsWith('/admin');
@@ -107,6 +111,9 @@ function App() {
                 <Link to="/admin" className="nav-link" onClick={() => setIsNavOpen(false)}>Login</Link>
               )}
             </li> */}
+
+
+            
           </ul>
         </div>
       </nav>
@@ -147,19 +154,19 @@ function App() {
             <Route path="/admin/location" element={isLoggedIn ? <Location_filter /> : <Navigate to="/admin" />} />
             <Route path="*" element={<Navigate to={isLoggedIn ? "/admin/product" : "/"} />} />
           </Routes>
-          {!isLoggedIn && (
-            <div className="cart-container">
-              <div className="cart_icon" onClick={toggleCart}>
-                <HiMiniShoppingCart size={42} className='cart_bottom' />
-                <span className="cart-count">{cartItems.reduce((total, item) => total + item.quantity, 0)}</span>
-              </div>
-              {showCart && (
-                <div className="cart-popup">
-                  <Cart cartItems={cartItems} setCartItems={setCartItems} />
+         {!isLoggedIn && (
+              <div className="cart-container">
+                <div className="cart_icon" onClick={toggleCart}>
+                  <HiMiniShoppingCart size={42} className='cart_bottom' />
+                  <span className="cart-count">{cartItems.reduce((total, item) => total + item.quantity, 0)}</span>
                 </div>
-              )}
-            </div>
-          )}
+                {showCart && (
+                  <div className="cart-popup">
+                    <Cart cartItems={cartItems} setCartItems={setCartItems} onClose={closeCart} />
+                  </div>
+                )}
+              </div>
+            )}
         </div>
       </AnimatePresence>
       </div>
