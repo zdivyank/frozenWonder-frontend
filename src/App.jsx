@@ -21,6 +21,7 @@ import Admin_order from './components/admin/order/Admin_order';
 import Location_filter from './components/admin/location/Location_filter';
 import AdminSidebar from './components/admin/AdminSidebar';
 import { Link as ScrollLink, Element } from 'react-scroll';
+import { AnimatePresence } from 'framer-motion';
 
 function App() {
   const [isNavOpen, setIsNavOpen] = useState(false);
@@ -111,6 +112,7 @@ function App() {
   return (
     <Router>
       <div className="app-container">
+      <AnimatePresence>
         {isLoggedIn && <AdminSidebar />}
         <div className={`main-content ${isLoggedIn ? 'admin-page' : ''}`}>
           <NavBar />
@@ -138,7 +140,6 @@ function App() {
             <Route path="/admin/location" element={isLoggedIn ? <Location_filter /> : <Navigate to="/admin" />} />
             <Route path="*" element={<Navigate to={isLoggedIn ? "/admin/product" : "/"} />} />
           </Routes>
-
           {!isLoggedIn && (
             <div className="cart-container">
               <div className="cart_icon" onClick={toggleCart}>
@@ -153,6 +154,7 @@ function App() {
             </div>
           )}
         </div>
+      </AnimatePresence>
       </div>
       <ToastContainer
         position="top-center"
@@ -164,7 +166,7 @@ function App() {
         pauseOnFocusLoss
         draggable
         pauseOnHover
-      />
+        />
     </Router>
   );
 }

@@ -44,11 +44,11 @@
 //       canvas.width = img.width;
 //       canvas.height = img.height;
 //       ctx.drawImage(img, 0, 0, img.width, img.height);
-      
+
 //       const centerX = Math.floor(img.width / 2);
 //       const centerY = Math.floor(img.height / 2);
 //       const pixelData = ctx.getImageData(centerX, centerY, 1, 1).data;
-      
+
 //       const color = `rgb(${pixelData[0]}, ${pixelData[1]}, ${pixelData[2]})`;
 //       setProductColors(prev => ({
 //         ...prev,
@@ -81,7 +81,7 @@
 //     const quantity = quantities[product._id]?.[packIndex] || 0;
 //     if (quantity > 0) {
 //       addToCart(product, packIndex, quantity);
-      
+
 //       // Reset quantity to 0 after adding to cart
 //       setQuantities(prevState => ({
 //         ...prevState,
@@ -109,7 +109,7 @@
 //                 <h3>{product.name}</h3>
 //                 <p>{product.desc}</p>
 //                 {product.discount > 0 && <p>Discount: {product.discount}%</p>}
-                
+
 //                 <div className="pack-group">
 //                   {product.packs.map((pack, index) => (
 //                     <div key={index} className="pack-item">
@@ -169,6 +169,7 @@ import React, { useEffect, useState } from 'react';
 import './product.css';
 import { CONFIGS } from '../../../config';
 import { IoMdCart } from 'react-icons/io';
+import { motion } from 'framer-motion';
 
 function Product({ addToCart, cart = [] }) {
   const [products, setProducts] = useState([]);
@@ -223,11 +224,11 @@ function Product({ addToCart, cart = [] }) {
       canvas.width = img.width;
       canvas.height = img.height;
       ctx.drawImage(img, 0, 0, img.width, img.height);
-      
+
       const centerX = Math.floor(img.width / 2);
       const centerY = Math.floor(img.height / 2);
       const pixelData = ctx.getImageData(centerX, centerY, 1, 1).data;
-      
+
       const color = `rgb(${pixelData[0]}, ${pixelData[1]}, ${pixelData[2]})`;
       setProductColors(prev => ({
         ...prev,
@@ -259,7 +260,7 @@ function Product({ addToCart, cart = [] }) {
   const handleAddToCart = (product, packIndex) => {
     const quantity = quantities[product._id]?.[packIndex] || 1;
     addToCart(product, packIndex, quantity);
-    
+
     // Reset quantity to 1 after adding to cart
     setQuantities(prevState => ({
       ...prevState,
@@ -276,23 +277,37 @@ function Product({ addToCart, cart = [] }) {
       {products.length > 0 ? (
         <div className="product-list">
           {products.map((product) => (
-            <div 
+
+            <motion.div
+              className="product-item"
+              whileHover={{ scale: 1.1, rotate: 360 }}
+              whileTap={{
+                scale: 0.8,
+                rotate: 360,
+                borderRadius: "100%"
+              }}
+              transition={1}
+              key={product._id}
+              style={{ "--product-color": productColors[product._id] || 'transparent' }}
+
+            >
+              {/* <div 
               key={product._id} 
               className="product-item"
               style={{"--product-color": productColors[product._id] || 'transparent'}}
-            >
+            > */}
               <img src={product.image} alt={product.name} />
               <div className="content">
                 <h3>{product.name}</h3>
                 <p>{product.desc}</p>
                 {product.discount > 0 && <p>Discount: {product.discount}%</p>}
-                
+
                 <div className="pack-group">
                   {product.packs.map((pack, index) => (
                     <div key={index} className="pack-item">
                       <p>{pack.ml}ML * {pack.unit} - RS.{pack.price}</p>
                       <p className="stock-info">
-                        {getAvailableQuantity(product, index) === 0 
+                        {getAvailableQuantity(product, index) === 0
                           ? 'Out of Stock'
                           : getAvailableQuantity(product, index) <= 10
                             ? `Hurry up! Only ${getAvailableQuantity(product, index)} left in stock!`
@@ -300,23 +315,23 @@ function Product({ addToCart, cart = [] }) {
                       </p>
                       {getAvailableQuantity(product, index) > 0 && (
                         <div className="quantity-controls">
-                          <button 
-                            className='btn btn-dark me-3' 
+                          <button
+                            className='btn btn-dark me-3'
                             onClick={() => handleQuantityChange(product._id, index, -1)}
                             disabled={quantities[product._id]?.[index] <= 1}
                           >
                             -
                           </button>
                           <span>{quantities[product._id]?.[index] || 1}</span>
-                          <button 
-                            className='btn btn-dark m-3' 
+                          <button
+                            className='btn btn-dark m-3'
                             onClick={() => handleQuantityChange(product._id, index, 1)}
                             disabled={quantities[product._id]?.[index] >= getAvailableQuantity(product, index)}
                           >
                             +
                           </button>
-                          <button 
-                            className='btn btn-dark mb-3' 
+                          <button
+                            className='btn btn-dark mb-3'
                             onClick={() => handleAddToCart(product, index)}
                           >
                             <IoMdCart />
@@ -327,8 +342,10 @@ function Product({ addToCart, cart = [] }) {
                     </div>
                   ))}
                 </div>
+
+                {/* </div> */}
               </div>
-            </div>
+            </motion.div>
           ))}
         </div>
       ) : (
