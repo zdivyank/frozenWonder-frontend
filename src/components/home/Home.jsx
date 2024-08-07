@@ -1,26 +1,34 @@
-import React from 'react';
-import { motion } from 'framer-motion';
+import React, { useRef } from 'react';
+import { motion, useTransform, useViewportScroll } from 'framer-motion';
 import './home.css';
 
 const containerVariants = {
-  hidden: { opacity: 0, scale: 1},
+  hidden: { opacity: 0, scale: 1 },
   visible: {
     opacity: 1,
     scale: 1,
     transition: {
       duration: 2.5,
       when: "beforeChildren",
-      staggerChildren: 0.3
-    }
-  }
+      staggerChildren: 0.3,
+    },
+  },
 };
 
 const itemVariants = {
   hidden: { opacity: 0, y: 90 },
-  visible: { opacity: 1, y: 0 }
+  visible: { opacity: 1, y: 0 },
 };
 
 function Home() {
+  const { scrollYProgress } = useViewportScroll();
+  const constraintsRef = useRef(null)
+
+
+  // Define the scale and opacity transforms based on scroll position
+  const scale = useTransform(scrollYProgress, [0, 1, 1], [0.9, 2, 1.7]);
+  const opacity = useTransform(scrollYProgress, [0, 1, 0], [1, 1, 0]);
+
   return (
     <motion.section
       initial="hidden"
@@ -51,7 +59,22 @@ function Home() {
             variants={itemVariants}
           />
         </div>
-      </div>
+        </div>
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        exit={{ opacity: 0 }}
+        transition={{ duration: 0.6 }}
+        className="animate_text m-5"
+        style={{ scale, opacity }}
+        ref={constraintsRef}
+        variants={containerVariants}
+        >
+        <motion.h1 drag dragConstraints={constraintsRef} className='moving_text'> Frozen Wonders</motion.h1>
+        <motion.h1 drag dragConstraints={constraintsRef} className='moving_text'> Frozen Wonders</motion.h1>
+        {/* <h1 className='moving_text'>Hello From Frozen Wonders</h1> */}
+
+      </motion.div>
     </motion.section>
   );
 }

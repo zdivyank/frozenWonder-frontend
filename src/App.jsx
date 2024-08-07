@@ -14,6 +14,7 @@ import Admin_product from './components/admin/product/Admin_product';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import AddProduct from './components/admin/product/AddProduct';
 import UpdateProduct from './components/admin/product/UpdateProduct';
+import Testimonials from './components/testimonials/Testimonials';
 import Cart from './components/cart/Cart';
 import { HiMiniShoppingCart } from 'react-icons/hi2';
 import { FaBars, FaTimes } from 'react-icons/fa';
@@ -89,10 +90,13 @@ function App() {
                   <ScrollLink to="home" smooth={true} duration={500} className="nav-link" onClick={() => setIsNavOpen(false)}>Home</ScrollLink>
                 </li>
                 <li className="nav-item">
-                  <ScrollLink to="about" smooth={true} duration={500} className="nav-link" onClick={() => setIsNavOpen(false)}>About Us</ScrollLink>
+                  <ScrollLink to="products" smooth={true} duration={500} className="nav-link" onClick={() => setIsNavOpen(false)}>Products</ScrollLink>
                 </li>
                 <li className="nav-item">
-                  <ScrollLink to="products" smooth={true} duration={500} className="nav-link" onClick={() => setIsNavOpen(false)}>Products</ScrollLink>
+                  <ScrollLink to="about" smooth={true} duration={500} className="nav-link" onClick={() => setIsNavOpen(false)}>Our Philosophy</ScrollLink>
+                </li>
+                <li className="nav-item">
+                  <ScrollLink to="testimonials" smooth={true} duration={500} className="nav-link" onClick={() => setIsNavOpen(false)}>Success Stories</ScrollLink>
                 </li>
               </>
             )}
@@ -128,6 +132,9 @@ function App() {
                 </Element>
                 <Element name="products">
                   <Product addToCart={addToCart} />
+                </Element>
+                <Element name="testimonials">
+                  <Testimonials />
                 </Element>
               </>
             } />
