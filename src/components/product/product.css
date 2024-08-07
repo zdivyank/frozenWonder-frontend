@@ -1,6 +1,8 @@
 #products {
-  padding-top: 5%;
+  padding-top: 10%;
   background-color: #ffffff;
+  position: relative;
+  /* z-index: 2; */
 }
 
 .product_container {
@@ -8,6 +10,7 @@
   /* max-width: 1200px; */
   margin: 0 auto;
   padding: 0 20px;
+  /* margin-top: auto; */
 }
 .product_container h1 {
   font-family: "SugarpunchDEMO";

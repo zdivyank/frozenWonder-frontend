@@ -1,4 +1,8 @@
-
+#about {
+  position: relative;
+  z-index: 1;
+  padding-bottom: 100px; 
+}
   .blur-background {
     position: relative;
     width: 100%;
@@ -23,6 +27,7 @@
     padding: 20px;
     margin: auto; /* Center the content */
     max-width: 1200px;
+    height: auto;
   }
   
 
