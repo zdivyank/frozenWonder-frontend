@@ -1,7 +1,8 @@
 #about {
   position: relative;
   z-index: 1;
-  padding-bottom: 100px; 
+  /* padding: 100px 0;  */
+  padding-bottom: 10%;
 }
   .blur-background {
     position: relative;

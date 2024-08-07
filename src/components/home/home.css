@@ -68,11 +68,12 @@
         width: 400px;
         margin-left: 0%  ;
         float:none;
+        margin-bottom: 35px;
     }
-  
+    
 }
 @media only screen and (max-width: 768px) {
-
+    
     .home_container {
         display: flex;
         flex-direction: column;
@@ -87,6 +88,7 @@
         width: 400px;
         margin-left: 20%  ;
         float:none;
+        margin-bottom: 105px;
     }
     .logo
     {

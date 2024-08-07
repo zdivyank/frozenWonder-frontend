@@ -1,8 +1,8 @@
 #products {
-  padding-top: 10%;
+  padding-top: 5%;
   background-color: #ffffff;
   position: relative;
-  /* z-index: 2; */
+  z-index: 2;
 }
 
 .product_container {
