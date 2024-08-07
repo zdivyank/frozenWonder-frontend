@@ -280,13 +280,11 @@ function Product({ addToCart, cart = [] }) {
 
             <motion.div
               className="product-item"
-              whileHover={{ scale: 1.1, rotate: 360 }}
               whileTap={{
-                scale: 0.8,
-                rotate: 360,
-                borderRadius: "100%"
+                scale: 1.1,
+                rotate: 15,
               }}
-              transition={1}
+              transition={{ duration: 0.4 }}
               key={product._id}
               style={{ "--product-color": productColors[product._id] || 'transparent' }}
 

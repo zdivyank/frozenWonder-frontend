@@ -8,7 +8,7 @@ const containerVariants = {
     opacity: 1,
     scale: 1,
     transition: {
-      duration: 1.4,
+      duration: 2.5,
       when: "beforeChildren",
       staggerChildren: 0.3
     }

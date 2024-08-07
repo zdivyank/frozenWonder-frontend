@@ -6,7 +6,7 @@ const About = () => {
   const { scrollYProgress } = useViewportScroll();
   
   // Define the scale and opacity transforms based on scroll position
-  const scale = useTransform(scrollYProgress, [0, 0.5, 1], [0.8, 1, 1.2]);
+  const scale = useTransform(scrollYProgress, [0, 0.5, 1], [0.8, 1, 1.4]);
   const opacity = useTransform(scrollYProgress, [0, 1, 1], [1, 1, 0]);
 
   return (
@@ -14,7 +14,7 @@ const About = () => {
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
-      transition={{ duration: 0.5 }}
+      transition={{ duration: 1 }}
       id="about"
       style={{ scale, opacity }}
     >
