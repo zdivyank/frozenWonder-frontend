@@ -5,6 +5,7 @@ import { AiFillProduct } from 'react-icons/ai';
 import { GoListOrdered } from 'react-icons/go';
 import { FaLocationDot } from 'react-icons/fa6';
 import { IoLogOutOutline } from 'react-icons/io5';
+import { VscFeedback } from 'react-icons/vsc';
 
 function AdminSidebar() {
   return (
@@ -16,6 +17,8 @@ function AdminSidebar() {
         <li><NavLink to="/admin/order" activeClassName="active"><GoListOrdered className='me-2'/>Order Summary</NavLink></li>
         <li><NavLink to="/admin/location" activeClassName="active"><FaLocationDot className='me-2'/>
         Location Filter</NavLink></li>
+        <li><NavLink to="/admin/testimonail" activeClassName="active"><VscFeedback className='me-2' />
+         Success Stories</NavLink></li>
         <li><NavLink to="/logout" className="logout"><IoLogOutOutline className='me-2'/>
         Logout</NavLink></li>
       </ul>

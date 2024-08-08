@@ -23,6 +23,7 @@ import Location_filter from './components/admin/location/Location_filter';
 import AdminSidebar from './components/admin/AdminSidebar';
 import { Link as ScrollLink, Element } from 'react-scroll';
 import { AnimatePresence } from 'framer-motion';
+import AdminTesimonails from './components/admin/tesimonails/AdminTesimonails';
 
 function App() {
   const [isNavOpen, setIsNavOpen] = useState(false);
@@ -104,16 +105,6 @@ function App() {
                 </li>
               </>
             )}
-            {/* <li className="nav-item">
-              {isLoggedIn ? (
-                <Link to="/logout" className="nav-link" onClick={() => setIsNavOpen(false)}>Logout</Link>
-              ) : (
-                <Link to="/admin" className="nav-link" onClick={() => setIsNavOpen(false)}>Login</Link>
-              )}
-            </li> */}
-
-
-            
           </ul>
         </div>
       </nav>
@@ -123,38 +114,38 @@ function App() {
   return (
     <Router>
       <div className="app-container">
-      <AnimatePresence>
-        {isLoggedIn && <AdminSidebar />}
-        <div className={`main-content ${isLoggedIn ? 'admin-page' : ''}`}>
-          <NavBar />
-
-          <Routes>
-            <Route path="/" element={
-              <>
-                <Element name="home">
-                  <Home />
-                </Element>
-                <Element name="about">
-                  <About />
-                </Element>
-                <Element name="products">
-                  <Product addToCart={addToCart} />
-                </Element>
-                <Element name="testimonials">
-                  <Testimonials />
-                </Element>
-              </>
-            } />
-            <Route path="/admin" element={<Admin />} />
-            <Route path="/logout" element={<Logout />} />
-            <Route path="/admin/product" element={isLoggedIn ? <Admin_product /> : <Navigate to="/admin" />} />
-            <Route path="/admin/order" element={isLoggedIn ? <Admin_order /> : <Navigate to="/admin" />} />
-            <Route path="/admin/product/:_id/update" element={isLoggedIn ? <UpdateProduct /> : <Navigate to="/admin" />} />
-            <Route path="/admin/addproduct" element={isLoggedIn ? <AddProduct /> : <Navigate to="/admin" />} />
-            <Route path="/admin/location" element={isLoggedIn ? <Location_filter /> : <Navigate to="/admin" />} />
-            <Route path="*" element={<Navigate to={isLoggedIn ? "/admin/product" : "/"} />} />
-          </Routes>
-         {!isLoggedIn && (
+        <AnimatePresence>
+          {isLoggedIn && <AdminSidebar />}
+          <div className={`main-content ${isLoggedIn ? 'admin-page' : ''}`}>
+            {!isLoggedIn && <NavBar />}
+            <Routes>
+              <Route path="/" element={
+                <>
+                  <Element name="home">
+                    <Home />
+                  </Element>
+                  <Element name="about">
+                    <About />
+                  </Element>
+                  <Element name="products">
+                    <Product addToCart={addToCart} />
+                  </Element>
+                  <Element name="testimonials">
+                    <Testimonials />
+                  </Element>
+                </>
+              } />
+              <Route path="/admin" element={<Admin />} />
+              <Route path="/logout" element={<Logout />} />
+              <Route path="/admin/product" element={isLoggedIn ? <Admin_product /> : <Navigate to="/admin" />} />
+              <Route path="/admin/order" element={isLoggedIn ? <Admin_order /> : <Navigate to="/admin" />} />
+              <Route path="/admin/product/:_id/update" element={isLoggedIn ? <UpdateProduct /> : <Navigate to="/admin" />} />
+              <Route path="/admin/addproduct" element={isLoggedIn ? <AddProduct /> : <Navigate to="/admin" />} />
+              <Route path="/admin/location" element={isLoggedIn ? <Location_filter /> : <Navigate to="/admin" />} />
+              <Route path="/admin/testimonail" element={isLoggedIn ? <AdminTesimonails /> : <Navigate to="/admin" />} />
+              <Route path="*" element={<Navigate to={isLoggedIn ? "/admin/product" : "/"} />} />
+            </Routes>
+            {!isLoggedIn && (
               <div className="cart-container">
                 <div className="cart_icon" onClick={toggleCart}>
                   <HiMiniShoppingCart size={42} className='cart_bottom' />
@@ -167,8 +158,8 @@ function App() {
                 )}
               </div>
             )}
-        </div>
-      </AnimatePresence>
+          </div>
+        </AnimatePresence>
       </div>
       <ToastContainer
         position="top-center"
@@ -180,7 +171,7 @@ function App() {
         pauseOnFocusLoss
         draggable
         pauseOnHover
-        />
+      />
     </Router>
   );
 }
