@@ -4,6 +4,7 @@ import { CONFIGS } from '../../../../config/index';
 import { Modal, Button, Form, Row, Col } from 'react-bootstrap'; // Import Bootstrap components
 import { toast } from 'react-toastify';
 import { FaEdit, FaTrash } from 'react-icons/fa'; // Import icons
+import { CiCirclePlus } from 'react-icons/ci';
 
 function AdminTesimonails() {
   const [testimonials, setTestimonials] = useState([]);
@@ -15,6 +16,7 @@ function AdminTesimonails() {
     image: null
   });
   const [editTestimonial, setEditTestimonial] = useState(null);
+  const [saving, setSaving] = useState(false); // New state for tracking button disabled
 
   useEffect(() => {
     fetchTestimonials();
@@ -71,6 +73,7 @@ function AdminTesimonails() {
   };
 
   const handleUpdateTestimonial = async () => {
+    setSaving(true); // Disable the button
     try {
       const formData = new FormData();
       formData.append('cust_name', editTestimonial.cust_name);
@@ -102,6 +105,8 @@ function AdminTesimonails() {
       }
     } catch (error) {
       console.error('Error updating testimonial:', error);
+    } finally {
+      setSaving(false); // Re-enable the button
     }
   };
 
@@ -155,9 +160,10 @@ function AdminTesimonails() {
 
   return (
     <div className="admin-testimonials">
-      <h1>Admin Testimonials</h1>
-      <Button variant="primary" onClick={() => setShowAddModal(true)}>Add Testimonial</Button>
+      <Button className='btn btn-success' onClick={() => setShowAddModal(true)}> <CiCirclePlus className='me-2' size={24}/> Add Testimonial</Button>
       <Row className="mt-4">
+        <h1>Our Success Stories</h1>
+        <hr />
         {testimonials.length > 0 ? (
           testimonials.map((testimonial) => (
             <Col md={4} sm={6} xs={12} key={testimonial._id} className="mb-4 d-flex">
@@ -176,13 +182,19 @@ function AdminTesimonails() {
                 <p><strong>Message:</strong> {testimonial.message}</p>
                 <hr />
                 <div className="actions text-center mt-auto">
-                  <Button variant="outline-primary me-3" onClick={() => {
-                    setEditTestimonial(testimonial);
-                    setShowEditModal(true);
-                  }}>
+                  <Button 
+                    variant="outline-primary me-3" 
+                    onClick={() => {
+                      setEditTestimonial(testimonial);
+                      setShowEditModal(true);
+                    }}
+                  >
                     <FaEdit />
                   </Button>
-                  <Button variant="outline-danger" onClick={() => handleDeleteTestimonial(testimonial._id)}>
+                  <Button 
+                    variant="outline-danger" 
+                    onClick={() => handleDeleteTestimonial(testimonial._id)}
+                  >
                     <FaTrash />
                   </Button>
                 </div>
@@ -282,7 +294,11 @@ function AdminTesimonails() {
           <Button variant="secondary" onClick={handleCloseEditModal}>
             Close
           </Button>
-          <Button variant="primary" onClick={handleUpdateTestimonial}>
+          <Button 
+            variant="primary" 
+            onClick={handleUpdateTestimonial}
+            disabled={saving} // Disable button if saving is true
+          >
             Save Changes
           </Button>
         </Modal.Footer>

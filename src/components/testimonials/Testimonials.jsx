@@ -26,11 +26,15 @@ function Testimonials() {
 
   useEffect(() => {     
     fetchTestimonials();   
-  }, []);    
+  }, []); 
+  
+  const constraintsRef = useRef(null)
+
 
   return (     
+      
     <div id='testimonials'>       
-      <h1 className='text-center'>Testimonials</h1>           
+      <h1 className='text-center'>Success Stories</h1>           
       <div className='testimonials-container'>         
         {           
           testimonials.length > 0 ? (             

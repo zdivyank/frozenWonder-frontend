@@ -151,6 +151,7 @@ import { Modal, Button } from 'react-bootstrap';
 import './addproduct.css';
 import { MdDelete } from 'react-icons/md';
 import { GrDocumentUpdate } from 'react-icons/gr';
+import { CiCirclePlus } from 'react-icons/ci';
 
 function Admin_product() {
     const [products, setProducts] = useState([]);
@@ -221,10 +222,12 @@ function Admin_product() {
     return (
         <div className='m-3'>
             <button
+            
                 className='btn btn-success m-3'
                 onClick={() => navigate('/admin/addproduct')}
             >
-                Add New Products
+                
+                <CiCirclePlus size={22} className='me-2' />Add New Products
             </button>
             <h1>Our Products</h1>
             <Table striped bordered hover>

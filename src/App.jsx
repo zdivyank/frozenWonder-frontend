@@ -24,6 +24,7 @@ import AdminSidebar from './components/admin/AdminSidebar';
 import { Link as ScrollLink, Element } from 'react-scroll';
 import { AnimatePresence } from 'framer-motion';
 import AdminTesimonails from './components/admin/tesimonails/AdminTesimonails';
+import Admin_user from './components/admin/user/Admin_user';
 
 function App() {
   const [isNavOpen, setIsNavOpen] = useState(false);
@@ -143,6 +144,7 @@ function App() {
               <Route path="/admin/addproduct" element={isLoggedIn ? <AddProduct /> : <Navigate to="/admin" />} />
               <Route path="/admin/location" element={isLoggedIn ? <Location_filter /> : <Navigate to="/admin" />} />
               <Route path="/admin/testimonail" element={isLoggedIn ? <AdminTesimonails /> : <Navigate to="/admin" />} />
+              <Route path="/admin/user" element={isLoggedIn ? <Admin_user /> : <Navigate to="/admin" />} />
               <Route path="*" element={<Navigate to={isLoggedIn ? "/admin/product" : "/"} />} />
             </Routes>
             {!isLoggedIn && (
