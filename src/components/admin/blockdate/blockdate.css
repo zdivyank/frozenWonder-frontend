@@ -1,0 +1,71 @@
+.block_container {
+    max-width: 600px;
+    margin: 2%;
+    /* margin: 0 auto; */
+    padding: 20px;
+  }
+  
+  h1, h2 {
+    color: #495E70;
+  }
+  
+  .block_form {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 20px;
+  }
+  
+  .block_form input,
+  .block_form select,
+  .block_form button {
+    padding: 10px;
+    font-size: 16px;
+  }
+  
+  .block_form button {
+    background-color: #495E70;
+    color: white;
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.3s;
+  }
+  
+  .block_form button:hover {
+    background-color: #3a4a59;
+  }
+  
+  .message {
+    background-color: #f8d7da;
+    color: #721c24;
+    padding: 10px;
+    margin-bottom: 20px;
+    border-radius: 4px;
+  }
+  
+  .blocked_dates_list {
+    list-style-type: none;
+    padding: 0;
+  }
+  
+  .blocked_dates_list li {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px;
+    margin-bottom: 10px;
+    background-color: #e9ecef;
+    border-radius: 4px;
+  }
+  
+  .blocked_dates_list button {
+    background-color: #dc3545;
+    color: white;
+    border: none;
+    padding: 5px 10px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+  }
+  
+  .blocked_dates_list button:hover {
+    background-color: #c82333;
+  }

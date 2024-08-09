@@ -1,4 +1,9 @@
 /* Grid Layout for Orders */
+
+.location_main
+{
+    margin: 2%;
+}
 .order-grid {
     display: grid;
     grid-template-columns: repeat(3, 1fr); /* 4 columns */
@@ -37,4 +42,13 @@
 
 .pagination span {
     margin: 0 10px;
+}
+
+
+.loading_screen
+{
+    display: flex;
+    margin: auto;
+    justify-content: center;
+    align-items: center;
 }

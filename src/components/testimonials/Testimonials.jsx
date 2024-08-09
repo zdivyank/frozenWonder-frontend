@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react'; 
+import React, { useEffect, useState } from 'react'; 
 import './testimonials.css'; 
 import { CONFIGS } from '../../../config';  
 
@@ -28,7 +28,7 @@ function Testimonials() {
     fetchTestimonials();   
   }, []); 
   
-  const constraintsRef = useRef(null)
+
 
 
   return (     

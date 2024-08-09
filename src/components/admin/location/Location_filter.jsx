@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { Dropdown } from 'rsuite';
 import { FaEdit } from 'react-icons/fa'; // Importing the edit icon
+import { MdPendingActions } from 'react-icons/md';
 import { CONFIGS } from '../../../../config';
 import './location_filter.css';
-import { MdPendingActions } from 'react-icons/md';
 
 function LocationFilter() {
     const [pincodeData, setPincodeData] = useState([]);
@@ -12,10 +12,12 @@ function LocationFilter() {
     const [updatingOrderId, setUpdatingOrderId] = useState(null);
     const [orderStatus, setOrderStatus] = useState({});
     const [currentPage, setCurrentPage] = useState(1);
+    const [loading, setLoading] = useState(false); // Add loading state
     const ordersPerPage = 6; // Number of orders to show per page
 
     // Fetch all pincode data
     const fetchAllPincodes = async () => {
+        setLoading(true); // Set loading true when starting fetch
         try {
             const response = await fetch(`${CONFIGS.API_BASE_URL}/allPincode`, {
                 method: "GET",
@@ -27,42 +29,50 @@ function LocationFilter() {
             }
 
             const data = await response.json();
-            setPincodeData(data.response);
+            console.log(data.pincodes);
+            
+            setPincodeData(data.pincodes || []);
         } catch (error) {
-            console.log(error);
+            console.log("Error fetching pincodes:", error);
+        } finally {
+            setLoading(false); // Set loading false when fetch is complete
         }
     };
 
-    // Fetch orders based on selected pincode
     const fetchOrders = async (pincode) => {
+        setLoading(true); // Set loading true when starting fetch
         try {
             const response = await fetch(`${CONFIGS.API_BASE_URL}/orderloaction`, {
                 method: "POST",
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({ pincode: [pincode] }),
+                body: JSON.stringify({ pincode }),
             });
-
+    
             if (!response.ok) {
                 console.log(`No orders found for selected pincodes`);
                 return;
             }
-
+    
             const data = await response.json();
-            setOrders(data.response);
-
+            console.log('Fetched Orders:', data.orders); 
+    
+            setOrders(data.orders || []);
+    
             // Initialize status state
-            const statusMap = data.response.reduce((map, order) => {
+            const statusMap = data.orders.reduce((map, order) => {
                 map[order._id] = order.status;
                 return map;
             }, {});
             setOrderStatus(statusMap);
         } catch (error) {
-            console.log(error);
+            console.log("Error fetching orders:", error);
+        } finally {
+            setLoading(false); // Set loading false when fetch is complete
         }
     };
-
+    
     useEffect(() => {
         fetchAllPincodes();
     }, []);
@@ -103,7 +113,7 @@ function LocationFilter() {
                 [orderId]: newStatus,
             }));
         } catch (error) {
-            console.log(error);
+            console.log("Error updating status:", error);
         }
     };
 
@@ -141,36 +151,42 @@ function LocationFilter() {
                 <hr />
                 <br />
                 <div className="filter">
-                    <div className="order-grid">
-                        {currentOrders.length > 0 ? (
-                            currentOrders.map((order, index) => (
-                                <div key={index} className="pincode_item">
-                                    <p>Name: {order.cust_name}</p>
-                                    <p>Address: {order.cust_address}</p>
-                                    <p>Order_date: {order.order_date}</p>
-                                    <p>Status: {orderStatus[order._id]}</p>
+                    {loading ? (
+                      <img src="/img/load.gif" alt=""  className='loading_screen text-center'/>
+                    ) : (
+                        <div className="order-grid">
+                            {currentOrders.length > 0 ? (
+                                currentOrders.map((order, index) => (
+                                    <div key={index} className="pincode_item">
+                                        <p>Name: {order.cust_name}</p>
+                                        <p>Address: {order.cust_address}</p>
+                                        <p>Order_date: {order.order_date}</p>
+                                        <p>Status: {orderStatus[order._id]}</p>
 
-                                    {/* Edit icon */}
-                                    <FaEdit onClick={() => handleEditClick(order._id)} style={{ cursor: 'pointer' }} />
-                                    {/* Dropdown for status selection */}
-                                    {updatingOrderId === order._id && (
-                                        <>
-                                        <hr />
-                                        <b>Update Status:</b>
-                                        <Dropdown title={orderStatus[order._id] || "Select Status"} color="orange" className='ms-2' searchble  onSelect={handleDropdownSelect}>
-                                            <Dropdown.Item  eventKey="Pending"> <MdPendingActions className='btn btn-danger' />
-                                            Pending</Dropdown.Item>
-                                            
-                                            <Dropdown.Item eventKey="Delivered">Delivered</Dropdown.Item>
-                                        </Dropdown>
-                                        </>
-                                    )}
-                                </div>
-                            ))
-                        ) : (
-                            <p>No orders found for selected pincodes</p>
-                        )}
-                    </div>
+                                        {/* Edit icon */}
+                                        <FaEdit onClick={() => handleEditClick(order._id)} style={{ cursor: 'pointer' }} />
+
+                                        {/* Dropdown for status selection */}
+                                        {updatingOrderId === order._id && (
+                                            <>
+                                                <hr />
+                                                <b>Update Status:</b>
+                                                <Dropdown title={orderStatus[order._id] || "Select Status"} onSelect={handleDropdownSelect}>
+                                                    <Dropdown.Item eventKey="Pending">
+                                                        <MdPendingActions className='btn btn-danger' />
+                                                        Pending
+                                                    </Dropdown.Item>
+                                                    <Dropdown.Item eventKey="Delivered">Delivered</Dropdown.Item>
+                                                </Dropdown>
+                                            </>
+                                        )}
+                                    </div>
+                                ))
+                            ) : (
+                                <p>No orders found for selected pincodes</p>
+                            )}
+                        </div>
+                    )}
 
                     {/* Pagination Controls */}
                     {totalPages > 1 && (

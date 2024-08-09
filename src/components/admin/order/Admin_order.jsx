@@ -35,7 +35,9 @@ function AdminOrder() {
       }
 
       const data = await response.json();
-      const sortedOrders = data.message.sort((a, b) => new Date(b.order_date) - new Date(a.order_date));
+      console.log(':::::::::::',data.orders);
+      
+      const sortedOrders = data.orders.sort((a, b) => new Date(b.order_date) - new Date(a.order_date));
       setOrders(sortedOrders);
     } catch (error) {
       console.log('Error fetching orders:', error);

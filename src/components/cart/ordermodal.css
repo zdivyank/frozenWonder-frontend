@@ -1,126 +1,151 @@
-/* Modal background styling */
+/* Modal styling */
 .modal {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background-color: rgba(0, 0, 0, 0.5);
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    z-index: 1050;
-  }
-  
-  /* Modal dialog styling */
-  .modal-dialog {
-    max-width: 600px;
-    width: 90%;
-    margin: 1.75rem auto;
-  }
-  
-  /* Modal content styling */
-  .modal-content {
-    background-color: #fff;
-    border-radius: 8px;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
-    overflow: hidden;
-  }
-  
-  /* Modal header styling */
-  .modal-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 1.5rem;
-    border-bottom: 1px solid #e9ecef;
-  }
-  
-  .modal-title {
-    margin: 0;
-    font-size: 1.5rem;
-  }
-  
-  .close {
-    background: none;
-    border: none;
-    font-size: 1.5rem;
-    cursor: pointer;
-  }
-  
-  /* Modal body styling */
-  .modal-body {
-    padding: 1.5rem;
-  }
-  
-  /* Form group styling */
-  .form-group {
-    margin-bottom: 1.5rem;
-  }
-  
-  .form-group label {
-    /* display: block; */
-    /* margin-bottom: 0.5rem; */
-    /* font-weight: bold; */
-    /* float: left; */
-    /* border: 1px solid ; */
-    display: flex;
-    width: 100%;
-    float: left;
-    margin-right: 100%;
-  }
-  
-  .order_info {
-    width: 100%;
-    padding: 0.5rem 0;
-    background-color:  #9ec9ed15;
-    border: none !important;
-    border-bottom: 2px solid #bbbbbb !important;
-    outline: none !important;
-    transition: border-color 0.3s, box-shadow 0.3s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: rgba(0, 0, 0, 0.5);
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 1050;
 }
 
-/* Focus state for input fields */
+.modal-dialog {
+  max-width: 600px;
+  width: 90%;
+  margin: 1.75rem auto;
+  max-height: 90vh;
+  overflow-y: auto;
+}
+
+.modal-content {
+  background-color: #fff;
+  border-radius: 12px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+  overflow: hidden;
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1.5rem;
+  background-color: #495E70;
+  color: #fff;
+}
+
+.modal-title {
+  margin: 0;
+  font-size: 1.5rem;
+  font-weight: 600;
+}
+
+.close {
+  background: none;
+  border: none;
+  color: #fff;
+  font-size: 1.5rem;
+  cursor: pointer;
+  opacity: 0.7;
+  transition: opacity 0.3s;
+}
+
+.close:hover {
+  opacity: 1;
+}
+
+.modal-body {
+  padding: 2rem;
+}
+
+/* Form styling */
+.form-group {
+  margin-bottom: 1.5rem;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-weight: 600;
+  color: #495E70;
+}
+
+.order_info {
+  width: 100%;
+  padding: 0.75rem;
+  background-color: #f8f9fa;
+  border: 1px solid #ced4da;
+  border-radius: 4px;
+  transition: border-color 0.3s, box-shadow 0.3s;
+}
+
 .order_info:focus {
-    
-    border-bottom: 2px solid #2b2b2b !important;
-    box-shadow: 0 0 10px #9ecaed;
-    /* border-color: #ff0000; */
-    /* border-bottom: 2px solid #ff0000 !important; */
-    /* box-shadow: 0 1px 0 0 #495E70; */
+  border-color: #495E70;
+  box-shadow: 0 0 0 0.2rem rgba(73, 94, 112, 0.25);
+  outline: none;
+}
+
+/* DatePicker styling */
+.react-datepicker-wrapper {
+  width: 100%;
+}
+
+.react-datepicker__input-container {
+  width: 100%;
+}
+
+.react-datepicker__input-container input {
+  width: 100%;
+  padding: 0.75rem;
+  background-color: #f8f9fa;
+  border: 1px solid #ced4da;
+  border-radius: 4px;
+  transition: border-color 0.3s, box-shadow 0.3s;
+}
+
+.react-datepicker__input-container input:focus {
+  border-color: #495E70;
+  box-shadow: 0 0 0 0.2rem rgba(73, 94, 112, 0.25);
+  outline: none;
+}
+
+.react-datepicker-popper {
+  z-index: 1060 !important;
+}
+
+/* Button styling */
+.btn-primary {
+  display: inline-block;
+  padding: 0.75rem 1.5rem;
+  color: #fff;
+  background-color: #495E70;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.btn-primary:hover {
+  background-color: #3a4a59;
+}
+
+/* Responsive adjustments */
+@media (max-width: 576px) {
+  .modal-dialog {
+    width: 95%;
+    margin: 1rem auto;
   }
-  
-  /* Submit button styling */
+
+  .modal-header, .modal-body {
+    padding: 1.25rem;
+  }
+
   .btn-primary {
-    display: inline-block;
-    padding: 0.75rem 1.5rem;
-    color: #fff;
-    background-color: #495E70;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    transition: background-color 0.3s;
+    width: 100%;
   }
-  
-  .btn-primary:hover {
-    background-color: #3a4a59;
-  }
-  
-  /* Responsive adjustments */
-  @media (max-width: 576px) {
-    .modal-dialog {
-      width: 95%;
-      margin: 1rem auto;
-    }
-  
-    .modal-header, .modal-body {
-      padding: 1rem;
-    }
-  
-    .btn-primary {
-      width: 100%;
-    }
-  }
-
-
-  
+}
