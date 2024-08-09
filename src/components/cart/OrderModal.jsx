@@ -9,7 +9,8 @@ import moment from 'moment';
 function OrderModal({ cartItems, total, onClose, setCartItems }) {
   const [customerInfo, setCustomerInfo] = useState({
     cust_name: '',
-    cust_address: '',
+    cust_addresses: [{ address: '', label: 'Primary Address' }],
+    selected_address: 0,
     cust_number: '',
     pincode: '',
     order_date: null,
@@ -67,7 +68,7 @@ function OrderModal({ cartItems, total, onClose, setCartItems }) {
           setCustomerInfo(prev => ({
             ...prev,
             cust_name: data.response[0].cust_name || '',
-            cust_address: data.response[0].cust_address || '',
+            cust_addresses: data.response[0].cust_addresses || [{ address: '', label: 'Primary Address' }],
             pincode: data.response[0].pincode || ''
           }));
           toast.success('Customer details fetched successfully!', {
@@ -106,7 +107,6 @@ function OrderModal({ cartItems, total, onClose, setCartItems }) {
       });
     }
   };
-
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -186,6 +186,26 @@ function OrderModal({ cartItems, total, onClose, setCartItems }) {
     setCustomerInfo(prev => ({ ...prev, [name]: value }));
   };
 
+  const handleAddressChange = (index, e) => {
+    const { value } = e.target;
+    setCustomerInfo(prev => {
+      const updatedAddresses = [...prev.cust_addresses];
+      updatedAddresses[index].address = value;
+      return { ...prev, cust_addresses: updatedAddresses };
+    });
+  };
+
+  const handleAddAddress = () => {
+    setCustomerInfo(prev => ({
+      ...prev,
+      cust_addresses: [...prev.cust_addresses, { address: '', label: `Address ${prev.cust_addresses.length + 1}` }],
+    }));
+  };
+
+  const handleSelectAddress = (e) => {
+    setCustomerInfo(prev => ({ ...prev, selected_address: parseInt(e.target.value, 10) }));
+  };
+
   const handleDateChange = (date) => {
     setCustomerInfo(prev => ({ ...prev, order_date: date, timeslot: '' }));
   };
@@ -235,7 +255,7 @@ function OrderModal({ cartItems, total, onClose, setCartItems }) {
                 <div className="form-group">
                   <label>Mobile Number:</label>
                   <div className="d-flex">
-                  <input
+                    <input
                       type="tel"
                       name="cust_number"
                       value={customerInfo.cust_number}
@@ -264,57 +284,74 @@ function OrderModal({ cartItems, total, onClose, setCartItems }) {
                   />
                 </div>
                 <div className="form-group">
-                  <label>Address:</label>
-                  <textarea
-                    name="cust_address"
-                    value={customerInfo.cust_address}
-                    onChange={handleInputChange}
+                  <label>Select Address:</label>
+                  <select
+                    name="selected_address"
+                    value={customerInfo.selected_address}
+                    onChange={handleSelectAddress}
                     className="order_info"
                     required
-                  ></textarea>
+                  >
+                    {customerInfo.cust_addresses.map((address, index) => (
+                      <option key={index} value={index}>
+                        {address.label} - {address.address}
+                      </option>
+                    ))}
+                  </select>
+                  <button 
+                    type="button" 
+                    className="btn btn-dark m-5" 
+                    onClick={handleAddAddress}
+                  >
+                    +
+                  </button>
+                  {customerInfo.cust_addresses.map((address, index) => (
+                    <div key={index} className="form-group">
+                      <label>{address.label}:</label>
+                      <input
+                        type="text"
+                        value={address.address}
+                        onChange={(e) => handleAddressChange(index, e)}
+                        className="order_info"
+                      />
+                    </div>
+                  ))}
                 </div>
                 <div className="form-group">
-                  <label>Pincode:</label>
-                  <input
-                    type="text"
-                    name="pincode"
-                    value={customerInfo.pincode}
-                    onChange={handleInputChange}
-                    className="order_info"
-                    required
-                  />
-                </div>
-
-                <div className="form-group">
-                  <label>Delivery Date:</label>
+                  <label>Date:</label>
                   <DatePicker
                     selected={customerInfo.order_date}
                     onChange={handleDateChange}
-                    filterDate={date => !isDateDisabled(date)}
-                    dateFormat="yyyy-MM-dd"
+                    minDate={new Date()}
+                    filterDate={(date) => !isDateDisabled(date)}
                     className="order_info"
                     placeholderText="Select a date"
                     required
                   />
                 </div>
-
-                <div className="form-group">
-                  <label>Time Slot:</label>
-                  <select
-                    name="timeslot"
-                    value={customerInfo.timeslot}
-                    onChange={handleInputChange}
-                    className="order_info"
-                    required
-                  >
-                    <option value="" disabled>Select a time slot</option>
-                    {getAvailableTimeSlots().map(slot => (
-                      <option key={slot} value={slot}>{slot.charAt(0).toUpperCase() + slot.slice(1)}</option>
-                    ))}
-                  </select>
-                </div>
+                {customerInfo.order_date && (
+                  <div className="form-group">
+                    <label>Timeslot:</label>
+                    <select
+                      name="timeslot"
+                      value={customerInfo.timeslot}
+                      onChange={handleInputChange}
+                      className="order_info"
+                      required
+                    >
+                      <option value="">Select a timeslot</option>
+                      {getAvailableTimeSlots().map((slot, index) => (
+                        <option key={index} value={slot}>
+                          {slot.charAt(0).toUpperCase() + slot.slice(1)}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                )}
+                <button type="submit" className="btn btn-primary">
+                  Place Order
+                </button>
               </div>
-              <button type="submit" className="btn btn-primary">Place Order</button>
             </form>
           </div>
         </div>
