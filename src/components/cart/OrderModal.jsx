@@ -36,6 +36,78 @@ function OrderModal({ cartItems, total, onClose, setCartItems }) {
     }
   };
 
+  const handleFetchCustomerDetails = async () => {
+    if (!customerInfo.cust_number) {
+      toast.error('Please enter a mobile number', {
+        position: 'top-center',
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+      });
+      return;
+    }
+
+    try {
+      const response = await fetch(`${CONFIGS.API_BASE_URL}/isAlreadyuser`, {
+        method: "POST",
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ cust_number: customerInfo.cust_number }),
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        console.log(data.response);
+        
+        if (data.response) {
+          setCustomerInfo(prev => ({
+            ...prev,
+            cust_name: data.response[0].cust_name || '',
+            cust_address: data.response[0].cust_address || '',
+            pincode: data.response[0].pincode || ''
+          }));
+          toast.success('Customer details fetched successfully!', {
+            position: 'top-center',
+            autoClose: 3000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+          });
+        } else {
+          toast.info('No existing customer found. Please fill in your details.', {
+            position: 'top-center',
+            autoClose: 3000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+          });
+        }
+      } else {
+        throw new Error('Failed to fetch customer details');
+      }
+    } catch (error) {
+      console.error('Error fetching customer details:', error);
+      toast.error('Failed to fetch customer details. Please try again.', {
+        position: 'top-center',
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+      });
+    }
+  };
+
+
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -61,7 +133,6 @@ function OrderModal({ cartItems, total, onClose, setCartItems }) {
 
       if (response.ok) {
         setIsOrderPlaced(true);
-        // Order placed successfully, now update stock for each item
         for (const item of cartItems) {
           const stockUpdateResponse = await fetch(`${CONFIGS.API_BASE_URL}/updatestock`, {
             method: 'PUT',
@@ -121,8 +192,8 @@ function OrderModal({ cartItems, total, onClose, setCartItems }) {
 
   const isDateDisabled = (date) => {
     const formattedDate = moment(date).format('YYYY-MM-DD');
-    return blockedDates.some(blockedDate => 
-      blockedDate.date === formattedDate && 
+    return blockedDates.some(blockedDate =>
+      blockedDate.date === formattedDate &&
       (blockedDate.timeslot === 'fullday' || blockedDate.timeslot === 'all')
     );
   };
@@ -136,7 +207,7 @@ function OrderModal({ cartItems, total, onClose, setCartItems }) {
       .map(blockedDate => blockedDate.timeslot);
 
     const allTimeSlots = ['morning', 'evening'];
-    return allTimeSlots.filter(slot => !blockedTimeslots.includes(slot) && !blockedTimeslots.includes('fullday') && !blockedTimeslots.includes('all'));
+    return allTimeSlots.filter(slot => !blockedTimeslots.includes(slot));
   };
 
   return (
@@ -162,22 +233,31 @@ function OrderModal({ cartItems, total, onClose, setCartItems }) {
             <form onSubmit={handleSubmit}>
               <div className="order_container">
                 <div className="form-group">
+                  <label>Mobile Number:</label>
+                  <div className="d-flex">
+                  <input
+                      type="tel"
+                      name="cust_number"
+                      value={customerInfo.cust_number}
+                      onChange={handleInputChange}
+                      className="order_info"
+                      required
+                    />
+                    <button 
+                      type="button" 
+                      className="btn btn-secondary ml-2" 
+                      onClick={handleFetchCustomerDetails}
+                    >
+                      Fetch Details
+                    </button>
+                  </div>
+                </div>
+                <div className="form-group">
                   <label>Name:</label>
                   <input
                     type="text"
                     name="cust_name"
                     value={customerInfo.cust_name}
-                    onChange={handleInputChange}
-                    className="order_info"
-                    required
-                  />
-                </div>
-                <div className="form-group">
-                  <label>Mobile Number:</label>
-                  <input
-                    type="tel"
-                    name="cust_number"
-                    value={customerInfo.cust_number}
                     onChange={handleInputChange}
                     className="order_info"
                     required
@@ -226,19 +306,15 @@ function OrderModal({ cartItems, total, onClose, setCartItems }) {
                     onChange={handleInputChange}
                     className="order_info"
                     required
-                    disabled={!customerInfo.order_date}
                   >
-                    <option value="">Select a time slot</option>
+                    <option value="" disabled>Select a time slot</option>
                     {getAvailableTimeSlots().map(slot => (
-                      <option key={slot} value={slot}>
-                        {slot.charAt(0).toUpperCase() + slot.slice(1)}
-                      </option>
+                      <option key={slot} value={slot}>{slot.charAt(0).toUpperCase() + slot.slice(1)}</option>
                     ))}
                   </select>
                 </div>
-
-                <button type="submit" className="btn btn-primary" disabled={isOrderPlaced}>Place Order</button>
               </div>
+              <button type="submit" className="btn btn-primary">Place Order</button>
             </form>
           </div>
         </div>
