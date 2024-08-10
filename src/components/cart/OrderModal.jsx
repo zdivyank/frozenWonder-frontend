@@ -5,6 +5,10 @@ import './ordermodal.css';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import moment from 'moment';
+import { RadioGroup, Radio, Input } from 'rsuite';
+import { RadioTileGroup, RadioTile } from 'rsuite';
+import { Icon } from '@rsuite/icons';
+import { FaHome, FaBuilding, FaPlus } from 'react-icons/fa';
 
 function OrderModal({ cartItems, total, onClose, setCartItems }) {
   const [customerInfo, setCustomerInfo] = useState({
@@ -18,6 +22,8 @@ function OrderModal({ cartItems, total, onClose, setCartItems }) {
   });
   const [isOrderPlaced, setIsOrderPlaced] = useState(false);
   const [blockedDates, setBlockedDates] = useState([]);
+
+  const [newAddress, setNewAddress] = useState('');
 
   useEffect(() => {
     fetchBlockedDates();
@@ -63,7 +69,7 @@ function OrderModal({ cartItems, total, onClose, setCartItems }) {
       if (response.ok) {
         const data = await response.json();
         console.log(data.response);
-        
+
         if (data.response) {
           setCustomerInfo(prev => ({
             ...prev,
@@ -186,26 +192,45 @@ function OrderModal({ cartItems, total, onClose, setCartItems }) {
     setCustomerInfo(prev => ({ ...prev, [name]: value }));
   };
 
-  const handleAddressChange = (index, e) => {
-    const { value } = e.target;
-    setCustomerInfo(prev => {
-      const updatedAddresses = [...prev.cust_addresses];
-      updatedAddresses[index].address = value;
-      return { ...prev, cust_addresses: updatedAddresses };
-    });
+  const handleNewAddressChange = (value) => {
+    setNewAddress(value);
   };
 
-  const handleAddAddress = () => {
-    setCustomerInfo(prev => ({
-      ...prev,
-      cust_addresses: [...prev.cust_addresses, { address: '', label: `Address ${prev.cust_addresses.length + 1}` }],
-    }));
+  const handleAddAddress = async () => {
+    try {
+      if (newAddress.trim() === '') {
+        toast.error('Please enter an address before adding.');
+        return;
+      }
+  
+      const response = await fetch(`${CONFIGS.API_BASE_URL}/addAddress`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          cust_number: customerInfo.cust_number,
+          address: newAddress,
+          label: `Address ${customerInfo.cust_addresses.length + 1}`
+        }),
+      });
+  
+      if (response.ok) {
+        const data = await response.json();
+        setCustomerInfo((prev) => ({
+          ...prev,
+          cust_addresses: data.cust_addresses, // Update with response data
+        }));
+        setNewAddress('');
+      } else {
+        toast.error('Failed to add address. Please try again.');
+      }
+    } catch (error) {
+      console.error('Error adding address:', error);
+      toast.error('An error occurred. Please try again.');
+    }
   };
-
-  const handleSelectAddress = (e) => {
-    setCustomerInfo(prev => ({ ...prev, selected_address: parseInt(e.target.value, 10) }));
-  };
-
+  
   const handleDateChange = (date) => {
     setCustomerInfo(prev => ({ ...prev, order_date: date, timeslot: '' }));
   };
@@ -220,7 +245,7 @@ function OrderModal({ cartItems, total, onClose, setCartItems }) {
 
   const getAvailableTimeSlots = () => {
     if (!customerInfo.order_date) return [];
-    
+
     const formattedDate = moment(customerInfo.order_date).format('YYYY-MM-DD');
     const blockedTimeslots = blockedDates
       .filter(blockedDate => blockedDate.date === formattedDate)
@@ -230,6 +255,9 @@ function OrderModal({ cartItems, total, onClose, setCartItems }) {
     return allTimeSlots.filter(slot => !blockedTimeslots.includes(slot));
   };
 
+  const handleSelectAddress = (value) => {
+    setCustomerInfo(prev => ({ ...prev, selected_address: parseInt(value) }));
+  };
   return (
     <div className="modal" style={{ display: 'block', backgroundColor: 'rgba(0,0,0,0.5)' }}>
       <div className="modal-dialog">
@@ -263,15 +291,16 @@ function OrderModal({ cartItems, total, onClose, setCartItems }) {
                       className="order_info"
                       required
                     />
-                    <button 
-                      type="button" 
-                      className="btn btn-secondary ml-2" 
+                    <button
+                      type="button"
+                      className="btn btn-secondary ml-2"
                       onClick={handleFetchCustomerDetails}
                     >
                       Fetch Details
                     </button>
                   </div>
                 </div>
+
                 <div className="form-group">
                   <label>Name:</label>
                   <input
@@ -283,75 +312,93 @@ function OrderModal({ cartItems, total, onClose, setCartItems }) {
                     required
                   />
                 </div>
+
                 <div className="form-group">
-                  <label>Select Address:</label>
-                  <select
-                    name="selected_address"
-                    value={customerInfo.selected_address}
+                  <label>Address:</label>
+                  <RadioTileGroup
+                    name="address"
+                    value={customerInfo.selected_address.toString()}
                     onChange={handleSelectAddress}
-                    className="order_info"
-                    required
+                    inline
                   >
                     {customerInfo.cust_addresses.map((address, index) => (
-                      <option key={index} value={index}>
-                        {address.label} - {address.address}
-                      </option>
+                      <RadioTile
+                        key={index}
+                        value={index.toString()}
+                        icon={<Icon as={index === 0 ? FaHome : FaHome} />}
+                        label={address.label}
+                      >
+                        {address.address}
+                      </RadioTile>
                     ))}
-                  </select>
-                  <button 
-                    type="button" 
-                    className="btn btn-dark m-5" 
-                    onClick={handleAddAddress}
-                  >
-                    +
-                  </button>
-                  {customerInfo.cust_addresses.map((address, index) => (
-                    <div key={index} className="form-group">
-                      <label>{address.label}:</label>
-                      <input
-                        type="text"
-                        value={address.address}
-                        onChange={(e) => handleAddressChange(index, e)}
-                        className="order_info"
-                      />
-                    </div>
-                  ))}
+                  </RadioTileGroup>
+                  <div className="d-flex mt-2">
+                    <Input
+                      as="textarea"
+                      rows={3}
+                      placeholder="Enter new address"
+                      value={newAddress}
+                      onChange={handleNewAddressChange}
+                      style={{ flex: 1 }}
+                    />
+                    <button
+                      type="button"
+                      className="btn btn-success ml-2"
+                      onClick={handleAddAddress}
+                      // style={{ alignSelf: 'flex-end' }}
+                    >
+                      <Icon as={FaPlus} />
+                    </button>
+                  </div>
                 </div>
+
+
                 <div className="form-group">
-                  <label>Date:</label>
+                  <label>Pincode:</label>
+                  <input
+                    type="text"
+                    name="pincode"
+                    value={customerInfo.pincode}
+                    onChange={handleInputChange}
+                    className="order_info"
+                    required
+                  />
+                </div>
+
+                <div className="form-group">
+                  <label>Order Date:</label>
                   <DatePicker
                     selected={customerInfo.order_date}
                     onChange={handleDateChange}
                     minDate={new Date()}
-                    filterDate={(date) => !isDateDisabled(date)}
+                    dateFormat="dd/MM/yyyy"
                     className="order_info"
-                    placeholderText="Select a date"
+                    filterDate={date => !isDateDisabled(date)}
                     required
                   />
                 </div>
-                {customerInfo.order_date && (
-                  <div className="form-group">
-                    <label>Timeslot:</label>
-                    <select
-                      name="timeslot"
-                      value={customerInfo.timeslot}
-                      onChange={handleInputChange}
-                      className="order_info"
-                      required
-                    >
-                      <option value="">Select a timeslot</option>
-                      {getAvailableTimeSlots().map((slot, index) => (
-                        <option key={index} value={slot}>
-                          {slot.charAt(0).toUpperCase() + slot.slice(1)}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
-                )}
-                <button type="submit" className="btn btn-primary">
-                  Place Order
-                </button>
+
+                <div className="form-group">
+                  <label>Time Slot:</label>
+                  <select
+                    name="timeslot"
+                    value={customerInfo.timeslot}
+                    onChange={handleInputChange}
+                    className="order_info"
+                    required
+                  >
+                    <option value="" disabled>Select a time slot</option>
+                    {getAvailableTimeSlots().map(slot => (
+                      <option key={slot} value={slot}>
+                        {slot === 'morning' ? 'Morning (9AM - 12PM)' : 'Evening (4PM - 7PM)'}
+                      </option>
+                    ))}
+                  </select>
+                </div>
               </div>
+              <button type="submit" className="btn btn-primary btn-block mt-3">
+                Place Order
+              </button>
             </form>
           </div>
         </div>
