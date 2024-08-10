@@ -96,14 +96,14 @@ function Cart({ cartItems, setCartItems, onClose }) {
         </button>
       </div>
       <hr />
-      <h5 className='ms-3'>Order Summary</h5>
       {cartItems.length === 0 ? (
         <div className="empty-cart">
-          <img src={emptyCartGif} height={150} alt="Empty Cart" className="empty-cart-gif" />
-          <p>Your cart is empty.</p>
+          <img src={emptyCartGif} height={340} width={320} alt="Empty Cart" className="empty-cart-gif " />
+          <p className='text-center'>Your cart is empty.</p>
         </div>
       ) : (
         <>
+      <h5 className='ms-3'>Order Summary</h5>  
 
           <table className="cart-table">
             {/* <thead>
