@@ -50,27 +50,10 @@ function AdminOrder() {
     fetchOrders();
   }, [isLoggedIn, navigate]);
 
-  const handleDelete = async () => {
-    try {
-      const response = await fetch(`${CONFIGS.API_BASE_URL}/deleteorder/${selectedOrderId}`, {
-        method: 'DELETE',
-      });
-
-      if (response.ok) {
-        setOrders(orders.filter(order => order._id !== selectedOrderId));
-        setShowModal(false);
-      } else {
-        console.error('Error deleting order');
-      }
-    } catch (error) {
-      console.error('Error deleting order:', error);
-    }
-  };
-
   const handleStatusUpdate = async (orderId, currentStatus) => {
     const newStatus = currentStatus === "pending" ? "delivered" : "pending";
     try {
-      const response = await fetch(`${CONFIGS.API_BASE_URL}/updatestatus/${orderId}`, {
+      const response = await fetch(`${CONFIGS.API_BASE_URL}/updateorderstatus/${orderId}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -79,15 +62,14 @@ function AdminOrder() {
       });
 
       if (response.ok) {
-        const updatedOrder = await response.json();
         setOrders(orders.map(order => 
-          order._id === orderId ? { ...order, status: updatedOrder.Order.status } : order
+          order._id === orderId ? { ...order, status: newStatus } : order
         ));
       } else {
-        console.error('Error updating order status');
+        console.log('Failed to update order status');
       }
     } catch (error) {
-      console.error('Error updating order status:', error);
+      console.log('Error updating order status:', error);
     }
   };
 
@@ -101,10 +83,38 @@ function AdminOrder() {
     setSelectedOrderId(null);
   };
 
+  const handleDelete = async () => {
+    if (selectedOrderId) {
+      try {
+        const response = await fetch(`${CONFIGS.API_BASE_URL}/deleteorder/${selectedOrderId}`, {
+          method: 'DELETE',
+        });
+
+        if (response.ok) {
+          setOrders(orders.filter(order => order._id !== selectedOrderId));
+          closeModal();
+        } else {
+          console.log('Failed to delete order');
+        }
+      } catch (error) {
+        console.log('Error deleting order:', error);
+      }
+    }
+  };
+
+  const getSelectedAddress = (order) => {
+    if (order.cust_addresses && Array.isArray(order.cust_addresses) && order.selected_address !== undefined) {
+      return order.cust_addresses[order.selected_address]?.address || 'Address not available';
+    }
+    return order.cust_address || 'Address not available';
+  };
+
+  // Calculate current orders
   const indexOfLastOrder = currentPage * ordersPerPage;
   const indexOfFirstOrder = indexOfLastOrder - ordersPerPage;
   const currentOrders = orders.slice(indexOfFirstOrder, indexOfLastOrder);
 
+  // Change page
   const paginate = (pageNumber) => setCurrentPage(pageNumber);
 
   return (
@@ -128,7 +138,7 @@ function AdminOrder() {
                           </div>
                           <div className="admin-order-detail">
                             <b className="admin-order-label">Address:</b>
-                            <div className="admin-order-value">{order.cust_address}</div>
+                            <div className="admin-order-value">{getSelectedAddress(order)}</div>
                           </div>
                           <div className="admin-order-detail">
                             <b className="admin-order-label">Phone Number:</b>
@@ -139,10 +149,12 @@ function AdminOrder() {
                             <div className="admin-order-value">{new Date(order.order_date).toLocaleDateString()}</div>
                           </div>
                           <div className="admin-order-detail">
+                            <b className="admin-order-label">Time Slot:</b>
+                            <div className="admin-order-value">{order.timeslot}</div>
+                          </div>
+                          <div className="admin-order-detail">
                             <b className="admin-order-label">Status:</b>
-                            <div className=   {order.status === "pending" ? "text-warning" : "text-success"}>{order.status}</div>
-
-                         
+                            <div className={order.status === "pending" ? "text-warning" : "text-success"}>{order.status}</div>
                           </div>
 
                           <div className="admin-order-products">
@@ -151,7 +163,7 @@ function AdminOrder() {
                               {order.order_product.length > 0 ? (
                                 <ul className="admin-order-product-list">
                                   {order.order_product.map((product, index) => (
-                                    <li key={index} className="admin-order-product-item">
+                                    <li key={`${order._id}-${index}`} className="admin-order-product-item">
                                       <div className="d-flex justify-content-between">
                                         <span className="admin-order-product-name">{product.name}</span>
                                         <span className="admin-order-product-price">RS.{product.price}</span>

@@ -8,7 +8,7 @@ import moment from 'moment';
 import { RadioGroup, Radio, Input } from 'rsuite';
 import { RadioTileGroup, RadioTile } from 'rsuite';
 import { Icon } from '@rsuite/icons';
-import { FaHome, FaBuilding, FaPlus } from 'react-icons/fa';
+import { FaHome, FaBuilding, FaPlus, FaTrash } from 'react-icons/fa';
 
 function OrderModal({ cartItems, total, onClose, setCartItems }) {
   const [customerInfo, setCustomerInfo] = useState({
@@ -230,7 +230,34 @@ function OrderModal({ cartItems, total, onClose, setCartItems }) {
       toast.error('An error occurred. Please try again.');
     }
   };
-  
+  const handleremoveAddress = async (index) => {
+    try {
+      const response = await fetch(`${CONFIGS.API_BASE_URL}/deleteAddress`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          cust_number: customerInfo.cust_number,
+          addressIndex: index
+        }),
+      });
+
+      if (response.ok) {
+        setCustomerInfo((prev) => ({
+          ...prev,
+          cust_addresses: prev.cust_addresses.filter((_, i) => i !== index),
+          selected_address: prev.selected_address > index ? prev.selected_address - 1 : 0
+        }));
+        toast.success('Address removed successfully');
+      } else {
+        toast.error('Failed to remove address. Please try again.');
+      }
+    } catch (error) {
+      console.error('Error removing address:', error);
+      toast.error('An error occurred. Please try again.');
+    }
+  };
   const handleDateChange = (date) => {
     setCustomerInfo(prev => ({ ...prev, order_date: date, timeslot: '' }));
   };
@@ -328,7 +355,18 @@ function OrderModal({ cartItems, total, onClose, setCartItems }) {
                         icon={<Icon as={index === 0 ? FaHome : FaHome} />}
                         label={address.label}
                       >
-                        {address.address}
+                        <div className="d-flex justify-content-between align-items-center">
+                          <span>{address.address}</span>
+                          {index !== 0 && (
+                            <button
+                              type="button"
+                              className="btn btn-danger btn-sm ml-2"
+                              onClick={() => handleremoveAddress(index)}
+                            >
+                              <Icon as={FaTrash} />
+                            </button>
+                          )}
+                        </div>
                       </RadioTile>
                     ))}
                   </RadioTileGroup>
