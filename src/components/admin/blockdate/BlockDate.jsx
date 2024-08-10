@@ -35,7 +35,7 @@ function BlockDate() {
     }
 
     try {
-      const response = await fetch(`${CONFIGS.API_BASE_URL}/block-date`  , {
+      const response = await fetch(`${CONFIGS.API_BASE_URL}/block-date`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -74,7 +74,10 @@ function BlockDate() {
       setMessage(data.message);
 
       if (response.ok) {
-        fetchBlockedDates();
+        // Remove the unblocked date and timeslot from the blockedDates state
+        setBlockedDates(prevBlockedDates =>
+          prevBlockedDates.filter(block => !(block.date === date && block.timeslot === timeslot))
+        );
       }
     } catch (error) {
       setMessage('An error occurred while unblocking the date');
