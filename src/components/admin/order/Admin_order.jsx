@@ -141,6 +141,11 @@ function AdminOrder() {
                             <div className="admin-order-value">{getSelectedAddress(order)}</div>
                           </div>
                           <div className="admin-order-detail">
+                            <b className="admin-order-label">Pincode:</b>
+                            <div className="admin-order-value">{order.pincode}</div>
+                          </div>
+
+                          <div className="admin-order-detail">
                             <b className="admin-order-label">Phone Number:</b>
                             <div className="admin-order-value">{order.cust_number}</div>
                           </div>

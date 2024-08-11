@@ -1,0 +1,99 @@
+/* adminagency.css */
+
+.admin-agency-container {
+    max-width: 600px;
+    margin: 30px auto;
+    padding: 20px;
+    background-color: #f9f9f9;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.admin-agency-container h2 {
+    text-align: center;
+    margin-bottom: 20px;
+    color: #333;
+    font-size: 1.8rem;
+    font-weight: bold;
+}
+
+.admin-agency-container form {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.admin-agency-container input,
+.admin-agency-container select,
+.admin-agency-container button {
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    /* font-size: 1rem; */
+    font-weight: 400;
+
+    width: 100%;
+    transition: border-color 0.3s ease;
+}
+
+.admin-agency-container input:focus,
+.admin-agency-container select:focus {
+    outline: none;
+    border-color: #007bff;
+    box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+}
+
+.admin-agency-container input[type="file"] {
+    border: none;
+    padding: 0;
+}
+
+.admin-agency-container button {
+    background-color: #007bff;
+    color: #fff;
+    cursor: pointer;
+    /* font-weight: bold; */
+    font-weight: 400;
+
+    border: none;
+    transition: background-color 0.3s ease;
+}
+
+.admin-agency-container button:hover {
+    background-color: #0056b3;
+}
+
+.admin-agency-container button:active {
+    background-color: #004080;
+}
+
+.admin-agency-label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: bold;
+}
+
+.admin-agency-input, .admin-agency-input-file {
+    display: block;
+    width: 100%;
+    padding: 8px;
+    margin-bottom: 12px;
+    border-radius: 4px;
+    border: 1px solid #ccc;
+}
+
+
+@media (max-width: 768px) {
+    .admin-agency-container {
+        width: 90%;
+        padding: 15px;
+    }
+
+    .admin-agency-container h2 {
+        font-size: 1.5rem;
+    }
+
+    .admin-agency-container button {
+        font-size: 1rem;
+    }
+}

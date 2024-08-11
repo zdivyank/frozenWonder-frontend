@@ -232,8 +232,8 @@ function OrderModal({ cartItems, total, onClose, setCartItems }) {
   };
   const handleremoveAddress = async (index) => {
     try {
-      const response = await fetch(`${CONFIGS.API_BASE_URL}/deleteAddress`, {
-        method: 'POST',
+      const response = await fetch(`${CONFIGS.API_BASE_URL}/delete-address`, {
+        method: 'DELETE',
         headers: {
           'Content-Type': 'application/json',
         },

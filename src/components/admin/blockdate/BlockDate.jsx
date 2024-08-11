@@ -19,7 +19,10 @@ function BlockDate() {
       const response = await fetch(`${CONFIGS.API_BASE_URL}/blocked-dates`);
       if (response.ok) {
         const data = await response.json();
-        setBlockedDates(data);
+        setBlockedDates(data.map(block => ({
+          ...block,
+          date: formatDate(block.date),
+        })));
       } else {
         setMessage('Failed to fetch blocked dates');
       }
@@ -28,11 +31,19 @@ function BlockDate() {
     }
   };
 
+  const formatDate = (dateString) => {
+    const date = new Date(dateString);
+    const options = { year: 'numeric', month: '2-digit', day: '2-digit' };
+    return date.toLocaleDateString(undefined, options);
+  };
+
   const handleBlock = async () => {
     if (!selectedDate || !timeslot) {
       setMessage('Please select both date and timeslot');
       return;
     }
+
+    const formattedDate = formatDate(selectedDate);
 
     try {
       const response = await fetch(`${CONFIGS.API_BASE_URL}/block-date`, {
@@ -41,7 +52,7 @@ function BlockDate() {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          date: selectedDate,
+          date: formattedDate,
           timeslot: timeslot,
         }),
       });
@@ -74,7 +85,6 @@ function BlockDate() {
       setMessage(data.message);
 
       if (response.ok) {
-        // Remove the unblocked date and timeslot from the blockedDates state
         setBlockedDates(prevBlockedDates =>
           prevBlockedDates.filter(block => !(block.date === date && block.timeslot === timeslot))
         );
@@ -85,38 +95,44 @@ function BlockDate() {
   };
 
   return (
-    <div className='block_container'>
-      <h1>Block Dates</h1>
+    <div className='blockdate-card'>
+      <h1 className='blockdate-title'>Block Dates</h1>
       
-      <div className='block_form'>
+      <div className='blockdate-form'>
         <DatePicker
           selected={selectedDate}
           onChange={date => setSelectedDate(date)}
           dateFormat="yyyy-MM-dd"
           placeholderText="Select a date"
+          className="blockdate-datepicker"
         />
         <select
           value={timeslot}
           onChange={(e) => setTimeslot(e.target.value)}
+          className="blockdate-select"
         >
           <option value="">Select timeslot</option>
           <option value="morning">Morning</option>
           <option value="evening">Evening</option>
           <option value="fullday">Full Day</option>
         </select>
-        <button onClick={handleBlock}>Block Date</button>
+        <button onClick={handleBlock} className="blockdate-button">Block Date</button>
       </div>
 
-      {message && <p className="message">{message}</p>}
+      {message && <p className="blockdate-message">{message}</p>}
 
-      <h2>Blocked Dates</h2>
-      <ul className='blocked_dates_list'>
-        {blockedDates.map((block, index) => (
-          <li key={index}>
-            {block.date} - {block.timeslot}
-            <button onClick={() => handleUnblock(block.date, block.timeslot)}>Unblock</button>
-          </li>
-        ))}
+      <h2 className='blockdate-subtitle'>Blocked Dates</h2>
+      <ul className='blockdate-list'>
+        {blockedDates.length > 0 ? (
+          blockedDates.map((block, index) => (
+            <li key={index} className='blockdate-list-item'>
+              {block.date} - {block.timeslot}
+              <button onClick={() => handleUnblock(block.date, block.timeslot)} className='blockdate-unblock-button'>Unblock</button>
+            </li>
+          ))
+        ) : (
+          <p className="blockdate-empty">No dates are currently blocked.</p>
+        )}
       </ul>
     </div>
   );

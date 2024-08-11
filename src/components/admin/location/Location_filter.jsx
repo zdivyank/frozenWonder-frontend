@@ -42,7 +42,7 @@ function LocationFilter() {
     const fetchOrders = async (pincode) => {
         setLoading(true); // Set loading true when starting fetch
         try {
-            const response = await fetch(`${CONFIGS.API_BASE_URL}/orderloaction`, {
+            const response = await fetch(`${CONFIGS.API_BASE_URL}/orderlocation`, {
                 method: "POST",
                 headers: {
                     'Content-Type': 'application/json',
@@ -56,6 +56,8 @@ function LocationFilter() {
             }
     
             const data = await response.json();
+            console.log(data);
+            
             console.log('Fetched Orders:', data.orders); 
     
             setOrders(data.orders || []);

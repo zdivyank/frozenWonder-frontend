@@ -1,71 +1,91 @@
-.block_container {
-    max-width: 600px;
-    margin: 2%;
-    /* margin: 0 auto; */
-    padding: 20px;
-  }
-  
-  h1, h2 {
-    color: #495E70;
-  }
-  
-  .block_form {
-    display: flex;
-    gap: 10px;
-    margin-bottom: 20px;
-  }
-  
-  .block_form input,
-  .block_form select,
-  .block_form button {
-    padding: 10px;
-    font-size: 16px;
-  }
-  
-  .block_form button {
-    background-color: #495E70;
-    color: white;
-    border: none;
-    cursor: pointer;
-    transition: background-color 0.3s;
-  }
-  
-  .block_form button:hover {
-    background-color: #3a4a59;
-  }
-  
-  .message {
-    background-color: #f8d7da;
-    color: #721c24;
-    padding: 10px;
-    margin-bottom: 20px;
-    border-radius: 4px;
-  }
-  
-  .blocked_dates_list {
-    list-style-type: none;
-    padding: 0;
-  }
-  
-  .blocked_dates_list li {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 10px;
-    margin-bottom: 10px;
-    background-color: #e9ecef;
-    border-radius: 4px;
-  }
-  
-  .blocked_dates_list button {
-    background-color: #dc3545;
-    color: white;
-    border: none;
-    padding: 5px 10px;
-    cursor: pointer;
-    transition: background-color 0.3s;
-  }
-  
-  .blocked_dates_list button:hover {
-    background-color: #c82333;
-  }
+.blockdate-card {
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  padding: 20px;
+  max-width: 600px;
+  margin: 20px auto;
+}
+
+.blockdate-title {
+  font-size: 24px;
+  font-weight: bold;
+  margin-bottom: 20px;
+}
+
+.blockdate-form {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.blockdate-datepicker {
+  width: 100%;
+  padding: 10px;
+  border-radius: 4px;
+  border: 1px solid #ddd;
+}
+
+.blockdate-select {
+  width: 100%;
+  padding: 10px;
+  border-radius: 4px;
+  border: 1px solid #ddd;
+}
+
+.blockdate-button {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 4px;
+  background-color: #007bff;
+  color: #fff;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+.blockdate-button:hover {
+  background-color: #0056b3;
+}
+
+.blockdate-message {
+  color: #ff4d4d;
+  font-size: 14px;
+  margin-top: 10px;
+}
+
+.blockdate-subtitle {
+  font-size: 20px;
+  font-weight: bold;
+  margin-top: 20px;
+}
+
+.blockdate-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.blockdate-list-item {
+  display: flex;
+  justify-content: space-between;
+  padding: 10px;
+  border-bottom: 1px solid #ddd;
+}
+
+.blockdate-unblock-button {
+  background-color: #dc3545;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  padding: 5px 10px;
+  cursor: pointer;
+}
+
+.blockdate-unblock-button:hover {
+  background-color: #c82333;
+}
+
+.blockdate-empty {
+  color: #888;
+  font-style: italic;
+}
