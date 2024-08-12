@@ -101,6 +101,8 @@ function AdminOrder() {
       }
     }
   };
+
+  // Function to get the selected address
   const getSelectedAddress = (order) => {
     if (order.cust_address && Array.isArray(order.cust_address) && order.selected_address !== undefined) {
       // If cust_address is an array, use selected_address as index
@@ -115,19 +117,6 @@ function AdminOrder() {
     return 'Address not available';
   };
 
-  // const getSelectedAddress = (order) => {
-  //   if (order.cust_address && Array.isArray(order.cust_address) && order.selected_address !== undefined) {
-  //     // If cust_address is an array, use selected_address as index
-  //     return order.cust_address[order.selected_address] || 'Address not available';
-  //   } else if (typeof order.cust_address === 'string') {
-  //     // If cust_address is a string, return it directly
-  //     return order.cust_address;
-  //   } else if (order.cust_addresses && Array.isArray(order.cust_addresses) && order.selected_address !== undefined) {
-  //     // Fallback to cust_addresses if present
-  //     return order.cust_addresses[order.selected_address]?.address || 'Address not available';
-  //   }
-  //   return 'Address not available';
-  // };
   // Calculate current orders
   const indexOfLastOrder = currentPage * ordersPerPage;
   const indexOfFirstOrder = indexOfLastOrder - ordersPerPage;
@@ -157,8 +146,7 @@ function AdminOrder() {
                           </div>
                           <div className="admin-order-detail">
                             <b className="admin-order-label">Address:</b>
-                            <div className="admin-order-value">{order.cust_address}</div>
-                            {/* <div className="admin-order-value">{getSelectedAddress(order)}</div> */}
+                            <div className="admin-order-value">{getSelectedAddress(order)}</div>
                           </div>
                           <div className="admin-order-detail">
                             <b className="admin-order-label">Pincode:</b>
@@ -244,35 +232,33 @@ function AdminOrder() {
 
             {/* Pagination Controls */}
             <Pagination className="admin-order-pagination">
-              {[...Array(Math.ceil(orders.length / ordersPerPage)).keys()].map((number) => (
-                <Pagination.Item
-                  key={number + 1}
-                  active={number + 1 === currentPage}
-                  onClick={() => paginate(number + 1)}
-                >
+              {[...Array(Math.ceil(orders.length / ordersPerPage)).keys()].map(number => (
+                <Pagination.Item key={number + 1} active={number + 1 === currentPage} onClick={() => paginate(number + 1)}>
                   {number + 1}
                 </Pagination.Item>
               ))}
             </Pagination>
+
+            {/* Delete Confirmation Modal */}
+            <Modal show={showModal} onHide={closeModal}>
+              <Modal.Header closeButton>
+                <Modal.Title>Confirm Delete</Modal.Title>
+              </Modal.Header>
+              <Modal.Body>
+                Are you sure you want to delete this order?
+              </Modal.Body>
+              <Modal.Footer>
+                <Button variant="secondary" onClick={closeModal}>
+                  Cancel
+                </Button>
+                <Button variant="danger" onClick={handleDelete}>
+                  Delete
+                </Button>
+              </Modal.Footer>
+            </Modal>
           </>
         )}
       </Container>
-
-      {/* Confirmation Modal */}
-      <Modal show={showModal} onHide={closeModal}>
-        <Modal.Header closeButton>
-          <Modal.Title>Confirm Deletion</Modal.Title>
-        </Modal.Header>
-        <Modal.Body>Are you sure you want to delete this order?</Modal.Body>
-        <Modal.Footer>
-          <Button variant="secondary" onClick={closeModal}>
-            Cancel
-          </Button>
-          <Button variant="danger" onClick={handleDelete}>
-            Delete
-          </Button>
-        </Modal.Footer>
-      </Modal>
     </section>
   );
 }
