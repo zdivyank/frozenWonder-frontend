@@ -6,15 +6,14 @@ import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import moment from 'moment';
 import { RadioGroup, Radio, Input } from 'rsuite';
-import { RadioTileGroup, RadioTile } from 'rsuite';
 import { Icon } from '@rsuite/icons';
-import { FaHome, FaBuilding, FaPlus, FaTrash } from 'react-icons/fa';
+import { FaHome, FaPlus, FaTrash } from 'react-icons/fa';
 
 function OrderModal({ cartItems, total, onClose, setCartItems }) {
   const [customerInfo, setCustomerInfo] = useState({
     cust_name: '',
-    cust_address: [],
-    selected_address: 0,
+    cust_addresses: [],
+    selected_address: null,
     cust_number: '',
     pincode: '',
     order_date: null,
@@ -60,11 +59,17 @@ function OrderModal({ cartItems, total, onClose, setCartItems }) {
       if (response.ok) {
         const data = await response.json();
         if (data.response && data.response.length > 0) {
+          const customer = data.response[0];
           setCustomerInfo(prev => ({
             ...prev,
-            cust_name: data.response[0].cust_name || '',
-            cust_address: data.response[0].cust_address || [],
-            pincode: data.response[0].pincode || ''
+            cust_name: customer.cust_name || '',
+            cust_addresses: customer.cust_address.map((address, index) => ({
+              address: address,
+              label: `Address ${index + 1}`,
+              _id: `temp_id_${index}`
+            })) || [],
+            selected_address: customer.selected_address ? parseInt(customer.selected_address) : null,
+            pincode: customer.pincode || ''
           }));
           toast.success('Customer details fetched successfully!');
         } else {
@@ -82,22 +87,28 @@ function OrderModal({ cartItems, total, onClose, setCartItems }) {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (customerInfo.selected_address < 0 || customerInfo.selected_address >= customerInfo.cust_address.length) {
-      toast.error('Please select a valid address');
+    if (!customerInfo.selected_address) {
+      toast.error('Please select an address');
       return;
     }
 
     const orderData = {
-      ...customerInfo,
-      selected_address: customerInfo.selected_address + 1,
+      cust_name: customerInfo.cust_name,
+      cust_address: customerInfo.cust_addresses.map(addr => addr.address),
+      selected_address: customerInfo.selected_address,
+      cust_number: customerInfo.cust_number,
+      pincode: customerInfo.pincode,
       order_product: cartItems.map(item => ({
         name: item.product.name,
         quantity: item.quantity,
         price: item.product.packs[item.packIndex].price
       })),
       total_amount: total,
-      order_date: customerInfo.order_date ? moment(customerInfo.order_date).format('YYYY-MM-DD') : null
+      order_date: customerInfo.order_date ? moment(customerInfo.order_date).format('YYYY-MM-DD') : null,
+      timeslot: customerInfo.timeslot
     };
+
+    console.log('Order Data:', orderData);
 
     try {
       const response = await fetch(`${CONFIGS.API_BASE_URL}/addorder`, {
@@ -110,11 +121,13 @@ function OrderModal({ cartItems, total, onClose, setCartItems }) {
 
       if (response.ok) {
         const data = await response.json();
+        console.log(data);
         setIsOrderPlaced(true);
         toast.success(data.message);
         onClose();
       } else {
         const errorData = await response.json();
+        console.log(errorData);
         throw new Error(errorData.message || 'Failed to create order');
       }
     } catch (error) {
@@ -124,7 +137,7 @@ function OrderModal({ cartItems, total, onClose, setCartItems }) {
   };
 
   const handleSelectAddress = (value) => {
-    setCustomerInfo(prev => ({ ...prev, selected_address: parseInt(value, 10) }));
+    setCustomerInfo(prev => ({ ...prev, selected_address: Number(value) }));
   };
 
   const handleInputChange = (e) => {
@@ -136,24 +149,83 @@ function OrderModal({ cartItems, total, onClose, setCartItems }) {
     setNewAddress(value);
   };
 
-  const handleAddAddress = () => {
+  const handleAddAddress = async () => {
     if (newAddress.trim() === '') {
       toast.error('Please enter an address before adding.');
       return;
     }
-    setCustomerInfo(prev => ({
-      ...prev,
-      cust_address: [...prev.cust_address, newAddress]
-    }));
+
+    try {
+      const newAddressObj = {
+        address: newAddress,
+        label: `Address ${customerInfo.cust_addresses.length + 1}`,
+        _id: `temp_id_${Date.now()}`
+      };
+
+      setCustomerInfo(prev => ({
+        ...prev,
+        cust_addresses: [...prev.cust_addresses, newAddressObj],
+        selected_address: prev.cust_addresses.length + 1
+      }));
+
+      const response = await fetch(`${CONFIGS.API_BASE_URL}/addAddress`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          cust_number: customerInfo.cust_number,
+          address: newAddress,
+          label: newAddressObj.label
+        }),
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        toast.success('Address added successfully');
+      } else {
+        const errorData = await response.json();
+        throw new Error(errorData.message || 'Failed to add address');
+      }
+    } catch (error) {
+      console.error('Error adding address:', error);
+      toast.error(`Failed to add address: ${error.message}`);
+    }
+
     setNewAddress('');
   };
 
-  const handleRemoveAddress = (index) => {
-    setCustomerInfo(prev => ({
-      ...prev,
-      cust_address: prev.cust_address.filter((_, i) => i !== index),
-      selected_address: prev.selected_address > index ? Math.max(0, prev.selected_address - 1) : prev.selected_address
-    }));
+  const handleRemoveAddress = async (index) => {
+    try {
+      setCustomerInfo(prev => ({
+        ...prev,
+        cust_addresses: prev.cust_addresses.filter((_, i) => i !== index - 1),
+        selected_address: prev.selected_address === index ? null :
+          (prev.selected_address > index ? prev.selected_address - 1 : prev.selected_address)
+      }));
+
+      const response = await fetch(`${CONFIGS.API_BASE_URL}/delete-address`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          cust_number: customerInfo.cust_number,
+          addressIndex: index - 1
+        }),
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        toast.success('Address removed successfully');
+      } else {
+        const errorData = await response.json();
+        throw new Error(errorData.message || 'Failed to remove address');
+      }
+    } catch (error) {
+      console.error('Error removing address:', error);
+      toast.error(`Failed to remove address: ${error.message}`);
+    }
   };
 
   const handleDateChange = (date) => {
@@ -237,30 +309,27 @@ function OrderModal({ cartItems, total, onClose, setCartItems }) {
 
                 <div className="form-group">
                   <label>Address:</label>
-                  <RadioTileGroup
+                  <RadioGroup
                     name="selected_address"
-                    value={customerInfo.selected_address.toString()}
+                    value={customerInfo.selected_address}
                     onChange={handleSelectAddress}
-                    inline
                   >
-                    {customerInfo.cust_address.map((address, index) => (
-                      <RadioTile
-                        key={index}
-                        value={index.toString()}
-                        icon={<Icon as={FaHome} />}
-                        label={`Address ${index + 1}`}
-                      >
-                        {address}
+                    {customerInfo.cust_addresses.map((address, index) => (
+                      <Radio key={address._id} value={index + 1}>
+                        <Icon as={FaHome} /> {address.address}
                         <button
                           type="button"
                           className="btn btn-danger btn-sm ml-2"
-                          onClick={() => handleRemoveAddress(index)}
+                          onClick={(e) => {
+                            e.preventDefault();
+                            handleRemoveAddress(index + 1);
+                          }}
                         >
                           <Icon as={FaTrash} />
                         </button>
-                      </RadioTile>
+                      </Radio>
                     ))}
-                  </RadioTileGroup>
+                  </RadioGroup>
                   <div className="d-flex mt-2">
                     <Input
                       as="textarea"
