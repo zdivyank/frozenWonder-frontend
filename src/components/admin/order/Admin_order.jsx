@@ -157,7 +157,7 @@ function AdminOrder() {
                           </div>
                           <div className="admin-order-detail">
                             <b className="admin-order-label">Address:</b>
-                            <div className="admin-order-value">{order.selected_address}</div>
+                            <div className="admin-order-value">{order.cust_address}</div>
                             {/* <div className="admin-order-value">{getSelectedAddress(order)}</div> */}
                           </div>
                           <div className="admin-order-detail">
