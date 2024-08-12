@@ -35,8 +35,8 @@ function AdminOrder() {
       }
 
       const data = await response.json();
-      console.log(':::::::::::',data.orders);
-      
+      console.log(':::::::::::', data.orders);
+
       const sortedOrders = data.orders.sort((a, b) => new Date(b.order_date) - new Date(a.order_date));
       setOrders(sortedOrders);
     } catch (error) {
@@ -62,7 +62,7 @@ function AdminOrder() {
       });
 
       if (response.ok) {
-        setOrders(orders.map(order => 
+        setOrders(orders.map(order =>
           order._id === orderId ? { ...order, status: newStatus } : order
         ));
       } else {
@@ -101,14 +101,33 @@ function AdminOrder() {
       }
     }
   };
-
   const getSelectedAddress = (order) => {
-    if (order.cust_addresses && Array.isArray(order.cust_addresses) && order.selected_address !== undefined) {
+    if (order.cust_address && Array.isArray(order.cust_address) && order.selected_address !== undefined) {
+      // If cust_address is an array, use selected_address as index
+      return order.cust_address[order.selected_address] || 'Address not available';
+    } else if (typeof order.cust_address === 'string') {
+      // If cust_address is a string, return it directly
+      return order.cust_address;
+    } else if (order.cust_addresses && Array.isArray(order.cust_addresses) && order.selected_address !== undefined) {
+      // Fallback to cust_addresses if present
       return order.cust_addresses[order.selected_address]?.address || 'Address not available';
     }
-    return order.cust_address || 'Address not available';
+    return 'Address not available';
   };
 
+  // const getSelectedAddress = (order) => {
+  //   if (order.cust_address && Array.isArray(order.cust_address) && order.selected_address !== undefined) {
+  //     // If cust_address is an array, use selected_address as index
+  //     return order.cust_address[order.selected_address] || 'Address not available';
+  //   } else if (typeof order.cust_address === 'string') {
+  //     // If cust_address is a string, return it directly
+  //     return order.cust_address;
+  //   } else if (order.cust_addresses && Array.isArray(order.cust_addresses) && order.selected_address !== undefined) {
+  //     // Fallback to cust_addresses if present
+  //     return order.cust_addresses[order.selected_address]?.address || 'Address not available';
+  //   }
+  //   return 'Address not available';
+  // };
   // Calculate current orders
   const indexOfLastOrder = currentPage * ordersPerPage;
   const indexOfFirstOrder = indexOfLastOrder - ordersPerPage;
@@ -138,7 +157,8 @@ function AdminOrder() {
                           </div>
                           <div className="admin-order-detail">
                             <b className="admin-order-label">Address:</b>
-                            <div className="admin-order-value">{getSelectedAddress(order)}</div>
+                            <div className="admin-order-value">{order.selected_address}</div>
+                            {/* <div className="admin-order-value">{getSelectedAddress(order)}</div> */}
                           </div>
                           <div className="admin-order-detail">
                             <b className="admin-order-label">Pincode:</b>
@@ -157,6 +177,11 @@ function AdminOrder() {
                             <b className="admin-order-label">Time Slot:</b>
                             <div className="admin-order-value">{order.timeslot}</div>
                           </div>
+                          <div className="admin-order-detail">
+                            <b className="admin-order-label">Agency:</b>
+                            <div className="admin-order-value">{order.agency_id?.agency_name || 'Agency not available'}</div>
+                          </div>
+
                           <div className="admin-order-detail">
                             <b className="admin-order-label">Status:</b>
                             <div className={order.status === "pending" ? "text-warning" : "text-success"}>{order.status}</div>
