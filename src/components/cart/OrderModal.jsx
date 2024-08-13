@@ -24,6 +24,8 @@ function OrderModal({ cartItems, total, onClose, setCartItems }) {
   const [blockedDates, setBlockedDates] = useState([]);
   const [newAddress, setNewAddress] = useState('');
 
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
   useEffect(() => {
     fetchBlockedDates();
   }, []);
@@ -91,6 +93,9 @@ function OrderModal({ cartItems, total, onClose, setCartItems }) {
   };
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (isSubmitting) return; // Prevent multiple submissions
+
+    setIsSubmitting(true);
 
     if (customerInfo.cust_addresses.length === 0) {
       toast.error('Please add at least one address');
@@ -147,6 +152,8 @@ function OrderModal({ cartItems, total, onClose, setCartItems }) {
     } catch (error) {
       console.error('Error creating order:', error);
       toast.error(`Failed to place order: ${error.message}`);
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -208,19 +215,19 @@ function OrderModal({ cartItems, total, onClose, setCartItems }) {
       // Update the state first
       setCustomerInfo(prev => {
         const updatedAddresses = prev.cust_addresses.filter((_, i) => i !== index);
-        const updatedSelectedAddress = 
-          prev.selected_address === index ? 
-          (updatedAddresses.length > 0 ? 0 : null) : 
-          (prev.selected_address > index ? prev.selected_address - 1 : prev.selected_address);
-  
+        const updatedSelectedAddress =
+          prev.selected_address === index ?
+            (updatedAddresses.length > 0 ? 0 : null) :
+            (prev.selected_address > index ? prev.selected_address - 1 : prev.selected_address);
+
         return {
           ...prev,
           cust_addresses: updatedAddresses,
           selected_address: updatedSelectedAddress,
         };
       });
-  console.log(index);
-  
+      console.log(index);
+
       // If the user is not new, attempt to delete the address from the backend
       if (!customerInfo.isNewUser) {
         const response = await fetch(`${CONFIGS.API_BASE_URL}/delete-address`, {
@@ -233,13 +240,13 @@ function OrderModal({ cartItems, total, onClose, setCartItems }) {
             selected_address: index,
           }),
         });
-  
+
         if (response.ok) {
           toast.success('Address removed successfully');
         } else {
           const errorData = await response.json();
           console.log('Error data from server:', errorData);
-  
+
           throw new Error(errorData.message || 'Failed to remove address');
         }
       } else {
@@ -250,7 +257,7 @@ function OrderModal({ cartItems, total, onClose, setCartItems }) {
       toast.error(`Failed to remove address: ${error.message}`);
     }
   };
-  
+
   const handleDateChange = (date) => {
     setCustomerInfo(prev => ({ ...prev, order_date: date, timeslot: '' }));
   };
@@ -423,8 +430,12 @@ function OrderModal({ cartItems, total, onClose, setCartItems }) {
                 </div>
 
               </div>
-              <button type="submit" className="btn btn-primary mt-3">
-                Place Order
+              <button
+                type="submit"
+                className="btn btn-primary mt-3"
+                disabled={isSubmitting}
+              >
+                {isSubmitting ? 'Placing Order...' : 'Place Order'}
               </button>
             </form>
           </div>

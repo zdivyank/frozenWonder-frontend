@@ -29,13 +29,26 @@ import Admin_agency from './components/admin/user/Admin_agency';
 import Agency_orders from './components/agency/orders/Agency_order';
 import Agency_location from './components/agency/orders/Agency_location';
 import DeliveryPerson_orders from './components/delivery/DeliveryPerson_orders';
+import Cart from './components/cart/Cart';
 import { FaBars, FaTimes } from 'react-icons/fa';
 import { Link as ScrollLink } from 'react-scroll';
+import { HiMiniShoppingCart } from 'react-icons/hi2';
 
 function AppContent() {
   const { isLoggedIn, role, isLoading } = useAuth();
   const location = useLocation();
   const [isNavOpen, setIsNavOpen] = useState(false);
+
+  const [showCart, setShowCart] = useState(false);
+
+  const [cartItems, setCartItems] = useState(() => {
+    const savedCart = localStorage.getItem('cart');
+    return savedCart ? JSON.parse(savedCart) : [];
+  });
+
+  useEffect(() => {
+    localStorage.setItem('cart', JSON.stringify(cartItems));
+  }, [cartItems]);
 
   useEffect(() => {
     if (isLoggedIn && role) {
@@ -70,8 +83,33 @@ function AppContent() {
     }
   };
 
+
+  const addToCart = (product, packIndex, quantity) => {
+    setCartItems(prevItems => {
+      const existingItemIndex = prevItems.findIndex(
+        item => item.product._id === product._id && item.packIndex === packIndex
+      );
+
+      if (existingItemIndex !== -1) {
+        const updatedItems = [...prevItems];
+        updatedItems[existingItemIndex].quantity += quantity;
+        return updatedItems;
+      } else {
+        return [...prevItems, { product, packIndex, quantity }];
+      }
+    });
+  };
   const toggleNav = () => {
     setIsNavOpen(!isNavOpen);
+  };
+
+  
+  const toggleCart = () => {
+    setShowCart(!showCart);
+  };
+
+  const closeCart = () => {
+    setShowCart(false);
   };
 
   const NavBar = () => {
@@ -123,7 +161,7 @@ function AppContent() {
               <>
                 <Element name="home"><Home /></Element>
                 <Element name="about"><About /></Element>
-                <Element name="products"><Product /></Element>
+                <Element name="products"><Product addToCart={addToCart} cart={cartItems} /></Element>
                 <Element name="testimonials"><Testimonials /></Element>
               </>
             } />
@@ -150,6 +188,19 @@ function AppContent() {
 
             <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>
+          {!isLoggedIn && (
+            <div className="cart-container">
+              <div className="cart_icon" onClick={toggleCart}>
+                <HiMiniShoppingCart size={42} className='cart_bottom' />
+                <span className="cart-count">{cartItems.reduce((total, item) => total + item.quantity, 0)}</span>
+              </div>
+              {showCart && (
+                <div className="cart-popup">
+                  <Cart cartItems={cartItems} setCartItems={setCartItems} onClose={closeCart} />
+                </div>
+              )}
+            </div>
+          )}
         </div>
       </AnimatePresence>
       <ToastContainer position="top-center" autoClose={10000} hideProgressBar={false} newestOnTop={false} closeOnClick rtl={false} pauseOnFocusLoss draggable pauseOnHover />
