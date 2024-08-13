@@ -22,7 +22,7 @@ function AdminSidebar() {
         <li><NavLink to="/admin/testimonail" activeClassName="active"><VscFeedback className='me-2' />
          Success Stories</NavLink></li>
         <li><NavLink to="/admin/user"><FaUsers className='me-2'/>Add User</NavLink></li>
-        <li><NavLink to="/admin/date"><CiCalendarDate className='me-2'/>Dates</NavLink></li>
+        <li><NavLink to="/admin/date"><CiCalendarDate className='me-2'/>Block Dates</NavLink></li>
         <li><NavLink to="/logout" className="logout"><IoLogOutOutline className='me-2'/>
         Logout</NavLink></li>
       </ul>
