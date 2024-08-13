@@ -1,0 +1,59 @@
+/* General container styling */
+.order-container {
+    padding: 20px;
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+  
+  /* Styling for individual order cards */
+  .order-card {
+    background: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    padding: 15px;
+    margin: 10px 0;
+    transition: transform 0.3s, box-shadow 0.3s;
+  }
+  
+  /* Hover effect for cards */
+  .order-card:hover {
+    transform: scale(1.02);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  }
+  
+  /* Styling for headings */
+  .order-card h3 {
+    margin: 0;
+    font-size: 1.2em;
+    color: #333;
+  }
+  
+  /* Styling for paragraphs */
+  .order-card p {
+    margin: 5px 0;
+    font-size: 0.9em;
+    color: #555;
+  }
+  
+  /* Highlighted labels */
+  .order-card strong {
+    color: #333;
+  }
+  
+  /* Styling for the list of products */
+  .order-card ul {
+    list-style-type: none;
+    padding: 0;
+  }
+  
+  .order-card li {
+    border-bottom: 1px solid #eee;
+    padding: 5px 0;
+    font-size: 0.8em;
+  }
+  
+  /* Styling for the last product item */
+  .order-card li:last-child {
+    border-bottom: none;
+  }
+  

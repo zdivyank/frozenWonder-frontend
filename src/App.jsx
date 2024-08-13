@@ -25,6 +25,7 @@ import { AnimatePresence } from 'framer-motion';
 import AdminTestimonials from './components/admin/tesimonails/AdminTesimonails';
 import Admin_user from './components/admin/user/Admin_user';
 import BlockDate from './components/admin/blockdate/BlockDate';
+import Admin_agency from './components/admin/user/Admin_agency';
 import Agency_orders from './components/agency/orders/Agency_order';
 import Agency_location from './components/agency/orders/Agency_location';
 import DeliveryPerson_orders from './components/delivery/DeliveryPerson_orders';
@@ -135,8 +136,9 @@ function AppContent() {
             <Route path="/admin/product/:_id/update" element={isLoggedIn && role === 'owner' ? <UpdateProduct /> : <Navigate to="/admin" replace />} />
             <Route path="/admin/addproduct" element={isLoggedIn && role === 'owner' ? <AddProduct /> : <Navigate to="/admin" replace />} />
             <Route path="/admin/location" element={isLoggedIn && role === 'owner' ? <Location_filter /> : <Navigate to="/admin" replace />} />
-            <Route path="/admin/testimonial" element={isLoggedIn && role === 'owner' ? <AdminTestimonials /> : <Navigate to="/admin" replace />} />
+            <Route path="/admin/testimonail" element={isLoggedIn && role === 'owner' ? <AdminTestimonials /> : <Navigate to="/admin" replace />} />
             <Route path="/admin/user" element={isLoggedIn && role === 'owner' ? <Admin_user /> : <Navigate to="/admin" replace />} />
+            <Route path="/admin/agency" element={isLoggedIn && role === 'owner' ? <Admin_agency /> : <Navigate to="/admin" replace />} />
             <Route path="/admin/date" element={isLoggedIn && role === 'owner' ? <BlockDate /> : <Navigate to="/admin" replace />} />
 
             {/* Agency Routes */}

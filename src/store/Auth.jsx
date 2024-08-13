@@ -49,6 +49,7 @@ export const AuthProvider = ({ children }) => {
       setIsLoading(false);
     }
   }
+  
 
   const fetchUserRole = async (userId) => {
     try {
