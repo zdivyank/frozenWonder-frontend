@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { BrowserRouter as Router, Route, Routes, Navigate, Link, useLocation } from 'react-router-dom';
+import React, { useEffect, useState } from 'react';
+import { BrowserRouter as Router, Route, Routes, Navigate, useLocation, Link } from 'react-router-dom';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import Home from './components/home/Home';
@@ -15,71 +15,65 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import AddProduct from './components/admin/product/AddProduct';
 import UpdateProduct from './components/admin/product/UpdateProduct';
 import Testimonials from './components/testimonials/Testimonials';
-import Cart from './components/cart/Cart';
-import { HiMiniShoppingCart } from 'react-icons/hi2';
-import { FaBars, FaTimes } from 'react-icons/fa';
 import Admin_order from './components/admin/order/Admin_order';
 import Location_filter from './components/admin/location/Location_filter';
 import AdminSidebar from './components/admin/AdminSidebar';
-import { Link as ScrollLink, Element } from 'react-scroll';
+import AgencySidebar from './components/admin/AgencySidebar';
+import DeliveryPersonSidebar from './components/admin/DeliveryPersonSidebar';
+import { Element } from 'react-scroll';
 import { AnimatePresence } from 'framer-motion';
-import AdminTesimonails from './components/admin/tesimonails/AdminTesimonails';
+import AdminTestimonials from './components/admin/tesimonails/AdminTesimonails';
 import Admin_user from './components/admin/user/Admin_user';
 import BlockDate from './components/admin/blockdate/BlockDate';
-import Admin_agency from './components/admin/user/Admin_agency';
+import Agency_orders from './components/agency/orders/Agency_order';
+import Agency_location from './components/agency/orders/Agency_location';
+import DeliveryPerson_orders from './components/delivery/DeliveryPerson_orders';
+import { FaBars, FaTimes } from 'react-icons/fa';
+import { Link as ScrollLink } from 'react-scroll';
 
-function App() {
+function AppContent() {
+  const { isLoggedIn, role, isLoading } = useAuth();
+  const location = useLocation();
   const [isNavOpen, setIsNavOpen] = useState(false);
-  const { isLoggedIn } = useAuth();
-  const [showCart, setShowCart] = useState(false);
-
-  const [cartItems, setCartItems] = useState(() => {
-    const savedCart = localStorage.getItem('cart');
-    return savedCart ? JSON.parse(savedCart) : [];
-  });
 
   useEffect(() => {
-    localStorage.setItem('cart', JSON.stringify(cartItems));
-  }, [cartItems]);
-
-  const addToCart = (product, packIndex, quantity) => {
-    setCartItems(prevItems => {
-      const existingItemIndex = prevItems.findIndex(
-        item => item.product._id === product._id && item.packIndex === packIndex
-      );
-
-      if (existingItemIndex !== -1) {
-        const updatedItems = [...prevItems];
-        updatedItems[existingItemIndex].quantity += quantity;
-        return updatedItems;
-      } else {
-        return [...prevItems, { product, packIndex, quantity }];
+    if (isLoggedIn && role) {
+      if (location.pathname === '/admin') {
+        switch (role) {
+          case 'owner':
+            window.location.href = '/admin/product';
+            break;
+          case 'agency':
+            window.location.href = '/agency/orders';
+            break;
+          case 'delivery_person':
+            window.location.href = '/delivery/orders';
+            break;
+          default:
+            window.location.href = '/';
+        }
       }
-    });
-  };
-
-  useEffect(() => {
-    if (isNavOpen) {
-      document.body.style.overflow = 'hidden';
-    } else {
-      document.body.style.overflow = 'auto';
     }
-  }, [isNavOpen]);
+  }, [isLoggedIn, role, location.pathname]);
+
+  const renderSidebar = () => {
+    switch (role) {
+      case 'owner':
+        return <AdminSidebar />;
+      case 'agency':
+        return <AgencySidebar />;
+      case 'delivery_person':
+        return <DeliveryPersonSidebar />;
+      default:
+        return null;
+    }
+  };
 
   const toggleNav = () => {
     setIsNavOpen(!isNavOpen);
   };
 
-  const toggleCart = () => {
-    setShowCart(!showCart);
-  };
-
-  const closeCart = () => {
-    setShowCart(false);
-  };
-
   const NavBar = () => {
-    const location = useLocation();
     const isAdminRoute = location.pathname.startsWith('/admin');
 
     return (
@@ -114,70 +108,57 @@ function App() {
     );
   };
 
+  if (isLoading) {
+    return <div>Loading...</div>;
+  }
+
+  return (
+    <div className="app-container">
+      <AnimatePresence>
+        {isLoggedIn ? renderSidebar() : <NavBar />}
+        <div className={`main-content ${isLoggedIn ? 'logged-in-page' : ''}`}>
+          <Routes>
+            <Route path="/" element={
+              <>
+                <Element name="home"><Home /></Element>
+                <Element name="about"><About /></Element>
+                <Element name="products"><Product /></Element>
+                <Element name="testimonials"><Testimonials /></Element>
+              </>
+            } />
+            <Route path="/admin" element={!isLoggedIn ? <Admin /> : <Navigate to={`/${role === 'owner' ? 'admin/product' : role === 'agency' ? 'agency/orders' : 'delivery/orders'}`} replace />} />
+            <Route path="/logout" element={<Logout />} />
+
+            {/* Admin Routes */}
+            <Route path="/admin/product" element={isLoggedIn && role === 'owner' ? <Admin_product /> : <Navigate to="/admin" replace />} />
+            <Route path="/admin/order" element={isLoggedIn && role === 'owner' ? <Admin_order /> : <Navigate to="/admin" replace />} />
+            <Route path="/admin/product/:_id/update" element={isLoggedIn && role === 'owner' ? <UpdateProduct /> : <Navigate to="/admin" replace />} />
+            <Route path="/admin/addproduct" element={isLoggedIn && role === 'owner' ? <AddProduct /> : <Navigate to="/admin" replace />} />
+            <Route path="/admin/location" element={isLoggedIn && role === 'owner' ? <Location_filter /> : <Navigate to="/admin" replace />} />
+            <Route path="/admin/testimonial" element={isLoggedIn && role === 'owner' ? <AdminTestimonials /> : <Navigate to="/admin" replace />} />
+            <Route path="/admin/user" element={isLoggedIn && role === 'owner' ? <Admin_user /> : <Navigate to="/admin" replace />} />
+            <Route path="/admin/date" element={isLoggedIn && role === 'owner' ? <BlockDate /> : <Navigate to="/admin" replace />} />
+
+            {/* Agency Routes */}
+            <Route path="/agency/orders" element={isLoggedIn && role === 'agency' ? <Agency_orders /> : <Navigate to="/admin" replace />} />
+            <Route path="/agency/location" element={isLoggedIn && role === 'agency' ? <Agency_location /> : <Navigate to="/admin" replace />} />
+
+            {/* Delivery Person Routes */}
+            <Route path="/delivery/orders" element={isLoggedIn && role === 'delivery_person' ? <DeliveryPerson_orders /> : <Navigate to="/admin" replace />} />
+
+            <Route path="*" element={<Navigate to="/" replace />} />
+          </Routes>
+        </div>
+      </AnimatePresence>
+      <ToastContainer position="top-center" autoClose={10000} hideProgressBar={false} newestOnTop={false} closeOnClick rtl={false} pauseOnFocusLoss draggable pauseOnHover />
+    </div>
+  );
+}
+
+function App() {
   return (
     <Router>
-      <div className="app-container">
-        <AnimatePresence>
-          {isLoggedIn && <AdminSidebar />}
-          <div className={`main-content ${isLoggedIn ? 'admin-page' : ''}`}>
-            {!isLoggedIn && <NavBar />}
-            <Routes>
-              <Route path="/" element={
-                <>
-                  <Element name="home">
-                    <Home />
-                  </Element>
-                  <Element name="about">
-                    <About />
-                  </Element>
-                  <Element name="products">
-                    <Product addToCart={addToCart} />
-                  </Element>
-                  <Element name="testimonials">
-                    <Testimonials />
-                  </Element>
-                </>
-              } />
-              <Route path="/admin" element={<Admin />} />
-              <Route path="/logout" element={<Logout />} />
-              <Route path="/admin/product" element={isLoggedIn ? <Admin_product /> : <Navigate to="/admin" />} />
-              <Route path="/admin/order" element={isLoggedIn ? <Admin_order /> : <Navigate to="/admin" />} />
-              <Route path="/admin/product/:_id/update" element={isLoggedIn ? <UpdateProduct /> : <Navigate to="/admin" />} />
-              <Route path="/admin/addproduct" element={isLoggedIn ? <AddProduct /> : <Navigate to="/admin" />} />
-              <Route path="/admin/location" element={isLoggedIn ? <Location_filter /> : <Navigate to="/admin" />} />
-              <Route path="/admin/testimonail" element={isLoggedIn ? <AdminTesimonails /> : <Navigate to="/admin" />} />
-              <Route path="/admin/user" element={isLoggedIn ? <Admin_user /> : <Navigate to="/admin" />} />
-              <Route path="/admin/agency" element={isLoggedIn ? <Admin_agency /> : <Navigate to="/admin" />} />
-              <Route path="/admin/date" element={isLoggedIn ? <BlockDate /> : <Navigate to="/admin" />} />
-              <Route path="*" element={<Navigate to={isLoggedIn ? "/admin/product" : "/"} />} />
-            </Routes>
-            {!isLoggedIn && (
-              <div className="cart-container">
-                <div className="cart_icon" onClick={toggleCart}>
-                  <HiMiniShoppingCart size={42} className='cart_bottom' />
-                  <span className="cart-count">{cartItems.reduce((total, item) => total + item.quantity, 0)}</span>
-                </div>
-                {showCart && (
-                  <div className="cart-popup">
-                    <Cart cartItems={cartItems} setCartItems={setCartItems} onClose={closeCart} />
-                  </div>
-                )}
-              </div>
-            )}
-          </div>
-        </AnimatePresence>
-      </div>
-      <ToastContainer
-        position="top-center"
-        autoClose={10000}
-        hideProgressBar={false}
-        newestOnTop={false}
-        closeOnClick
-        rtl={false}
-        pauseOnFocusLoss
-        draggable
-        pauseOnHover
-      />
+      <AppContent />
     </Router>
   );
 }

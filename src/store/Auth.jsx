@@ -1,81 +1,96 @@
-import React,{createContext, useContext, useState,useEffect } from "react";
+import React, { createContext, useContext, useState, useEffect } from "react";
 import { CONFIGS } from "../../config";
 
 export const AuthContext = createContext();
 
-export const AuthProvider = ({ children }) =>{
-    // const [token,setToken]= useState(""); 
-    const [token,setToken]= useState(localStorage.getItem("token"));
-    const [user,setUser] = useState('');
-    const [isLoading,setIsLoading] = useState(true);
-   
-    const AuthorizationToken = `Bearer ${token}`;
+export const AuthProvider = ({ children }) => {
+  const [token, setToken] = useState(localStorage.getItem("token"));
+  const [user, setUser] = useState('');
+  const [isLoading, setIsLoading] = useState(true);
+  const [role, setRole] = useState('');
 
- 
+  const AuthorizationToken = `Bearer ${token}`;
 
-    const storeTokenInLS = (serverToken)=>{
-        setToken(serverToken);
-        return localStorage.setItem("token",serverToken);
-    };
+  const storeTokenInLS = (serverToken) => {
+    setToken(serverToken);
+    return localStorage.setItem("token", serverToken);
+  };
 
-    let isLoggedIn  = !!token;
-    console.log("isloogg",isLoggedIn);
-// console.log(`user info${user}`);
-    // tackling logout funcionality
-    const LogoutUser = ()=>{
-        setToken("");
-        setUser("");
-        return localStorage.removeItem("token");
-    }
+  let isLoggedIn = !!token;
 
-    //jwt authentication - currently logged in user
+  const LogoutUser = () => {
+    setToken("");
+    setUser("");
+    setRole("");
+    return localStorage.removeItem("token");
+  }
 
-    const userAuthentication = async() =>{
-        try {
-            setIsLoading(true);
-                const response = await fetch(`${CONFIGS.API_BASE_URL}/user`,
-                {
-                    method : "GET",
-                    headers:{
-                    Authorization : AuthorizationToken , 
-                    }
-                });
-                if (response.ok) {
-                    const data = await response.json();
-                    setUser(data.userData);
-                    console.log('hello',data);
-                    setIsLoading(false);
-                }else
-                {
-                    console.log('error fetching userdata')
-                    setIsLoading(false);
-                }
-            }
-         catch (error) {
-            console.error("Error Fetching user data",error)
+  const userAuthentication = async () => {
+    try {
+      setIsLoading(true);
+      const response = await fetch(`${CONFIGS.API_BASE_URL}/user`, {
+        method: "GET",
+        headers: {
+          Authorization: AuthorizationToken,
         }
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        setUser(data.userData);
+        await fetchUserRole(data.userData._id);
+        setIsLoading(false);
+      } else {
+        console.log('error fetching userdata')
+        setIsLoading(false);
+      }
+    } catch (error) {
+      console.error("Error Fetching user data", error)
+      setIsLoading(false);
     }
+  }
 
-    
-    useEffect(() => {
-        
-        userAuthentication();
-        // LogoutUser();
-    }, [token])
-    
+  const fetchUserRole = async (userId) => {
+    try {
+      const response = await fetch(`${CONFIGS.API_BASE_URL}/fetchrole`, {
+        method: "POST",
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: AuthorizationToken,
+        },
+        body: JSON.stringify({ _id: userId }),
+      });
 
-    // token
-    return(
-     <AuthContext.Provider value={{isLoggedIn,storeTokenInLS,LogoutUser,user}}>
-    {children}
+      if (response.ok) {
+        const data = await response.json();
+        setRole(data.role);
+      } else {
+        console.log('Error fetching role');
+      }
+    } catch (error) {
+      console.log('Error fetching role', error);
+    }
+  };
+
+  useEffect(() => {
+    if (token) {
+      userAuthentication();
+    } else {
+      setIsLoading(false);
+    }
+  }, [token])
+
+  return (
+    <AuthContext.Provider value={{ isLoggedIn, storeTokenInLS, LogoutUser, user, role, isLoading }}>
+      {children}
     </AuthContext.Provider>
-    )
+  )
 }
-export const useAuth = ()=>{
-    const AuthContextValue =  useContext(AuthContext);
-    if(!AuthContextValue)
-    {
-     throw new Error("useAuth used Outside of the provider");
-    }
-    return AuthContextValue;
-} 
+
+export const useAuth = () => {
+  const AuthContextValue = useContext(AuthContext);
+  if (!AuthContextValue) {
+    throw new Error("useAuth used outside of the provider");
+  }
+  return AuthContextValue;
+}
