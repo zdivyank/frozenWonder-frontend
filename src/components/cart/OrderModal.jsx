@@ -49,8 +49,9 @@ function OrderModal({ cartItems, total, onClose, setCartItems }) {
       toast.error('Please enter a mobile number');
       return;
     }
-
+  
     try {
+      console.log('Fetching customer details for number:', customerInfo.cust_number);
       const response = await fetch(`${CONFIGS.API_BASE_URL}/isAlreadyuser`, {
         method: "POST",
         headers: {
@@ -58,15 +59,19 @@ function OrderModal({ cartItems, total, onClose, setCartItems }) {
         },
         body: JSON.stringify({ cust_number: customerInfo.cust_number }),
       });
-
+  
+      console.log('API Response status:', response.status);
+  
       if (response.ok) {
         const data = await response.json();
+        console.log('Customer data received:', data);
+  
         if (data.response && data.response.length > 0) {
           const customer = data.response[0];
           setCustomerInfo(prev => ({
             ...prev,
             cust_name: customer.cust_name || '',
-            cust_addresses: customer.cust_address || [], // This should now be an array of addresses
+            cust_addresses: customer.cust_address || [],
             selected_address: customer.selected_address ? parseInt(customer.selected_address) : 1,
             pincode: customer.pincode || '',
             isNewUser: false,
@@ -84,6 +89,8 @@ function OrderModal({ cartItems, total, onClose, setCartItems }) {
           toast.info('No existing customer found. Please fill in your details.');
         }
       } else {
+        const errorData = await response.json();
+        console.error('Error response data:', errorData);
         throw new Error('Failed to fetch customer details');
       }
     } catch (error) {
@@ -91,6 +98,7 @@ function OrderModal({ cartItems, total, onClose, setCartItems }) {
       toast.error('Failed to fetch customer details. Please try again.');
     }
   };
+  
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (isSubmitting) return; // Prevent multiple submissions
@@ -143,6 +151,18 @@ function OrderModal({ cartItems, total, onClose, setCartItems }) {
         console.log(data);
         setIsOrderPlaced(true);
         toast.success(data.message);
+        setCustomerInfo(
+          {
+            cust_name: '',
+            cust_addresses: [],
+            selected_address: null,
+            cust_number: '',
+            pincode: '',
+            order_date: null,
+            timeslot: '',
+            isNewUser: true,
+          }
+        )
         onClose();
       } else {
         const errorData = await response.json();

@@ -61,10 +61,24 @@ function AdminOrder() {
         body: JSON.stringify({ status: newStatus }),
       });
 
-      if (response.ok) {
-        setOrders(orders.map(order =>
-          order._id === orderId ? { ...order, status: newStatus } : order
-        ));
+      // if (response.ok) {
+      //   setOrders(orders.map(order =>
+      //     order._id === orderId ? { ...order, status: newStatus } : order
+      //   ));
+
+        if (response.ok) {
+          const updatedOrders = orders.map(order =>
+            order._id === orderId ? { ...order, status: newStatus } : order
+          );
+          
+          // Re-sort the orders
+          const sortedOrders = updatedOrders.sort((a, b) => {
+            if (a.status === 'pending' && b.status !== 'pending') return -1;
+            if (a.status !== 'pending' && b.status === 'pending') return 1;
+            return new Date(b.order_date) - new Date(a.order_date);
+          });
+    
+          setOrders(sortedOrders);
       } else {
         console.log('Failed to update order status');
       }
