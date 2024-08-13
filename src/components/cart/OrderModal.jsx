@@ -169,10 +169,20 @@ function OrderModal({ cartItems, total, onClose, setCartItems }) {
         console.log(errorData);
         throw new Error(errorData.message || 'Failed to create order');
       }
-    } catch (error) {
+    }catch (error) {
       console.error('Error creating order:', error);
-      toast.error(`Failed to place order: ${error.message}`);
-    } finally {
+      let errorMessage = 'Failed to place order';
+      if (error.response) {
+        console.error('Error response:', error.response);
+        errorMessage += `: ${error.response.data.message || error.message}`;
+      } else if (error.request) {
+        console.error('Error request:', error.request);
+        errorMessage += ': No response received from server';
+      } else {
+        errorMessage += `: ${error.message}`;
+      }
+      toast.error(errorMessage);
+    }finally {
       setIsSubmitting(false);
     }
   };
