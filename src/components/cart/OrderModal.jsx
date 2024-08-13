@@ -13,7 +13,7 @@ function OrderModal({ cartItems, total, onClose, setCartItems }) {
   const [customerInfo, setCustomerInfo] = useState({
     cust_name: '',
     cust_addresses: [],
-    selected_address: null,
+    selected_address: '',
     cust_number: '',
     pincode: '',
     order_date: null,
@@ -65,7 +65,7 @@ function OrderModal({ cartItems, total, onClose, setCartItems }) {
             ...prev,
             cust_name: customer.cust_name || '',
             cust_addresses: customer.cust_address ? customer.cust_address.map((address, index) => address) : [],
-            selected_address: customer.selected_address ? parseInt(customer.selected_address) : 0,
+            selected_address: customer.selected_address ? parseInt(customer.selected_address) : '',
             pincode: customer.pincode || '',
             isNewUser: false,
           }));
@@ -98,6 +98,10 @@ function OrderModal({ cartItems, total, onClose, setCartItems }) {
       return;
     }
 
+    const selectedAddress = customerInfo.selected_address !== '' 
+      ? customerInfo.selected_address 
+      : 0;
+
     if (!customerInfo.selected_address && customerInfo.cust_addresses.length > 0) {
       setCustomerInfo(prev => ({ ...prev, selected_address: 0 }));
     }
@@ -105,7 +109,7 @@ function OrderModal({ cartItems, total, onClose, setCartItems }) {
     const orderData = {
       cust_name: customerInfo.cust_name,
       cust_address: customerInfo.cust_addresses,
-      selected_address: customerInfo.selected_address || 0,
+      selected_address: Number(selectedAddress),
       cust_number: customerInfo.cust_number,
       pincode: customerInfo.pincode,
       order_product: cartItems.map(item => ({
@@ -131,6 +135,9 @@ function OrderModal({ cartItems, total, onClose, setCartItems }) {
 
       if (response.ok) {
         const data = await response.json();
+        if (data.order && typeof data.order.selected_address === 'string') {
+          data.order.selected_address = Number(data.order.selected_address);
+        }
         console.log(data);
         setIsOrderPlaced(true);
         toast.success(data.message);
@@ -145,11 +152,9 @@ function OrderModal({ cartItems, total, onClose, setCartItems }) {
       toast.error(`Failed to place order: ${error.message}`);
     }
   };
-
   const handleSelectAddress = (value) => {
-    setCustomerInfo(prev => ({ ...prev, selected_address: Number(value) }));
+    setCustomerInfo(prev => ({ ...prev, selected_address: Number(value) + 1 }));
   };
-
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setCustomerInfo(prev => ({ ...prev, [name]: value }));
@@ -170,7 +175,7 @@ function OrderModal({ cartItems, total, onClose, setCartItems }) {
       setCustomerInfo(prev => ({
         ...prev,
         cust_addresses: updatedAddresses,
-        selected_address: updatedAddresses.length - 1,
+      selected_address: updatedAddresses.length,
       }));
 
       if (!customerInfo.isNewUser) {
@@ -181,7 +186,7 @@ function OrderModal({ cartItems, total, onClose, setCartItems }) {
           },
           body: JSON.stringify({
             cust_number: customerInfo.cust_number,
-            address: newAddress,
+            selectedAddress: newAddress,
           }),
         });
 
@@ -206,10 +211,10 @@ function OrderModal({ cartItems, total, onClose, setCartItems }) {
     try {
       setCustomerInfo(prev => {
         const updatedAddresses = prev.cust_addresses.filter((_, i) => i !== index);
-        const updatedSelectedAddress = prev.selected_address === index ? 
-          (updatedAddresses.length > 0 ? 0 : null) : 
-          (prev.selected_address > index ? prev.selected_address - 1 : prev.selected_address);
-
+        const updatedSelectedAddress = prev.selected_address === index + 1 ? 
+          (updatedAddresses.length > 0 ? 1 : null) : 
+          (prev.selected_address > index + 1 ? prev.selected_address - 1 : prev.selected_address);
+  
         return {
           ...prev,
           cust_addresses: updatedAddresses,
@@ -324,53 +329,52 @@ function OrderModal({ cartItems, total, onClose, setCartItems }) {
                 </div>
 
                 <div className="form-group">
-            <label>Address:</label>
-            {customerInfo.cust_addresses.length > 0 && (
-              <RadioTileGroup
-                name="selected_address"
-                value={customerInfo.selected_address}
-                onChange={handleSelectAddress}
-              >
-                {customerInfo.cust_addresses.map((address, index) => (
-                  <RadioTile key={index} value={index} style={{ marginBottom: '10px' }}>
-                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                      <div>
-                        <Icon as={FaHome} /> {address}
-                      </div>
-                      <button
-                        type="button"
-                        className="btn btn-danger btn-sm"
-                        onClick={(e) => {
-                          e.preventDefault();
-                          handleRemoveAddress(index);
-                        }}
-                      >
-                        <Icon as={FaTrash} />
-                      </button>
-                    </div>
-                  </RadioTile>
-                ))}
-              </RadioTileGroup>
-            )}
-            <div className="d-flex mt-2">
-              <Input
-                as="textarea"
-                rows={3}
-                placeholder="Enter new address"
-                value={newAddress}
-                onChange={handleNewAddressChange}
-                style={{ flex: 1 }}
-              />
-              <button
-                type="button"
-                className="btn btn-success ml-2"
-                onClick={handleAddAddress}
-              >
-                <Icon as={FaPlus} />
-              </button>
-            </div>
-          </div>
-
+                  <label>Address:</label>
+                  {customerInfo.cust_addresses.length > 0 && (
+                    <RadioTileGroup
+                      name="selected_address"
+                      value={customerInfo.selected_address - 1}
+                      onChange={handleSelectAddress}
+                    >
+                      {customerInfo.cust_addresses.map((address, index) => (
+                        <RadioTile key={index} value={index} style={{ marginBottom: '10px' }}>
+                          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                            <div>
+                              <Icon as={FaHome} /> {address}
+                            </div>
+                            <button
+                              type="button"
+                              className="btn btn-danger btn-sm"
+                              onClick={(e) => {
+                                e.preventDefault();
+                                handleRemoveAddress(index);
+                              }}
+                            >
+                              <Icon as={FaTrash} />
+                            </button>
+                          </div>
+                        </RadioTile>
+                      ))}
+                    </RadioTileGroup>
+                  )}
+                  <div className="d-flex mt-2">
+                    <Input
+                      as="textarea"
+                      rows={3}
+                      placeholder="Enter new address"
+                      value={newAddress}
+                      onChange={handleNewAddressChange}
+                      style={{ flex: 1 }}
+                    />
+                    <button
+                      type="button"
+                      className="btn btn-success ml-2"
+                      onClick={handleAddAddress}
+                    >
+                      <Icon as={FaPlus} />
+                    </button>
+                  </div>
+                </div>
 
                 <div className="form-group">
                   <label>Pincode:</label>
