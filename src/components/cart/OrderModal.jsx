@@ -8,6 +8,7 @@ import moment from 'moment';
 import { RadioGroup, Radio, Input, RadioTileGroup, RadioTile } from 'rsuite';
 import { Icon } from '@rsuite/icons';
 import { FaHome, FaPlus, FaTrash } from 'react-icons/fa';
+import { useNavigate } from 'react-router-dom';
 
 function OrderModal({ cartItems, total, onClose, setCartItems }) {
   const [customerInfo, setCustomerInfo] = useState({
@@ -23,6 +24,8 @@ function OrderModal({ cartItems, total, onClose, setCartItems }) {
   const [isOrderPlaced, setIsOrderPlaced] = useState(false);
   const [blockedDates, setBlockedDates] = useState([]);
   const [newAddress, setNewAddress] = useState('');
+
+  const navigate = useNavigate();
 
   useEffect(() => {
     fetchBlockedDates();
@@ -41,7 +44,6 @@ function OrderModal({ cartItems, total, onClose, setCartItems }) {
       console.error('Error fetching blocked dates:', error);
     }
   };
-
   const handleFetchCustomerDetails = async () => {
     if (!customerInfo.cust_number) {
       toast.error('Please enter a mobile number');
@@ -59,6 +61,7 @@ function OrderModal({ cartItems, total, onClose, setCartItems }) {
 
       if (response.ok) {
         const data = await response.json();
+
         if (data.response && data.response.length > 0) {
           const customer = data.response[0];
           setCustomerInfo(prev => ({
@@ -98,8 +101,8 @@ function OrderModal({ cartItems, total, onClose, setCartItems }) {
       return;
     }
 
-    const selectedAddress = customerInfo.selected_address !== '' 
-      ? customerInfo.selected_address 
+    const selectedAddress = customerInfo.selected_address !== ''
+      ? customerInfo.selected_address
       : 0;
 
     if (!customerInfo.selected_address && customerInfo.cust_addresses.length > 0) {
@@ -134,13 +137,14 @@ function OrderModal({ cartItems, total, onClose, setCartItems }) {
       });
 
       if (response.ok) {
+        navigate('/')
         const data = await response.json();
+        toast.success(data.message);
         if (data.order && typeof data.order.selected_address === 'string') {
           data.order.selected_address = Number(data.order.selected_address);
         }
         console.log(data);
         setIsOrderPlaced(true);
-        toast.success(data.message);
         onClose();
       } else {
         const errorData = await response.json();
@@ -175,7 +179,7 @@ function OrderModal({ cartItems, total, onClose, setCartItems }) {
       setCustomerInfo(prev => ({
         ...prev,
         cust_addresses: updatedAddresses,
-      selected_address: updatedAddresses.length,
+        selected_address: updatedAddresses.length,
       }));
 
       if (!customerInfo.isNewUser) {
@@ -211,10 +215,10 @@ function OrderModal({ cartItems, total, onClose, setCartItems }) {
     try {
       setCustomerInfo(prev => {
         const updatedAddresses = prev.cust_addresses.filter((_, i) => i !== index);
-        const updatedSelectedAddress = prev.selected_address === index + 1 ? 
-          (updatedAddresses.length > 0 ? 1 : null) : 
+        const updatedSelectedAddress = prev.selected_address === index + 1 ?
+          (updatedAddresses.length > 0 ? 1 : null) :
           (prev.selected_address > index + 1 ? prev.selected_address - 1 : prev.selected_address);
-  
+
         return {
           ...prev,
           cust_addresses: updatedAddresses,
@@ -419,9 +423,13 @@ function OrderModal({ cartItems, total, onClose, setCartItems }) {
                   </select>
                 </div>
               </div>
-              <button type="submit" className="btn btn-primary btn-block mt-3">
-                Place Order
-              </button>
+              {(!customerInfo.isNewUser) ? (
+                <p className="text-danger">Orders are currently limited to 500 unique customers. We apologize for the inconvenience.</p>
+              ) : (
+                <button type="submit" className="btn btn-primary btn-block mt-3">
+                  Place Order
+                </button>
+              )}
             </form>
           </div>
         </div>
