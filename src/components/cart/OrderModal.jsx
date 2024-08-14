@@ -24,12 +24,55 @@ function OrderModal({ cartItems, total, onClose, setCartItems }) {
   const [isOrderPlaced, setIsOrderPlaced] = useState(false);
   const [blockedDates, setBlockedDates] = useState([]);
   const [newAddress, setNewAddress] = useState('');
+  const [couponCode, setCouponCode] = useState('');
+  const [availableCoupons, setAvailableCoupons] = useState({});
+  const [discountedTotal, setDiscountedTotal] = useState(total);
 
   const navigate = useNavigate();
 
+
   useEffect(() => {
     fetchBlockedDates();
+    fetchAvailableCoupons();
   }, []);
+
+  const fetchAvailableCoupons = async () => {
+    try {
+      const response = await fetch(`${CONFIGS.API_BASE_URL}/getcoupon`);
+      if (response.ok) {
+        const data = await response.json();
+        console.log(data.message);
+
+        if (typeof data.message === 'object' && data.message !== null) {
+          setAvailableCoupons(data.message);
+        } else {
+          console.error('API did not return an object of coupons');
+          setAvailableCoupons({});
+        }
+      } else {
+        console.error('Failed to fetch available coupons');
+        setAvailableCoupons({});
+      }
+    } catch (error) {
+      console.error('Error fetching available coupons:', error);
+      setAvailableCoupons({});
+    }
+  };
+
+
+  useEffect(() => {
+    calculateDiscountedTotal();
+  }, [couponCode, total, availableCoupons]); // Add availableCoupons to the dependency array
+
+  const calculateDiscountedTotal = () => {
+    const selectedCoupon = availableCoupons[couponCode];
+    if (selectedCoupon) {
+      const discount = selectedCoupon.discount / 100;
+      setDiscountedTotal(total - (total * discount));
+    } else {
+      setDiscountedTotal(total);
+    }
+  };
 
   const fetchBlockedDates = async () => {
     try {
@@ -95,20 +138,20 @@ function OrderModal({ cartItems, total, onClose, setCartItems }) {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
+  
     if (customerInfo.cust_addresses.length === 0) {
       toast.error('Please add at least one address');
       return;
     }
-
+  
     const selectedAddress = customerInfo.selected_address !== ''
       ? customerInfo.selected_address
       : 0;
-
+  
     if (!customerInfo.selected_address && customerInfo.cust_addresses.length > 0) {
       setCustomerInfo(prev => ({ ...prev, selected_address: 0 }));
     }
-
+  
     const orderData = {
       cust_name: customerInfo.cust_name,
       cust_address: customerInfo.cust_addresses,
@@ -120,13 +163,14 @@ function OrderModal({ cartItems, total, onClose, setCartItems }) {
         quantity: item.quantity,
         price: item.product.packs[item.packIndex].price
       })),
-      total_amount: total,
+      total_amount: discountedTotal,
       order_date: customerInfo.order_date ? moment(customerInfo.order_date).format('YYYY-MM-DD') : null,
-      timeslot: customerInfo.timeslot
+      timeslot: customerInfo.timeslot,
+      coupon_code: couponCode, // Make sure this line is present
     };
-
+  
     console.log('Order Data:', orderData);
-
+  
     try {
       const response = await fetch(`${CONFIGS.API_BASE_URL}/addorder`, {
         method: 'POST',
@@ -135,10 +179,11 @@ function OrderModal({ cartItems, total, onClose, setCartItems }) {
         },
         body: JSON.stringify(orderData),
       });
-
+  
       if (response.ok) {
         navigate('/')
         const data = await response.json();
+        console.log('Sending order data:', JSON.stringify(orderData, null, 2)); 
         toast.success(data.message);
         if (data.order && typeof data.order.selected_address === 'string') {
           data.order.selected_address = Number(data.order.selected_address);
@@ -296,6 +341,9 @@ function OrderModal({ cartItems, total, onClose, setCartItems }) {
               </div>
             ))}
             <h4>Total: RS.{total}</h4>
+            {discountedTotal !== total && (
+              <h4>Discounted Total: RS.{discountedTotal.toFixed(2)}</h4>
+            )}
             <hr />
             <form onSubmit={handleSubmit}>
               <div className="order_container">
@@ -422,6 +470,23 @@ function OrderModal({ cartItems, total, onClose, setCartItems }) {
                     ))}
                   </select>
                 </div>
+              </div>
+
+              <div className="form-group">
+                <label>Coupon Code:</label>
+                <select
+                  name="couponCode"
+                  value={couponCode}
+                  onChange={(e) => setCouponCode(e.target.value)}
+                  className="order_info"
+                >
+                  <option value="">Select a coupon code</option>
+                  {Object.entries(availableCoupons).map(([code, coupon]) => (
+                    <option key={code} value={coupon.code}>
+                      {code}-{coupon.code} - {coupon.discount}% off
+                    </option>
+                  ))}
+                </select>
               </div>
               {(!customerInfo.isNewUser) ? (
                 <p className="text-danger">Orders are currently limited to 500 unique customers. We apologize for the inconvenience.</p>
