@@ -26,13 +26,14 @@ import AdminTestimonials from './components/admin/tesimonails/AdminTesimonails';
 import Admin_user from './components/admin/user/Admin_user';
 import BlockDate from './components/admin/blockdate/BlockDate';
 import Admin_agency from './components/admin/user/Admin_agency';
-import Agency_orders from './components/agency/orders/Agency_order';
+import Agency_orders from './components/agency/orders/Agency_orders';
 import Agency_location from './components/agency/orders/Agency_location';
 import DeliveryPerson_orders from './components/delivery/DeliveryPerson_orders';
 import Cart from './components/cart/Cart';
 import { FaBars, FaTimes } from 'react-icons/fa';
 import { Link as ScrollLink } from 'react-scroll';
 import { HiMiniShoppingCart } from 'react-icons/hi2';
+import Assign_orders from './components/agency/orders/Assign_order';
 
 function AppContent() {
   const { isLoggedIn, role, isLoading } = useAuth();
@@ -181,6 +182,7 @@ function AppContent() {
 
             {/* Agency Routes */}
             <Route path="/agency/orders" element={isLoggedIn && role === 'agency' ? <Agency_orders /> : <Navigate to="/admin" replace />} />
+            <Route path="/agency/assignorders" element={isLoggedIn && role === 'agency' ? <Assign_orders /> : <Navigate to="/admin" replace />} />
             <Route path="/agency/location" element={isLoggedIn && role === 'agency' ? <Agency_location /> : <Navigate to="/admin" replace />} />
 
             {/* Delivery Person Routes */}

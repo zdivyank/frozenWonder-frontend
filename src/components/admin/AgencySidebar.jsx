@@ -8,6 +8,7 @@ import { IoLogOutOutline } from 'react-icons/io5';
 import { VscFeedback } from 'react-icons/vsc';
 import { FaUsers } from 'react-icons/fa';
 import { CiCalendarDate } from 'react-icons/ci';
+import { MdOutlineAssignmentTurnedIn } from 'react-icons/md';
 
 function AgencySidebar() {
   return (
@@ -17,6 +18,7 @@ function AgencySidebar() {
       <ul>
       
         <li><NavLink to="/agency/orders" activeClassName="active"><GoListOrdered className='me-2'/>Order Summary</NavLink></li>
+        <li><NavLink to="/agency/assignorders" activeClassName="active"><MdOutlineAssignmentTurnedIn className='me-2'/>Assign Order </NavLink></li>
         <li><NavLink to="/agency/location" activeClassName="active"><FaLocationDot className='me-2'/>
         Location Filter</NavLink></li>
         <li><NavLink to="/logout" className="logout"><IoLogOutOutline className='me-2'/>
