@@ -8,6 +8,7 @@ function Product({ addToCart, cart = [] }) {
   const [products, setProducts] = useState([]);
   const [quantities, setQuantities] = useState({});
   const [productColors, setProductColors] = useState({});
+  const [openProductId, setOpenProductId] = useState(null);
 
   const fetchProducts = async () => {
     try {
@@ -94,6 +95,10 @@ function Product({ addToCart, cart = [] }) {
     }
   };
 
+  const toggleProductCard = (productId) => {
+    setOpenProductId(prevId => (prevId === productId ? null : productId));
+  };
+
   return (
     <div className='product_container' id='products'>
       <h1 className='text-center'>Products</h1>
@@ -102,8 +107,9 @@ function Product({ addToCart, cart = [] }) {
           {products.map((product) => (
             <div 
               key={product._id} 
-              className="product-item"
+              className={`product-item ${openProductId === product._id ? 'open' : ''}`}
               style={{"--product-color": productColors[product._id] || 'transparent'}}
+              onClick={() => toggleProductCard(product._id)}
             >
               <motion.div
                 whileTap={{
@@ -114,7 +120,7 @@ function Product({ addToCart, cart = [] }) {
               >
                 <img src={product.image} alt={product.name} />
               </motion.div>
-              <div className="content">
+              <div className={`content ${openProductId === product._id ? 'show' : 'hide'}`}>
                 <h3>{product.name}</h3>
                 <p>{product.desc}</p>
                 {product.discount > 0 && <p>Discount: {product.discount}%</p>}
@@ -123,7 +129,7 @@ function Product({ addToCart, cart = [] }) {
                   {product.packs.map((pack, index) => (
                     <div key={index} className="pack-item">
                       <p>{pack.ml}ML * {pack.unit} - RS.{pack.price}</p>
-                      <p className="stock-info">
+                      <p className="stock-info text-danger">
                         {getAvailableQuantity(product, index) === 0 
                           ? 'Out of Stock'
                           : getAvailableQuantity(product, index) <= 10
