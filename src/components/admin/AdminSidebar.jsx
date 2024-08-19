@@ -8,6 +8,7 @@ import { IoLogOutOutline } from 'react-icons/io5';
 import { VscFeedback } from 'react-icons/vsc';
 import { FaUsers } from 'react-icons/fa';
 import { CiCalendarDate } from 'react-icons/ci';
+import { IoIosContact } from 'react-icons/io';
 
 function AdminSidebar() {
   return (
@@ -23,6 +24,7 @@ function AdminSidebar() {
          Success Stories</NavLink></li>
         <li><NavLink to="/admin/user"><FaUsers className='me-2'/>Add User</NavLink></li>
         <li><NavLink to="/admin/date"><CiCalendarDate className='me-2'/>Block Dates</NavLink></li>
+        <li><NavLink to="/admin/contact"><IoIosContact className='me-2'/>Contact Us</NavLink></li>
         <li><NavLink to="/logout" className="logout"><IoLogOutOutline className='me-2'/>
         Logout</NavLink></li>
       </ul>

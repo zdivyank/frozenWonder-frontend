@@ -34,6 +34,8 @@ import { FaBars, FaTimes } from 'react-icons/fa';
 import { Link as ScrollLink } from 'react-scroll';
 import { HiMiniShoppingCart } from 'react-icons/hi2';
 import Assign_orders from './components/agency/orders/Assign_order';
+import Inquiries from './components/inquiry/Inquiries';
+import Admin_contact from './components/admin/contact/Admin_contact';
 
 function AppContent() {
   const { isLoggedIn, role, isLoading } = useAuth();
@@ -140,6 +142,9 @@ function AppContent() {
                 <li className="nav-item">
                   <ScrollLink to="testimonials" smooth={true} duration={500} className="nav-link" onClick={() => setIsNavOpen(false)}>Success Stories</ScrollLink>
                 </li>
+                <li className="nav-item">
+                  <ScrollLink to="inquiries" smooth={true} duration={500} className="nav-link" onClick={() => setIsNavOpen(false)}>Contact Us</ScrollLink>
+                </li>
               </>
             )}
           </ul>
@@ -164,6 +169,7 @@ function AppContent() {
                 <Element name="about"><About /></Element>
                 <Element name="products"><Product addToCart={addToCart} cart={cartItems} /></Element>
                 <Element name="testimonials"><Testimonials /></Element>
+                <Element name="inquiries"><Inquiries /></Element>
               </>
             } />
             <Route path="/admin" element={!isLoggedIn ? <Admin /> : <Navigate to={`/${role === 'owner' ? 'admin/product' : role === 'agency' ? 'agency/orders' : 'delivery/orders'}`} replace />} />
@@ -179,6 +185,7 @@ function AppContent() {
             <Route path="/admin/user" element={isLoggedIn && role === 'owner' ? <Admin_user /> : <Navigate to="/admin" replace />} />
             <Route path="/admin/agency" element={isLoggedIn && role === 'owner' ? <Admin_agency /> : <Navigate to="/admin" replace />} />
             <Route path="/admin/date" element={isLoggedIn && role === 'owner' ? <BlockDate /> : <Navigate to="/admin" replace />} />
+            <Route path="/admin/contact" element={isLoggedIn && role === 'owner' ? <Admin_contact /> : <Navigate to="/admin" replace />} />
 
             {/* Agency Routes */}
             <Route path="/agency/orders" element={isLoggedIn && role === 'agency' ? <Agency_orders /> : <Navigate to="/admin" replace />} />
