@@ -1,9 +1,9 @@
-/* adminOrder.css */
+/* adminOrder.css
 
 .admin-order-section {
-  /* padding: 20px 0; */
+  padding: 20px 0;
   margin: 2%;
-  /* background-color: #f8f9fa; */
+  
 }
 
 .admin-order-title {
@@ -118,7 +118,7 @@
   color: white;
 }
 
-/* Modal */
+
 .modal-header {
   background-color: #f8f9fa;
 }
@@ -130,4 +130,4 @@
 .modal-footer {
   display: flex;
   justify-content: space-between;
-}
+} */
