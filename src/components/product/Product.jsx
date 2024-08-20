@@ -6,7 +6,6 @@ import { motion } from 'framer-motion';
 
 function Product({ addToCart, cart = [] }) {
   const [products, setProducts] = useState([]);
-  const [quantities, setQuantities] = useState({});
   const [productColors, setProductColors] = useState({});
   const [openProductId, setOpenProductId] = useState(null);
 
@@ -63,36 +62,16 @@ function Product({ addToCart, cart = [] }) {
     return product.packs[packIndex].inventory;
   };
 
-  const handleQuantityChange = (productId, packIndex, change) => {
-    setQuantities(prevState => {
-      const currentQuantity = prevState[productId]?.[packIndex] || 0;
-      const product = products.find(p => p._id === productId);
-      const availableQuantity = getAvailableQuantity(product, packIndex);
-      const newQuantity = Math.max(0, Math.min(currentQuantity + change, availableQuantity));
-      return {
-        ...prevState,
-        [productId]: {
-          ...prevState[productId],
-          [packIndex]: newQuantity
-        }
-      };
-    });
+  const isProductInCart = (productId) => {
+    return cart.some(item => item.product._id === productId);
   };
 
   const handleAddToCart = (product, packIndex) => {
-    const quantity = quantities[product._id]?.[packIndex] || 0;
-    if (quantity > 0) {
-      addToCart(product, packIndex, quantity);
-
-      // Reset quantity to 0 after adding to cart
-      setQuantities(prevState => ({
-        ...prevState,
-        [product._id]: {
-          ...prevState[product._id],
-          [packIndex]: 0
-        }
-      }));
+    if (isProductInCart(product._id)) {
+      return; // Do nothing if the product is already in the cart
     }
+    const quantity = 1; // Set quantity to 1 by default
+    addToCart(product, packIndex, quantity);
   };
 
   const toggleProductCard = (productId) => {
@@ -138,7 +117,8 @@ function Product({ addToCart, cart = [] }) {
                       </p>
                       {getAvailableQuantity(product, index) > 0 && (
                         <div className="quantity-controls">
-                          <button 
+                          {/* Commented out quantity selection controls */}
+                          {/* <button 
                             className='btn btn-dark me-3' 
                             onClick={() => handleQuantityChange(product._id, index, -1)}
                             disabled={!quantities[product._id]?.[index]}
@@ -152,14 +132,14 @@ function Product({ addToCart, cart = [] }) {
                             disabled={quantities[product._id]?.[index] >= getAvailableQuantity(product, index)}
                           >
                             +
-                          </button>
+                          </button> */}
                           <button 
                             className='btn btn-dark mb-3' 
                             onClick={() => handleAddToCart(product, index)}
-                            disabled={!quantities[product._id]?.[index]}
+                            disabled={isProductInCart(product._id)}
                           >
                             <IoMdCart />
-                            Add to Cart
+                            {isProductInCart(product._id) ? 'Added to Cart' : 'Add to Cart'}
                           </button>
                         </div>
                       )}
