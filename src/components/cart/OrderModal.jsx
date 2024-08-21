@@ -20,6 +20,7 @@ function OrderModal({ cartItems, total, onClose, setCartItems }) {
     order_date: null,
     timeslot: '',
     isNewUser: true,
+    otp:''
   });
   const [isOrderPlaced, setIsOrderPlaced] = useState(false);
   const [blockedDates, setBlockedDates] = useState([]);
@@ -27,6 +28,12 @@ function OrderModal({ cartItems, total, onClose, setCartItems }) {
   const [couponCode, setCouponCode] = useState('');
   const [availableCoupons, setAvailableCoupons] = useState({});
   const [discountedTotal, setDiscountedTotal] = useState(total);
+
+  const [showOTPInput, setShowOTPInput] = useState(false);
+  const [showOtherFields, setShowOtherFields] = useState(false);
+  const [otpVerified, setOtpVerified] = useState(false);
+  const [showIndividualFields, setShowIndividualFields] = useState(false);
+
 
   const navigate = useNavigate();
 
@@ -87,6 +94,59 @@ function OrderModal({ cartItems, total, onClose, setCartItems }) {
       console.error('Error fetching blocked dates:', error);
     }
   };
+
+  const sendotp = async ()=>{
+    try {
+      const response = await fetch(`${CONFIGS.API_BASE_URL}/sendotp`, {
+        method: "POST",
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ cust_number: customerInfo.cust_number }),
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        console.log(data);
+        setShowOTPInput(true);
+        
+      }
+    } catch (error) {
+      console.log(error);
+      
+    }
+  }
+
+
+  const verifyotp = async()=>{
+    try {
+      const response = await fetch(`${CONFIGS.API_BASE_URL}/verifyotp`, {
+        method: "POST",
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ cust_number: customerInfo.cust_number,otp:customerInfo.otp }),
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        console.log(data);
+        handleFetchCustomerDetails()
+        // setShowOTPInput(false);
+        setOtpVerified(true);
+        setShowOTPInput(false);
+        setShowIndividualFields(true);
+        setShowOtherFields(true);
+
+        
+      }
+    } catch (error) {
+     console.log(error);
+      
+    }
+  }
+
+
   const handleFetchCustomerDetails = async () => {
     if (!customerInfo.cust_number) {
       toast.error('Please enter a mobile number');
@@ -166,6 +226,7 @@ function OrderModal({ cartItems, total, onClose, setCartItems }) {
       total_amount: discountedTotal,
       order_date: customerInfo.order_date ? moment(customerInfo.order_date).format('YYYY-MM-DD') : null,
       timeslot: customerInfo.timeslot,
+      otp: customerInfo.otp,
       coupon_code: couponCode, // Make sure this line is present
     };
   
@@ -324,183 +385,217 @@ function OrderModal({ cartItems, total, onClose, setCartItems }) {
 
   return (
     <div className="modal" style={{ display: 'block', backgroundColor: 'rgba(0,0,0,0.5)' }}>
-      <div className="modal-dialog">
-        <div className="modal-content">
-          <div className="modal-header">
-            <h5 className="modal-title">Order Summary</h5>
-            <button type="button" className="close" onClick={onClose}>
-              <span className='text-dark'>&times;</span>
-            </button>
-          </div>
-          <div className="modal-body">
-            {cartItems.map((item, index) => (
-              <div key={index}>
-                {item.product.name} - {item.product.packs[item.packIndex].ml}ML * {item.product.packs[item.packIndex].unit}
-                - Quantity: {item.quantity}
-                - Price: RS.{item.product.packs[item.packIndex].price * item.quantity}
-              </div>
-            ))}
-            <h4>Total: RS.{total}</h4>
-            {discountedTotal !== total && (
-              <h4>Discounted Total: RS.{discountedTotal.toFixed(2)}</h4>
-            )}
-            <hr />
-            <form onSubmit={handleSubmit}>
-              <div className="order_container">
-                <div className="form-group">
-                  <label>Email:</label>
-                  <div className="">
+    <div className="modal-dialog">
+      <div className="modal-content">
+        <div className="modal-header">
+          <h5 className="modal-title">Order Summary</h5>
+          <button type="button" className="close" onClick={onClose}>
+            <span className="text-dark">&times;</span>
+          </button>
+        </div>
+        <div className="modal-body">
+          {cartItems.map((item, index) => (
+            <div key={index}>
+              {item.product.name} - {item.product.packs[item.packIndex].ml}ML * {item.product.packs[item.packIndex].unit}
+              - Quantity: {item.quantity} - Price: RS.{item.product.packs[item.packIndex].price * item.quantity}
+            </div>
+          ))}
+          <h4>Total: RS.{total}</h4>
+          {discountedTotal !== total && <h4>Discounted Total: RS.{discountedTotal.toFixed(2)}</h4>}
+          <hr />
+          <form onSubmit={handleSubmit}>
+            <div className="order_container">
+              {/* Show Email and Send OTP Button */}
+              {!showOTPInput && !showIndividualFields && (
+                  <div className="form-group">
+                    <label>Email:</label>
+                    <div className="">
+                      <input
+                        type="text"
+                        name="cust_number"
+                        value={customerInfo.cust_number}
+                        onChange={handleInputChange}
+                        className="order_info"
+                        required
+                      />
+                      <button
+                        type="button"
+                        className="btn btn-outline-danger mt-4 d-flex text-center"
+                        onClick={sendotp}
+                      >
+                        SEND OTP
+                      </button>
+                    </div>
+                  </div>
+                )}
+
+  
+              {/* Show OTP Verification Field */}
+              {showOTPInput && (
+                  <div className="form-group">
+                    <label>OTP:</label>
+                    <div className="">
+                      <input
+                        type="tel"
+                        name="otp"
+                        value={customerInfo.otp}
+                        onChange={handleInputChange}
+                        className="order_info"
+                        required
+                      />
+                      <button
+                        type="button"
+                        className="btn btn-outline-success mt-4 d-flex text-center"
+                        onClick={verifyotp}
+                      >
+                        VERIFY OTP
+                      </button>
+                    </div>
+                  </div>
+                )}
+  
+              {/* Show Additional Fields After OTP Verification */}
+              {showOtherFields && showIndividualFields && (
+                <>
+                  <div className="form-group">
+                    <label>Name:</label>
                     <input
-                      type="tel"
-                      name="cust_number"
-                      value={customerInfo.cust_number}
+                      type="text"
+                      name="cust_name"
+                      value={customerInfo.cust_name}
                       onChange={handleInputChange}
                       className="order_info"
                       required
                     />
-                    <button
-                      type="button"
-                      className="btn btn-secondary ml-2"
-                      onClick={handleFetchCustomerDetails}
-                    >
-                      Fetch Details
-                    </button>
                   </div>
-                </div>
-
-                <div className="form-group">
-                  <label>Name:</label>
-                  <input
-                    type="text"
-                    name="cust_name"
-                    value={customerInfo.cust_name}
-                    onChange={handleInputChange}
-                    className="order_info"
-                    required
-                  />
-                </div>
-
-                <div className="form-group">
-                  <label>Address:</label>
-                  {customerInfo.cust_addresses.length > 0 && (
-                    <RadioTileGroup
-                      name="selected_address"
-                      value={customerInfo.selected_address - 1}
-                      onChange={handleSelectAddress}
-                    >
-                      {customerInfo.cust_addresses.map((address, index) => (
-                        <RadioTile key={index} value={index} style={{ marginBottom: '10px' }}>
-                          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                            <div>
-                              <Icon as={FaHome} /> {address}
+                  <div className="form-group">
+                    <label>Address:</label>
+                    {customerInfo.cust_addresses.length > 0 && (
+                      <RadioTileGroup
+                        name="selected_address"
+                        value={customerInfo.selected_address - 1}
+                        onChange={handleSelectAddress}
+                      >
+                        {customerInfo.cust_addresses.map((address, index) => (
+                          <RadioTile key={index} value={index} style={{ marginBottom: '10px' }}>
+                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                              <div>
+                                <Icon as={FaHome} /> {address}
+                              </div>
+                              <button
+                                type="button"
+                                className="btn btn-danger"
+                                onClick={(e) => {
+                                  e.preventDefault();
+                                  handleRemoveAddress(index);
+                                }}
+                              >
+                                <Icon as={FaTrash} />
+                              </button>
                             </div>
-                            <button
-                              type="button"
-                              className="btn btn-danger btn-sm"
-                              onClick={(e) => {
-                                e.preventDefault();
-                                handleRemoveAddress(index);
-                              }}
-                            >
-                              <Icon as={FaTrash} />
-                            </button>
-                          </div>
-                        </RadioTile>
-                      ))}
-                    </RadioTileGroup>
-                  )}
-                  <div className="d-flex mt-2">
-                    <Input
-                      as="textarea"
-                      rows={3}
-                      placeholder="Enter new address"
-                      value={newAddress}
-                      onChange={handleNewAddressChange}
-                      style={{ flex: 1 }}
-                    />
-                    <button
-                      type="button"
-                      className="btn btn-success ml-2"
-                      onClick={handleAddAddress}
-                    >
-                      <Icon as={FaPlus} />
-                    </button>
+                          </RadioTile>
+                        ))}
+                      </RadioTileGroup>
+                    )}
+                    <div className="d-flex mt-2">
+                      <Input
+                        as="textarea"
+                        rows={3}
+                        placeholder="Enter new address"
+                        value={newAddress}
+                        onChange={handleNewAddressChange}
+                        style={{ flex: 1 }}
+                      />
+                      <button
+                        type="button"
+                        className="btn btn-success ml-2"
+                        onClick={handleAddAddress}
+                      >
+                        <Icon as={FaPlus} />
+                      </button>
+                    </div>
                   </div>
-                </div>
-
-                <div className="form-group">
-                  <label>Pincode:</label>
-                  <input
-                    type="text"
-                    name="pincode"
-                    value={customerInfo.pincode}
-                    onChange={handleInputChange}
-                    className="order_info"
-                    required
-                  />
-                </div>
-
-                <div className="form-group">
-                  <label>Order Date:</label>
-                  <DatePicker
-                    selected={customerInfo.order_date}
-                    onChange={handleDateChange}
-                    minDate={new Date()}
-                    dateFormat="dd/MM/yyyy"
-                    className="order_info"
-                    filterDate={date => !isDateDisabled(date)}
-                    required
-                  />
-                </div>
-
-                <div className="form-group">
-                  <label>Time Slot:</label>
-                  <select
-                    name="timeslot"
-                    value={customerInfo.timeslot}
-                    onChange={handleInputChange}
-                    className="order_info"
-                    required
-                  >
-                    <option value="" disabled>Select a time slot</option>
-                    {getAvailableTimeSlots().map(slot => (
-                      <option key={slot} value={slot}>
-                        {slot === 'morning' ? 'Morning (9AM - 12PM)' : 'Evening (4PM - 7PM)'}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-              </div>
-
-              <div className="form-group">
-                <label>Coupon Code:</label>
-                <select
-                  name="couponCode"
-                  value={couponCode}
-                  onChange={(e) => setCouponCode(e.target.value)}
-                  className="order_info"
-                >
-                  <option value="">Select a coupon code</option>
-                  {Object.entries(availableCoupons).map(([code, coupon]) => (
-                    <option key={code} value={coupon.code}>
-                      {code}-{coupon.code} - {coupon.discount}% off
-                    </option>
-                  ))}
-                </select>
-              </div>
-              {(!customerInfo.isNewUser) ? (
-                <p className="text-danger">Orders are currently limited to 500 unique customers. We apologize for the inconvenience.</p>
-              ) : (
-                <button type="submit" className="btn btn-primary btn-block mt-3">
-                  Place Order
-                </button>
+  
+                  <div className="form-group">
+                    <label>Pincode:</label>
+                    <input
+                      type="text"
+                      name="pincode"
+                      value={customerInfo.pincode}
+                      onChange={handleInputChange}
+                      className="order_info"
+                      required
+                    />
+                  </div>
+  
+                  <div className="form-group">
+                    <label>Order Date:</label>
+                    <DatePicker
+                      selected={customerInfo.order_date}
+                      onChange={handleDateChange}
+                      minDate={new Date()}
+                      dateFormat="dd/MM/yyyy"
+                      className="order_info"
+                      filterDate={date => !isDateDisabled(date)}
+                      required
+                    />
+                  </div>
+  
+                  <div className="form-group">
+                    <label>Time Slot:</label>
+                    <select
+                      name="timeslot"
+                      value={customerInfo.timeslot}
+                      onChange={handleInputChange}
+                      className="order_info"
+                      required
+                    >
+                      <option value="" disabled>Select a time slot</option>
+                      {getAvailableTimeSlots().map(slot => (
+                        <option key={slot} value={slot}>
+                          {slot === 'morning' ? 'Morning (9AM - 12PM)' : 'Evening (4PM - 7PM)'}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+  
+                  <div className="form-group">
+                    <label>Coupon Code:</label>
+                    <select
+                      name="couponCode"
+                      value={couponCode}
+                      onChange={(e) => setCouponCode(e.target.value)}
+                      className="order_info"
+                    >
+                      <option value="">Select a coupon code</option>
+                      {Object.entries(availableCoupons).map(([code, coupon]) => (
+                        <option key={code} value={coupon.code}>
+                          {code}-{coupon.code} - {coupon.discount}% off
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+  
+                  {/* Submit Button */}
+                  {!customerInfo.isNewUser ? (
+                    <p className="text-danger">Orders are currently limited to 500 unique customers. We apologize for the inconvenience.</p>
+                  ) : (
+                    <button type="submit" className="btn btn-primary btn-block mt-3">
+                      Place Order
+                    </button>
+                  )}
+                </>
               )}
-            </form>
-          </div>
+            </div>
+          </form>
         </div>
       </div>
     </div>
+  </div>
+  
+    
   );
+  
 }
 
 export default OrderModal;
