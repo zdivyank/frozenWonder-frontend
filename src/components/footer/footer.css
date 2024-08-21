@@ -1,0 +1,137 @@
+/* Footer Styles */
+.footer {
+  background-color: #1f2937;
+  color: #ffffff;
+  padding: 3rem 1rem;
+}
+
+.footer-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 1rem;
+}
+
+.footer-content {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.footer-left,
+.footer-middle,
+.footer-right {
+  flex: 1;
+}
+
+.footer-logo {
+  width: 150px;
+  margin-bottom: 1rem;
+}
+
+.footer-company-profile {
+  font-size: 0.875rem;
+  line-height: 1.6;
+}
+
+.footer-links {
+  display: flex;
+  justify-content: space-between;
+}
+
+.footer-links-column {
+  flex: 1;
+}
+
+.footer-links-title {
+  font-weight: bold;
+  margin-bottom: 1rem;
+  font-size: 1.125rem;
+}
+
+.footer-links-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.footer-links-item {
+  margin-bottom: 0.5rem;
+}
+
+.footer-links-item a {
+  color: #ffffff;
+  text-decoration: none;
+  font-size: 0.875rem;
+}
+
+.footer-links-item a:hover {
+  text-decoration: underline;
+}
+
+.footer-address,
+.footer-contact {
+  font-size: 0.875rem;
+  line-height: 1.5;
+}
+
+.footer-address {
+  margin-bottom: 0.75rem;
+}
+
+.footer-copyright {
+  background-color: #111827;
+  color: #ffffff;
+  text-align: center;
+  padding: 1rem;
+  font-size: 0.875rem;
+}
+
+/* Ensure extreme left alignment */
+.footer-left {
+  flex: 1; /* Ensure it takes appropriate space */
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start; /* Aligns content to the left */
+  justify-content: flex-start;
+  margin-right: 2rem; /* Add some space to the right if needed */
+}
+
+/* Responsive Styles */
+@media (min-width: 768px) {
+  .footer-content {
+    flex-direction: row;
+    justify-content: space-between;
+  }
+
+  .footer-left {
+    flex: 0 0 25%;
+  }
+
+  .footer-middle {
+    flex: 0 0 50%;
+    display: flex;
+    justify-content: space-around;
+  }
+
+  .footer-right {
+    flex: 0 0 25%;
+  }
+
+  .footer-links {
+    justify-content: space-around;
+    gap: 2rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .footer {
+    padding: 4rem 2rem;
+  }
+
+  .footer-company-profile,
+  .footer-links-item a,
+  .footer-address,
+  .footer-contact {
+    font-size: 1rem;
+  }
+}

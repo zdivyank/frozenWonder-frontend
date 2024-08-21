@@ -348,8 +348,8 @@ function OrderModal({ cartItems, total, onClose, setCartItems }) {
             <form onSubmit={handleSubmit}>
               <div className="order_container">
                 <div className="form-group">
-                  <label>Mobile Number:</label>
-                  <div className="d-flex">
+                  <label>Email:</label>
+                  <div className="">
                     <input
                       type="tel"
                       name="cust_number"

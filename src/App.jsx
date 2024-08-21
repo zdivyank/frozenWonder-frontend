@@ -36,6 +36,7 @@ import { HiMiniShoppingCart } from 'react-icons/hi2';
 import Assign_orders from './components/agency/orders/Assign_order';
 import Inquiries from './components/inquiry/Inquiries';
 import Admin_contact from './components/admin/contact/Admin_contact';
+import Footer from './components/footer/Footer';
 
 function AppContent() {
   const { isLoggedIn, role, isLoading } = useAuth();
@@ -170,6 +171,7 @@ function AppContent() {
                 <Element name="products"><Product addToCart={addToCart} cart={cartItems} /></Element>
                 <Element name="testimonials"><Testimonials /></Element>
                 <Element name="inquiries"><Inquiries /></Element>
+                <Footer />
               </>
             } />
             <Route path="/admin" element={!isLoggedIn ? <Admin /> : <Navigate to={`/${role === 'owner' ? 'admin/product' : role === 'agency' ? 'agency/orders' : 'delivery/orders'}`} replace />} />
@@ -211,8 +213,9 @@ function AppContent() {
             </div>
           )}
         </div>
+         
       </AnimatePresence>
-      <ToastContainer position="top-center" autoClose={10000} hideProgressBar={false} newestOnTop={false} closeOnClick rtl={false} pauseOnFocusLoss draggable pauseOnHover />
+      <ToastContainer position="top-center" autoClose={5000} hideProgressBar={false} newestOnTop={false} closeOnClick rtl={false} pauseOnFocusLoss draggable pauseOnHover />
     </div>
   );
 }
