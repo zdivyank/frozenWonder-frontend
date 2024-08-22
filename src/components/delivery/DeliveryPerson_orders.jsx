@@ -26,12 +26,17 @@ function DeliveryPersonOrders() {
 
         const data = await response.json();
         const allOrderIds = data.Message.flatMap(delivery => delivery.order_id);
+        console.log(allOrderIds);
+        
 
         const orderDetails = await Promise.all(
           allOrderIds.map(async (orderId) => {
             const orderResponse = await fetch(`${CONFIGS.API_BASE_URL}/order/${orderId}`, {
               method: "GET",
             });
+
+            console.log(orderResponse);
+            
             if (!orderResponse.ok) throw new Error(`Failed to fetch details for order ${orderId}`);
             return orderResponse.json();
           })

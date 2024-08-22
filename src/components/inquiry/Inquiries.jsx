@@ -54,8 +54,9 @@ function Inquiries() {
   };
 
   return (
+    <>
+      <h1 className="inquiries-heading">Trade Inquiry</h1>
     <div className="inquiries-container" id='inquiries'>
-      <h1 className="inquiries-heading">Contact Us</h1>
       <form onSubmit={handleSubmit} className="inquiries-form">
         <div className="form-group">
           <label className="form-label">Name:</label>
@@ -66,7 +67,7 @@ function Inquiries() {
             onChange={handleChange}
             className="form-input"
             required
-          />
+            />
         </div>
         <div className="form-group">
           <label className="form-label">Company Name:</label>
@@ -77,7 +78,7 @@ function Inquiries() {
             onChange={handleChange}
             className="form-input"
             required
-          />
+            />
         </div>
         <div className="form-group">
           <label className="form-label">Phone Number:</label>
@@ -88,7 +89,7 @@ function Inquiries() {
             onChange={handleChange}
             className="form-input"
             required
-          />
+            />
         </div>
         <div className="form-group">
           <label className="form-label">Region:</label>
@@ -99,7 +100,7 @@ function Inquiries() {
             onChange={handleChange}
             className="form-input"
             required
-          />
+            />
         </div>
         <div className="form-group">
           <label className="form-label">Message:</label>
@@ -109,12 +110,13 @@ function Inquiries() {
             onChange={handleChange}
             className="form-textarea"
             required
-          />
+            />
         </div>
         <button type="submit" className="form-button">Submit</button>
       </form>
      
     </div>
+            </>
   );
 }
 
