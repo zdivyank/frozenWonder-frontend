@@ -11,6 +11,16 @@
   src: url('./fonts/HogfishDEMO.otf');
 }
 
+
+:root {
+  --primary: #495e70;
+  --secondary: #FEF3E2;
+  --third: #f4e869;
+  --white: #fff;
+  --black: #000;
+}
+
+
 body, html {
   margin: 0;
   padding: 0;

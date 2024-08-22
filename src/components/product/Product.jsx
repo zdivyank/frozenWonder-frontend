@@ -79,15 +79,17 @@ function Product({ addToCart, cart = [] }) {
   };
 
   return (
+  <>
+
     <div className='product_container' id='products'>
       <h1 className='text-center'>Products</h1>
       {products.length > 0 ? (
         <div className="product-list">
           {products.map((product) => (
             <div 
-              key={product._id} 
-              className={`product-item ${openProductId === product._id ? 'open' : ''}`}
-              style={{"--product-color": productColors[product._id] || 'transparent'}}
+            key={product._id} 
+            className={`product-item ${openProductId === product._id ? 'open' : ''}`}
+            style={{"--product-color": productColors[product._id] || 'transparent'}}
               onClick={() => toggleProductCard(product._id)}
             >
               <motion.div
@@ -96,7 +98,7 @@ function Product({ addToCart, cart = [] }) {
                   rotate: 2,
                 }}
                 transition={{ duration: 0.1 }}
-              >
+                >
                 <img src={product.image} alt={product.name} />
               </motion.div>
               <div className={`content ${openProductId === product._id ? 'show' : 'hide'}`}>
@@ -122,22 +124,22 @@ function Product({ addToCart, cart = [] }) {
                             className='btn btn-dark me-3' 
                             onClick={() => handleQuantityChange(product._id, index, -1)}
                             disabled={!quantities[product._id]?.[index]}
-                          >
+                            >
                             -
-                          </button>
-                          <span>{quantities[product._id]?.[index] || 0}</span>
-                          <button 
+                            </button>
+                            <span>{quantities[product._id]?.[index] || 0}</span>
+                            <button 
                             className='btn btn-dark m-3' 
                             onClick={() => handleQuantityChange(product._id, index, 1)}
                             disabled={quantities[product._id]?.[index] >= getAvailableQuantity(product, index)}
                           >
-                            +
+                          +
                           </button> */}
                           <button 
                             className='btn btn-dark mb-3' 
                             onClick={() => handleAddToCart(product, index)}
                             disabled={isProductInCart(product._id)}
-                          >
+                            >
                             <IoMdCart />
                             {isProductInCart(product._id) ? 'Added to Cart' : 'Add to Cart'}
                           </button>
@@ -154,6 +156,7 @@ function Product({ addToCart, cart = [] }) {
         <p>No products available.</p>
       )}
     </div>
+      </>
   );
 }
 

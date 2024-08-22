@@ -6,7 +6,11 @@
     height: 100%;
     font-size: 18px;
     color: #000000;
-    background-color:#F4D9D0;
+background: var(--third);
+/* background: url('/img/b7.png'); */
+background-size: cover;
+/* margin-bottom: 75px; */
+/* margin-bottom: 250px; */
     /* padding: 25px; */
     /* margin-bottom: 15px; */
 }
@@ -17,16 +21,24 @@
     justify-content: center;
     max-width: 500px;
     margin-left: 25px;
-  
+    
+}
+.left_container p {
+    /* margin-top: 150px; */
+    /* padding: 15px; */
+    /* background-color: var(--primary); */
 }
 
 .home_video {
+
     width: 400px;
-    height: auto;
+    height: 100%;
+    /* height: 250px; */
     float: right;
     display: flex;
     margin-right: -100%;
     border-radius: 25px;
+    filter: drop-shadow(3px 11px 8px #000000);
     /* border: 2px solid yellow;     */
 }
 
@@ -51,6 +63,7 @@
 {
     color: #000000;
     font-size: 16px;
+    background: #000;
     /* height: 100%; */
 }
 
@@ -62,7 +75,7 @@
 }
 /* Container for animated text */
 .animate_text {
-    height: 40vh;
+    height: 20vh;
     width: 100%;
     display: flex;
     overflow: hidden;
@@ -70,7 +83,7 @@
     margin-right: 100%;
     /* margin-top: 0; */
     /* top: 0; */
-    background-color: #D9ABAB;
+    /* background-color: #D9ABAB; */
     /* margin-bottom: 150px; */
 }
 
@@ -78,13 +91,13 @@
 .moving_text {
     width: auto;
     font-family:"SugarpunchDEMO" ;
-    color: #921A40;
+    color: var(--product-color);
     display: flex;
     justify-content: center;
     align-items: center;
-    font-size: 182px;
+    font-size: 102px;
     -webkit-text-stroke: 2px white;
-    animation: moveText 15s linear infinite;
+    animation: moveText 7s linear infinite;
     white-space:nowrap; 
 }
 
