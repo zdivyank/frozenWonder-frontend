@@ -3,7 +3,8 @@
   /* position: relative;   */
   padding-top: 5%;
   /* border: 2px solid darkblue; */
-  background: url('/img/bg3.png');
+  /* background: url('/img/bg3.png'); */
+  background: var(--primary);
   background-size: cover;
   z-index: 999;
   /* overflow: hidden;  */

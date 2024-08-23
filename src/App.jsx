@@ -144,7 +144,7 @@ function AppContent() {
                   <ScrollLink to="testimonials" smooth={true} duration={500} className="nav-link" onClick={() => setIsNavOpen(false)}>Success Stories</ScrollLink>
                 </li>
                 <li className="nav-item">
-                  <ScrollLink to="inquiries" smooth={true} duration={500} className="nav-link" onClick={() => setIsNavOpen(false)}>Contact Us</ScrollLink>
+                  <ScrollLink to="inquiries" smooth={true} duration={500} className="nav-link" onClick={() => setIsNavOpen(false)}>Trade Inquiry</ScrollLink>
                 </li>
               </>
             )}

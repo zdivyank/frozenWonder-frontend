@@ -1,8 +1,9 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { CONFIGS } from '../../../config';
 import './Inquiries.css';  // Import the CSS file
+import { useLocation } from 'react-router-dom';
 
 function Inquiries() {
   const [formData, setFormData] = useState({
@@ -12,6 +13,14 @@ function Inquiries() {
     region: '',
     message: ''
   });
+
+  const location = useLocation();
+  useEffect(() => {
+    // Scroll to the "Contact Us" section only if the hash is "#contact-us"
+    if (location.hash === '#inquiries') {
+        document.getElementById('inquiries').scrollIntoView({ behavior: 'smooth' });
+    }
+ }, [location]);
 
   const handleChange = (e) => {
     setFormData({
