@@ -54,7 +54,7 @@ const Footer = () => {
       </footer>
       <div className="footer-copyright">
         <p>&copy; {new Date().getFullYear()} Digital Creatorz. All rights reserved.</p>
-        <p>Made with ❤️ in India</p>
+        <p>Made with ❤️ in India......</p>
       </div>
     </>
   );
