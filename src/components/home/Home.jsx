@@ -1,6 +1,9 @@
 import React, { useRef } from 'react';
 import { motion, useTransform, useViewportScroll } from 'framer-motion';
 import './home.css';
+import { FiGift } from 'react-icons/fi';
+import { Link, NavLink, useNavigate } from 'react-router-dom';
+import { ScrollLink } from 'react-scroll';
 
 const containerVariants = {
   hidden: { opacity: 0, scale: 1 },
@@ -20,14 +23,33 @@ const itemVariants = {
   visible: { opacity: 1, y: 0 },
 };
 
+
+
 function Home() {
   const { scrollYProgress } = useViewportScroll();
   const constraintsRef = useRef(null)
+  const navigate = useNavigate();
 
 
   // Define the scale and opacity transforms based on scroll position
   const scale = useTransform(scrollYProgress, [0, 1, 1], [0.9, 2, 1.7]);
   const opacity = useTransform(scrollYProgress, [0, 1, 0], [1, 1, 0]);
+
+  const handleClick = () => {
+    // console.log("clciked");
+    
+    // Navigate to the home page if not already there
+    navigate('/');
+    
+    // Scroll to the products section
+    setTimeout(() => {
+      const productsSection = document.getElementById('products');
+      if (productsSection) {
+        productsSection.scrollIntoView({ behavior: 'smooth' });
+      }
+    }, 100);
+    // console.log("clciked2");
+  };
 
   return (
     <motion.section
@@ -48,6 +70,13 @@ function Home() {
           /> */}
           <motion.p variants={itemVariants}>
             Discover the future of frozen delights with Frozen Wonders, a revolutionary product that brings the freshest, real fruit flavors straight to your freezer. Our innovative process locks in the natural goodness and vibrant taste of fresh fruits, delivering a refreshing and healthy treat every time. Experience the perfect blend of convenience and quality with our range of frozen juices, smoothies, and more. Dive into a world where freshness meets innovation, and every sip is a burst of real fruit flavor.
+            <button
+            onClick={handleClick}
+            className='btn btn-dark mt-3 text-center'
+            style={{ display: 'inline-block', marginTop: '1rem' }}
+          >
+            Claim Your Gift <FiGift className='mb-1' />
+          </button>
           </motion.p>
         </div>
 

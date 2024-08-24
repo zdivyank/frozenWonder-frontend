@@ -1,0 +1,40 @@
+.terms-container {
+    max-width: 700px;
+    margin: 20px auto;
+    padding: 20px;
+    background-color: var(--third);
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  }
+  
+  .terms-container h1 {
+    font-size: 2rem;
+    margin-bottom: 15px;
+    text-align: center;
+  }
+  
+  .terms-list {
+    list-style-type: disc;
+    padding-left: 20px;
+  }
+  
+  .terms-list li {
+    font-size: 1.1rem;
+    margin-bottom: 10px;
+    line-height: 1.5;
+  }
+  
+  @media (max-width: 600px) {
+    .terms-container {
+      padding: 15px;
+    }
+  
+    .terms-container h1 {
+      font-size: 1.5rem;
+    }
+  
+    .terms-list li {
+      font-size: 1rem;
+    }
+  }
+  

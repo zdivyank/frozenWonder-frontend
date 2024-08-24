@@ -37,6 +37,7 @@ import Assign_orders from './components/agency/orders/Assign_order';
 import Inquiries from './components/inquiry/Inquiries';
 import Admin_contact from './components/admin/contact/Admin_contact';
 import Footer from './components/footer/Footer';
+import TermsnCondition from './components/footer/TermsnCondition';
 
 function AppContent() {
   const { isLoggedIn, role, isLoading } = useAuth();
@@ -175,6 +176,7 @@ function AppContent() {
               </>
             } />
             <Route path="/admin" element={!isLoggedIn ? <Admin /> : <Navigate to={`/${role === 'owner' ? 'admin/product' : role === 'agency' ? 'agency/orders' : 'delivery/orders'}`} replace />} />
+            <Route path="/terms" element={<TermsnCondition />} />
             <Route path="/logout" element={<Logout />} />
 
             {/* Admin Routes */}
