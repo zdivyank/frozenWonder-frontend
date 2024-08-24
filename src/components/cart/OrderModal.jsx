@@ -16,6 +16,7 @@ function OrderModal({ cartItems, total, onClose, setCartItems }) {
     cust_addresses: [],
     selected_address: '',
     cust_number: '',
+    cust_contact: '',
     pincode: '',
     order_date: null,
     timeslot: '',
@@ -185,6 +186,7 @@ function OrderModal({ cartItems, total, onClose, setCartItems }) {
             cust_addresses: customer.cust_address ? customer.cust_address.map((address, index) => address) : [],
             selected_address: customer.selected_address ? parseInt(customer.selected_address) : '',
             pincode: customer.pincode || '',
+            cust_contact:customer.cust_contact||'',
             isNewUser: false,
           }));
           toast.success('Customer details fetched successfully!');
@@ -195,6 +197,7 @@ function OrderModal({ cartItems, total, onClose, setCartItems }) {
             cust_addresses: [],
             selected_address: null,
             pincode: '',
+            cust_contact:'',
             isNewUser: true,
           }));
           toast.info('No existing customer found. Please fill in your details.');
@@ -238,6 +241,7 @@ function OrderModal({ cartItems, total, onClose, setCartItems }) {
       cust_address: customerInfo.cust_addresses,
       selected_address: Number(selectedAddress),
       cust_number: customerInfo.cust_number,
+      cust_contact: customerInfo.cust_contact,
       pincode: customerInfo.pincode,
       order_product: cartItems.map(item => ({
         name: item.product.name,
@@ -480,7 +484,7 @@ function OrderModal({ cartItems, total, onClose, setCartItems }) {
                         name="otp"
                         value={customerInfo.otp}
                         onChange={handleInputChange}
-                        className="order_info"
+                        className="order_info form-control"
                         required
                       />
                       <button
@@ -504,6 +508,17 @@ function OrderModal({ cartItems, total, onClose, setCartItems }) {
                         type="text"
                         name="cust_name"
                         value={customerInfo.cust_name}
+                        onChange={handleInputChange}
+                        className="order_info"
+                        required
+                      />
+                    </div>
+                    <div className="form-group">
+                      <label>Phone number:</label>
+                      <input
+                        type="text"
+                        name="cust_contact"
+                        value={customerInfo.cust_contact}
                         onChange={handleInputChange}
                         className="order_info"
                         required

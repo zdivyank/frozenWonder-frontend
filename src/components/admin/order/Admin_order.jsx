@@ -143,7 +143,8 @@ function AdminOrder() {
                   <th>Name</th>
                   <th>Address</th>
                   <th>Pincode</th>
-                  <th>Phone Number</th>
+                  <th>Email</th>
+                  <th>Phone No</th>
                   <th>Order Date</th>
                   <th>Time Slot</th>
                   <th>Agency</th>
@@ -160,6 +161,7 @@ function AdminOrder() {
                       <td>{getSelectedAddress(order)}</td>
                       <td>{order.pincode}</td>
                       <td>{order.cust_number}</td>
+                      <td>{order.cust_contact}</td>
                       <td>{new Date(order.order_date).toLocaleDateString()}</td>
                       <td>{order.timeslot}</td>
                       <td>{order.agency_id?.agency_name || 'Agency not available'}</td>
