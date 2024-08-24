@@ -423,15 +423,15 @@ function OrderModal({ cartItems, total, onClose, setCartItems }) {
 
   return (
     <div className="modal" style={{ display: 'block', backgroundColor: 'rgba(0,0,0,0.5)' }}>
-      <div className="modal-dialog">
-        <div className="modal-content">
-          <div className="modal-header">
+     <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
             <h5 className="modal-title">Order Summary</h5>
             <button type="button" className="close" onClick={onClose}>
               <span className="text-dark">&times;</span>
             </button>
           </div>
-          <div className="modal-body">
+          <div class="modal-body">
             <h3>GIFT HAMPER</h3>
             {/* {cartItems.map((item, index) => (
             <div key={index}>
@@ -627,6 +627,7 @@ function OrderModal({ cartItems, total, onClose, setCartItems }) {
                         onChange={(e) => setCouponCode(e.target.value.toUpperCase())}
                         className="order_info"
                         placeholder="Enter coupon code"
+                        required
                       />
                     </div>
                     {/* Submit Button */}
