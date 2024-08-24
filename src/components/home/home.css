@@ -156,8 +156,9 @@ background-size: cover;
 
 
     .animate_text {
-        background-color: #D9ABAB;
+        /* background-color: #D9ABAB; */
         /* margin-bottom: 150px; */
+        margin-bottom: 5%;
     }
 
     .moving_text {

@@ -18,9 +18,9 @@ function Inquiries() {
   useEffect(() => {
     // Scroll to the "Contact Us" section only if the hash is "#contact-us"
     if (location.hash === '#inquiries') {
-        document.getElementById('inquiries').scrollIntoView({ behavior: 'smooth' });
+      document.getElementById('inquiries').scrollIntoView({ behavior: 'smooth' });
     }
- }, [location]);
+  }, [location]);
 
   const handleChange = (e) => {
     setFormData({
@@ -42,7 +42,7 @@ function Inquiries() {
       });
 
       if (response.ok) {
-          toast.success('Message Sent successfully!', {
+        toast.success('Message Sent successfully!', {
           position: 'top-center',
           autoClose: 5000,
           hideProgressBar: false,
@@ -64,68 +64,71 @@ function Inquiries() {
 
   return (
     <>
-      <h1 className="inquiries-heading">Trade Inquiry</h1>
-    <div className="inquiries-container" id='inquiries'>
-      <form onSubmit={handleSubmit} className="inquiries-form">
-        <div className="form-group">
-          <label className="form-label">Name:</label>
-          <input
-            type="text"
-            name="name"
-            value={formData.name}
-            onChange={handleChange}
-            className="form-input"
-            required
-            />
+      <div className="main_container">
+
+        <h1 className="inquiries-heading">Trade Inquiry</h1>
+        <div className="inquiries-container" id='inquiries'>
+          <form onSubmit={handleSubmit} className="inquiries-form">
+            <div className="form-group">
+              <label className="form-label">Name:</label>
+              <input
+                type="text"
+                name="name"
+                value={formData.name}
+                onChange={handleChange}
+                className="form-input"
+                required
+              />
+            </div>
+            <div className="form-group">
+              <label className="form-label">Company Name:</label>
+              <input
+                type="text"
+                name="company_name"
+                value={formData.company_name}
+                onChange={handleChange}
+                className="form-input"
+                required
+              />
+            </div>
+            <div className="form-group">
+              <label className="form-label">Phone Number:</label>
+              <input
+                type="text"
+                name="user_number"
+                value={formData.user_number}
+                onChange={handleChange}
+                className="form-input"
+                required
+              />
+            </div>
+            <div className="form-group">
+              <label className="form-label">Region:</label>
+              <input
+                type="text"
+                name="region"
+                value={formData.region}
+                onChange={handleChange}
+                className="form-input"
+                required
+              />
+            </div>
+            <div className="form-group">
+              <label className="form-label">Message:</label>
+              <textarea
+                name="message"
+                value={formData.message}
+                onChange={handleChange}
+                className="form-textarea"
+                required
+              />
+            </div>
+            <button type="submit" className="form-button">Submit</button>
+          </form>
+
         </div>
-        <div className="form-group">
-          <label className="form-label">Company Name:</label>
-          <input
-            type="text"
-            name="company_name"
-            value={formData.company_name}
-            onChange={handleChange}
-            className="form-input"
-            required
-            />
-        </div>
-        <div className="form-group">
-          <label className="form-label">Phone Number:</label>
-          <input
-            type="text"
-            name="user_number"
-            value={formData.user_number}
-            onChange={handleChange}
-            className="form-input"
-            required
-            />
-        </div>
-        <div className="form-group">
-          <label className="form-label">Region:</label>
-          <input
-            type="text"
-            name="region"
-            value={formData.region}
-            onChange={handleChange}
-            className="form-input"
-            required
-            />
-        </div>
-        <div className="form-group">
-          <label className="form-label">Message:</label>
-          <textarea
-            name="message"
-            value={formData.message}
-            onChange={handleChange}
-            className="form-textarea"
-            required
-            />
-        </div>
-        <button type="submit" className="form-button">Submit</button>
-      </form>
-     
-    </div>
-            </>
+      </div>
+    </>
   );
 }
 
