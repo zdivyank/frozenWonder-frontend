@@ -215,6 +215,15 @@ function OrderModal({ cartItems, total, onClose, setCartItems }) {
       toast.error('Please add at least one address');
       return;
     }
+    if (!customerInfo.order_date) {
+      toast.error('Please select an order date');
+      return;
+    }
+
+    if (isDateDisabled(customerInfo.order_date)) {
+      toast.error('This date is not available for ordering. Please select another date.');
+      return;
+    }
 
     const selectedAddress = customerInfo.selected_address !== ''
       ? customerInfo.selected_address
@@ -377,11 +386,17 @@ function OrderModal({ cartItems, total, onClose, setCartItems }) {
 
   const isDateDisabled = (date) => {
     const formattedDate = moment(date).format('YYYY-MM-DD');
-    return blockedDates.some(blockedDate =>
+  
+    // Check if the date is before 1st September 2024
+    const isBeforeSeptember = moment(formattedDate).isBefore('2024-09-01');
+  
+    // Disable the date if it's before 1st September 2024 or matches the blocked dates and timeslots
+    return isBeforeSeptember || blockedDates.some(blockedDate =>
       blockedDate.date === formattedDate &&
-      (blockedDate.timeslot === 'fullday' || blockedDate.timeslot === 'all')
+      (blockedDate.timeslot === 'fullday' || blockedDate.timeslot === 'all' || blockedDate.timeslot === customerInfo.timeslot)
     );
   };
+  
 
   const getAvailableTimeSlots = () => {
     if (!customerInfo.order_date) return [];
