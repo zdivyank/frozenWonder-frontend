@@ -562,14 +562,14 @@ function OrderModal({ cartItems, total, onClose, setCartItems }) {
                           onChange={handleNewAddressChange}
                           style={{ flex: 1 }}
                         />
+                      </div>
                         <button
                           type="button"
-                          className="btn btn-success ml-2"
+                          className="btn btn-success mt-2"
                           onClick={handleAddAddress}
                         >
                           <Icon as={FaPlus} />
                         </button>
-                      </div>
                     </div>
 
                     <div className="form-group">
