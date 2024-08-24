@@ -138,13 +138,14 @@ function Cart({ cartItems, setCartItems, onClose }) {
               <span>Subtotal</span>
               <span>{subtotal.toFixed(2)}</span>
             </div>
-            <div className="summary-line">
+            {/* <div className="summary-line">
               <span>Shipping</span>
               <span>{shipping.toFixed(2)}</span>
-            </div>
+              </div> */}
             <div className="summary-line total">
               <span>Total</span>
-              <span>RS {total.toFixed(2)}</span>
+              <span>{subtotal.toFixed(2)}</span>
+              {/* <span>RS {total.toFixed(2)}</span> */}
             </div>
             <button className="place-order-btn" onClick={handlePlaceOrder}>Place Order →</button>
           </div>

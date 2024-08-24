@@ -113,11 +113,12 @@
 }
 
 .cart_icon {
-  background-color: #921A40;
-  color: white;
+  background-color: var(--white);
+  color: var(--primary);
   border-radius: 50%;
   padding: 10px;
   cursor: pointer;
+  border: 2px solid var(--third);
   transition: 0.7s ease;
 }
 
