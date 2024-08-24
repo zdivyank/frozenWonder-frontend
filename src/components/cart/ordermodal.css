@@ -1,6 +1,6 @@
 /* Modal styling */
 .modal {
-  display: flex;
+  display: block;
   align-items: center;
   justify-content: center;
   background-color: rgba(0, 0, 0, 0.5);
@@ -10,6 +10,7 @@
   right: 0;
   bottom: 0;
   z-index: 1050;
+  overflow-y: 'auto';
 }
 
 .modal-dialog {
@@ -134,6 +135,10 @@
   background-color: #3a4a59;
 }
 
+
+.modal-open {
+  overflow: hidden;
+}
 /* Responsive adjustments */
 @media (max-width: 576px) {
   .modal-dialog {

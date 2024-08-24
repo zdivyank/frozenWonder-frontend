@@ -246,7 +246,7 @@ function OrderModal({ cartItems, total, onClose, setCartItems }) {
       })),
       total_amount: discountedTotal,
       order_date: customerInfo.order_date ? moment(customerInfo.order_date).format('YYYY-MM-DD') : null,
-      timeslot: customerInfo.timeslot,
+      timeslot: 'morning',
       otp: customerInfo.otp,
       coupon_code: couponCode, // Make sure this line is present
     };
@@ -410,6 +410,17 @@ function OrderModal({ cartItems, total, onClose, setCartItems }) {
     return allTimeSlots.filter(slot => !blockedTimeslots.includes(slot));
   };
 
+  useEffect(() => {
+    // Add the class when the modal opens
+    document.body.classList.add('modal-open');
+
+    // Remove the class when the modal closes
+    return () => {
+      document.body.classList.remove('modal-open');
+    };
+  }, []);
+
+
   return (
     <div className="modal" style={{ display: 'block', backgroundColor: 'rgba(0,0,0,0.5)' }}>
       <div className="modal-dialog">
@@ -571,7 +582,7 @@ function OrderModal({ cartItems, total, onClose, setCartItems }) {
                       />
                     </div>
 
-                    <div className="form-group">
+                    {/* <div className="form-group">
                       <label>Time Slot:</label>
                       <select
                         name="timeslot"
@@ -587,7 +598,7 @@ function OrderModal({ cartItems, total, onClose, setCartItems }) {
                           </option>
                         ))}
                       </select>
-                    </div>
+                    </div> */}
 
                     {/* <div className="form-group">
                       <label>Coupon Code:</label>
