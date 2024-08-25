@@ -37,10 +37,10 @@ function Home() {
 
   const handleClick = () => {
     // console.log("clciked");
-    
+
     // Navigate to the home page if not already there
     navigate('/');
-    
+
     // Scroll to the products section
     setTimeout(() => {
       const productsSection = document.getElementById('products');
@@ -71,12 +71,20 @@ function Home() {
           <motion.p variants={itemVariants}>
             Discover the future of frozen delights with Frozen Wonders, a revolutionary product that brings the freshest, real fruit flavors straight to your freezer. Our innovative process locks in the natural goodness and vibrant taste of fresh fruits, delivering a refreshing and healthy treat every time. Experience the perfect blend of convenience and quality with our range of frozen juices, smoothies, and more. Dive into a world where freshness meets innovation, and every sip is a burst of real fruit flavor.
             <button
-            onClick={handleClick}
-            className='btn btn-dark mt-3 text-center'
-            style={{ display: 'inline-block', marginTop: '1rem' }}
-          >
-            Claim Your Gift <FiGift className='mb-1' />
-          </button>
+              onClick={handleClick}
+              className='btn btn-dark '
+              style={{
+                // display: 'inline-block',
+                marginTop: '2rem',
+                fontWeight: 'bold',
+                padding: '2rem 1rem', 
+                fontSize: '2rem',
+                width: '100%', 
+              }}
+            >
+              Claim Your Gift <FiGift className='mb-1' />
+            </button>
+
           </motion.p>
         </div>
 

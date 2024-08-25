@@ -23,11 +23,7 @@ background-size: cover;
     margin-left: 25px;
     
 }
-.left_container p {
-    /* margin-top: 150px; */
-    /* padding: 15px; */
-    /* background-color: var(--primary); */
-}
+
 
 .home_video {
 
@@ -150,7 +146,7 @@ background-size: cover;
     }
 
     .left_container p {
-        margin-left: 35%;
+        margin-left: 5%;
         margin-top: -50px;
     }
 
@@ -194,6 +190,11 @@ background-size: cover;
         width: 320px;
         margin-left: 5%;
         /* margin-right:250px; */
+    }
+
+    .left_container {
+        margin-left: 0px;
+        
     }
 
     .left_container p {

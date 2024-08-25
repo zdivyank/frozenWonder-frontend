@@ -83,13 +83,13 @@ function Product({ addToCart, cart = [] }) {
 
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 320"><path fill="#F4E869" fill-opacity="1" d="M0,32L40,48C80,64,160,96,240,133.3C320,171,400,213,480,197.3C560,181,640,107,720,80C800,53,880,75,960,96C1040,117,1120,139,1200,133.3C1280,128,1360,96,1400,80L1440,64L1440,320L1400,320C1360,320,1280,320,1200,320C1120,320,1040,320,960,320C880,320,800,320,720,320C640,320,560,320,480,320C400,320,320,320,240,320C160,320,80,320,40,320L0,320Z"></path></svg>
     <div className='product_container' id='products'>
-      <h1 className='text-center'>Products</h1>
+      <h1 className='text-center'>Claim Yor gift</h1>
       {products.length > 0 ? (
         <div className="product-list">
           {products.map((product) => (
             <div 
             key={product._id} 
-            className={`product-item ${openProductId === product._id ? 'open' : ''}`}
+            className={`product-item ${openProductId === product._id ? '' : 'open'}`}
             style={{"--product-color": productColors[product._id] || 'transparent'}}
               onClick={() => toggleProductCard(product._id)}
             >

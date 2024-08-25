@@ -9,6 +9,10 @@ import { RadioGroup, Radio, Input, RadioTileGroup, RadioTile } from 'rsuite';
 import { Icon } from '@rsuite/icons';
 import { FaHome, FaPlus, FaTrash } from 'react-icons/fa';
 import { useNavigate } from 'react-router-dom';
+import { Popover, Whisper, Button, List } from 'rsuite';
+import { IoIosInformationCircleOutline } from 'react-icons/io';
+
+
 
 function OrderModal({ cartItems, total, onClose, setCartItems }) {
   const [customerInfo, setCustomerInfo] = useState({
@@ -186,7 +190,7 @@ function OrderModal({ cartItems, total, onClose, setCartItems }) {
             cust_addresses: customer.cust_address ? customer.cust_address.map((address, index) => address) : [],
             selected_address: customer.selected_address ? parseInt(customer.selected_address) : '',
             pincode: customer.pincode || '',
-            cust_contact:customer.cust_contact||'',
+            cust_contact: customer.cust_contact || '',
             isNewUser: false,
           }));
           toast.success('Customer details fetched successfully!');
@@ -197,7 +201,7 @@ function OrderModal({ cartItems, total, onClose, setCartItems }) {
             cust_addresses: [],
             selected_address: null,
             pincode: '',
-            cust_contact:'',
+            cust_contact: '',
             isNewUser: true,
           }));
           toast.info('No existing customer found. Please fill in your details.');
@@ -390,17 +394,17 @@ function OrderModal({ cartItems, total, onClose, setCartItems }) {
 
   const isDateDisabled = (date) => {
     const formattedDate = moment(date).format('YYYY-MM-DD');
-  
+
     // Check if the date is before 1st September 2024
     const isBeforeSeptember = moment(formattedDate).isBefore('2024-09-01');
-  
+
     // Disable the date if it's before 1st September 2024 or matches the blocked dates and timeslots
     return isBeforeSeptember || blockedDates.some(blockedDate =>
       blockedDate.date === formattedDate &&
       (blockedDate.timeslot === 'fullday' || blockedDate.timeslot === 'all' || blockedDate.timeslot === customerInfo.timeslot)
     );
   };
-  
+
 
   const getAvailableTimeSlots = () => {
     if (!customerInfo.order_date) return [];
@@ -424,12 +428,22 @@ function OrderModal({ cartItems, total, onClose, setCartItems }) {
     };
   }, []);
 
+  const terms = (
+    <Popover title="Terms and Conditions" style={{ maxWidth: 300 }}>
+      <List bordered hover>
+        <List.Item>Samples are free of cost; only delivery/courier charges apply.</List.Item>
+        <List.Item>You will receive your free sample pack through our prescheduled deliveries starting from 1st September onwards.</List.Item>
+        <List.Item>You will get a confirmation call before any delivery is made.</List.Item>
+        <List.Item>Samples will be delivered subject to availability.</List.Item>
+      </List>
+    </Popover>
+  );
 
   return (
     <div className="modal" style={{ display: 'block', backgroundColor: 'rgba(0,0,0,0.5)' }}>
-     <div class="modal-dialog modal-dialog-centered">
-    <div class="modal-content">
-      <div class="modal-header">
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+          <div class="modal-header">
             <h5 className="modal-title">Order Summary</h5>
             <button type="button" className="close" onClick={onClose}>
               <span className="text-dark">&times;</span>
@@ -563,13 +577,13 @@ function OrderModal({ cartItems, total, onClose, setCartItems }) {
                           style={{ flex: 1 }}
                         />
                       </div>
-                        <button
-                          type="button"
-                          className="btn btn-success mt-2"
-                          onClick={handleAddAddress}
-                        >
-                          <Icon as={FaPlus} />
-                        </button>
+                      <button
+                        type="button"
+                        className="btn btn-success mt-2"
+                        onClick={handleAddAddress}
+                      >
+                        <Icon as={FaPlus} />
+                      </button>
                     </div>
 
                     <div className="form-group">
@@ -653,6 +667,15 @@ function OrderModal({ cartItems, total, onClose, setCartItems }) {
                         Place Order
                       </button>
                     )}
+
+                    <div className=" mt-3">
+                      <Whisper placement="auto" trigger="hover" speaker={terms}>
+                        <span style={{ textDecoration: 'underline', cursor: 'pointer' }}>
+                        <IoIosInformationCircleOutline />
+                        Terms and Conditions*
+                        </span>
+                      </Whisper>
+                    </div>
                   </>
                 )}
               </div>
