@@ -104,7 +104,22 @@ function OrderModal({ cartItems, total, onClose, setCartItems }) {
     }
   };
 
+  const handleInputChange = (event) => {
+    const { name, value } = event.target;
+  
+    // Trim whitespace from email input
+    const trimmedValue = name === 'cust_number' ? value.trim() : value;
+  
+    setCustomerInfo(prev => ({
+      ...prev,
+      [name]: trimmedValue,
+    }));
+  };
+  
+
+
   const sendotp = async () => {
+    const trimmedCustNumber = customerInfo.cust_number.trim();
     setIsLoadingOTP(true);
     try {
       const response = await fetch(`${CONFIGS.API_BASE_URL}/sendotp`, {
@@ -112,7 +127,7 @@ function OrderModal({ cartItems, total, onClose, setCartItems }) {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ cust_number: customerInfo.cust_number }),
+        body: JSON.stringify({ cust_number: trimmedCustNumber  }),
       });
 
       if (response.ok) {
@@ -163,13 +178,12 @@ function OrderModal({ cartItems, total, onClose, setCartItems }) {
     }
   }
 
-
   const handleFetchCustomerDetails = async () => {
     if (!customerInfo.cust_number) {
       toast.error('Please enter a mobile number');
       return;
     }
-
+  
     try {
       const response = await fetch(`${CONFIGS.API_BASE_URL}/isAlreadyuser`, {
         method: "POST",
@@ -178,10 +192,14 @@ function OrderModal({ cartItems, total, onClose, setCartItems }) {
         },
         body: JSON.stringify({ cust_number: customerInfo.cust_number }),
       });
-
+  
+      console.log('Response status:', response.status); // Log response status
+      console.log('Response headers:', response.headers); // Log response headers
+      
       if (response.ok) {
         const data = await response.json();
-
+        console.log('Response data:', data); // Log response data
+  
         if (data.response && data.response.length > 0) {
           const customer = data.response[0];
           setCustomerInfo(prev => ({
@@ -214,6 +232,7 @@ function OrderModal({ cartItems, total, onClose, setCartItems }) {
       toast.error('Failed to fetch customer details. Please try again.');
     }
   };
+  
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -279,6 +298,21 @@ function OrderModal({ cartItems, total, onClose, setCartItems }) {
           data.order.selected_address = Number(data.order.selected_address);
         }
         console.log(data);
+
+        for (const item of cartItems) {
+          await fetch(`${CONFIGS.API_BASE_URL}/updatestock`, {
+            method: 'PUT',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              productId: item.product._id,
+              packIndex: item.packIndex,
+              quantity: item.quantity,
+            }),
+          });
+        }
+        
         setIsOrderPlaced(true);
         onClose();
       } else {
@@ -294,10 +328,9 @@ function OrderModal({ cartItems, total, onClose, setCartItems }) {
   const handleSelectAddress = (value) => {
     setCustomerInfo(prev => ({ ...prev, selected_address: Number(value) + 1 }));
   };
-  const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    setCustomerInfo(prev => ({ ...prev, [name]: value }));
-  };
+ 
+
+
 
   const handleNewAddressChange = (value) => {
     setNewAddress(value);
