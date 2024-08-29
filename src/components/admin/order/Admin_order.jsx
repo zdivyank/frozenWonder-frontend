@@ -129,93 +129,113 @@ function AdminOrder() {
   // Change page
   const paginate = (pageNumber) => setCurrentPage(pageNumber);
 
+
+  const handledownload = async()=>{
+    try {
+      const response = await fetch(`${CONFIGS.API_BASE_URL}/downloadexcel`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+        },
+      });
+
+      if (response.ok) {
+        const blob = await response.blob();
+        const url = window.URL.createObjectURL(blob);
+
+        // Create a link to trigger the download
+        const link = document.createElement('a');
+        link.href = url;
+        link.setAttribute('download', 'orders.xlsx');
+        document.body.appendChild(link);
+        link.click();
+        link.remove();
+      } else {
+        console.error('Failed to download file');
+      }
+    }catch (error) {
+      console.log(error);
+      
+    }
+  }
   return (
-    <section className="admin-order-section">
+    <section className="admin-order-section text-center">
       <Container>
-        <h1 className="">Orders List</h1>
+        <h1 className="mt-3">Orders List</h1>
+        <button className='btn btn-dark mt-3 mb-3' onClick={handledownload}>Download excel</button>
         {loading ? (
           <p className="admin-order-loading">Loading...</p>
         ) : (
           <>
             <Table striped bordered hover responsive>
-              <thead>
-                <tr>
-                  <th>Name</th>
-                  <th>Address</th>
-                  <th>Pincode</th>
-                  <th>Email</th>
-                  <th>Phone No</th>
-                  <th>Order Date</th>
-                  <th>Time Slot</th>
-                  <th>Agency</th>
-                  <th>Status</th>
-                  <th>Products</th>
-                  <th>Actions</th>
-                </tr>
-              </thead>
-              <tbody>
-                {currentOrders.length > 0 ? (
-                  currentOrders.map((order) => (
-                    <tr key={order._id}>
-                      <td>{order.cust_name}</td>
-                      <td>{getSelectedAddress(order)}</td>
-                      <td>{order.pincode}</td>
-                      <td>{order.cust_number}</td>
-                      <td>{order.cust_contact}</td>
-                      <td>{new Date(order.order_date).toLocaleDateString()}</td>
-                      <td>{order.timeslot}</td>
-                      <td>{order.agency_id?.agency_name || 'Agency not available'}</td>
-                      <td className={order.status === "pending" ? "text-warning" : "text-success"}>{order.status}</td>
-                      <td>
-                        {order.order_product.length > 0 ? (
-                          <ul>
-                            {order.order_product.map((product, index) => (
-                              <li key={`${order._id}-${index}`}>
-                                <div className="d-flex justify-content-between">
-                                  <span>{product.name}</span>
-                                  <span>RS.{product.price}</span>
-                                </div>
-                                <div className="d-flex justify-content-between">
-                                  <span>Quantity:</span>
-                                  <span>{product.quantity}</span>
-                                </div>
-                              </li>
-                            ))}
-                            <hr />
-                            <div className="d-flex justify-content-between">
-                              <b>Total Amount:</b>
-                              <div>RS.{order.total_amount}</div>
-                            </div>
-                          </ul>
-                        ) : (
-                          <p>No products found</p>
-                        )}
-                      </td>
-                      <td>
-                        {/* <Button
-                          onClick={() => handleStatusUpdate(order._id, order.status)}
-                          variant={order.status === "pending" ? "success" : "dark"}
-                          className='me-2'
-                        >
-                          <FaExchangeAlt className='me-2' />
-                          {order.status === "pending" ? "Delivered" : "Pending"}
-                        </Button> */}
-                        <Button
-                          onClick={() => openModal(order._id)}
-                          variant="danger"
-                        >
-                          <MdDelete /> Delete
-                        </Button>
-                      </td>
-                    </tr>
-                  ))
-                ) : (
-                  <tr>
-                    <td colSpan="10" className="text-center">No Orders Available</td>
-                  </tr>
-                )}
-              </tbody>
-            </Table>
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Address</th>
+      <th>Pincode</th>
+      <th>Email</th>
+      <th>Phone No</th>
+      <th>Order Date</th>
+      <th>Time Slot</th>
+      <th>Agency</th>
+      <th>Status</th>
+      <th>Products</th>
+      <th>Qty.</th> {/* New column for Quantity */}
+      <th>Total</th> {/* New column for Total Amount */}
+      <th>Actions</th>
+    </tr>
+  </thead>
+  <tbody>
+    {currentOrders.length > 0 ? (
+      currentOrders.map((order) => (
+        <tr key={order._id}>
+          <td>{order.cust_name}</td>
+          <td>{getSelectedAddress(order)}</td>
+          <td>{order.pincode}</td>
+          <td>{order.cust_number}</td>
+          <td>{order.cust_contact}</td>
+          <td>{new Date(order.order_date).toLocaleDateString()}</td>
+          <td>{order.timeslot}</td>
+          <td>{order.agency_id?.agency_name || 'Agency not available'}</td>
+          <td className={order.status === "pending" ? "text-warning" : "text-success"}>{order.status}</td>
+          <td>
+            {order.order_product.length > 0 ? (
+              <ul>
+                {order.order_product.map((product, index) => (
+                  <li key={`${order._id}-${index}`}>
+                    <div className="d-flex justify-content-between">
+                      <span>{product.name}</span>
+                      {/* <span>RS.{product.price}</span> */}
+                    </div>
+                  </li>
+                ))}
+              </ul>
+            ) : (
+              <p>No products found</p>
+            )}
+          </td>
+          <td>
+            {order.order_product.reduce((total, product) => total + product.quantity, 0)} {/* Sum of quantities */}
+          </td>
+          <td>RS.{order.total_amount}</td> {/* Total amount */}
+          <td>
+            <Button
+              onClick={() => openModal(order._id)}
+              variant="danger"
+            >
+              <MdDelete /> Delete
+            </Button>
+          </td>
+        </tr>
+      ))
+    ) : (
+      <tr>
+        <td colSpan="13" className="text-center">No Orders Available</td> {/* Adjusted colSpan to 13 */}
+      </tr>
+    )}
+  </tbody>
+</Table>
+
 
             {/* Pagination Controls */}
             <Pagination className="admin-order-pagination">

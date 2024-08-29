@@ -47,6 +47,7 @@ function OrderModal({ cartItems, total, onClose, setCartItems }) {
   const [isLoadingOTP, setIsLoadingOTP] = useState(false);
   const [isResending, setIsResending] = useState(false);
   const navigate = useNavigate();
+  const [iscliked, setisliked] = useState(false);
 
 
   useEffect(() => {
@@ -274,6 +275,8 @@ function OrderModal({ cartItems, total, onClose, setCartItems }) {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setisliked(true);
+
 
     if (customerInfo.cust_addresses.length === 0) {
       toast.error('Please add at least one address');
@@ -356,6 +359,8 @@ function OrderModal({ cartItems, total, onClose, setCartItems }) {
       } else {
         const errorData = await response.json();
         console.log(errorData);
+        setisliked(false);
+
         throw new Error(errorData.message || 'Failed to create order');
       }
     } catch (error) {
@@ -741,9 +746,10 @@ function OrderModal({ cartItems, total, onClose, setCartItems }) {
                     {!customerInfo.isNewUser ? (
                       <p className="text-danger">Orders are currently limited to 500 unique customers. We apologize for the inconvenience.</p>
                     ) : (
-                      <button type="submit" className="btn btn-primary btn-block mt-3">
-                        Place Order
-                      </button>
+                      <button type="submit" disabled={iscliked} className="btn btn-primary btn-block mt-3">
+                      Place Order
+                    </button>
+
                     )}
 
                     <div className=" mt-3">

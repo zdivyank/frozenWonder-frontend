@@ -103,7 +103,7 @@ function Inquiries() {
               />
             </div>
             <div className="form-group">
-              <label className="form-label">Region:</label>
+              <label className="form-label">Area:</label>
               <input
                 type="text"
                 name="region"
