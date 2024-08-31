@@ -46,7 +46,7 @@ const Footer = () => {
                 Surat, Gujarat-394510<br />
               </address>
               <div className="footer-contact">
-                Email: info@company.com
+                Email: info@frozenwonders.in
               </div>
             </div>
           </div>
