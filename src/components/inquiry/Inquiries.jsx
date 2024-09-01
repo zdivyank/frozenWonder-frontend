@@ -13,6 +13,7 @@ function Inquiries() {
     region: '',
     message: ''
   });
+   const [isclicked,setisclicked] = useState(false);
 
   const location = useLocation();
   useEffect(() => {
@@ -31,6 +32,7 @@ function Inquiries() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setisclicked(true)
 
     try {
       const response = await fetch(`${CONFIGS.API_BASE_URL}/addinquiry`, {
@@ -52,8 +54,10 @@ function Inquiries() {
           progress: undefined,
         });
         setFormData({ name: '', company_name: '', user_number: '', region: '', message: '' });
+        setisclicked(true)
       } else {
         const errorData = await response.json();
+        setisclicked(false)
         toast.error('Failed to submit inquiry: ' + errorData.Message);
       }
     } catch (error) {
@@ -123,7 +127,7 @@ function Inquiries() {
                 required
               />
             </div>
-            <button type="submit" className="form-button">Submit</button>
+            <button type="submit" disabled={isclicked}  className="form-button">Submit</button>
           </form>
 
         </div>
