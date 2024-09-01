@@ -11,7 +11,7 @@ const Footer = () => {
             <div className="footer-left">
               <img src="/img/logo.png" className="footer-logo" height={150} alt="Company Logo" />
               <p className="footer-company-profile">
-                Fresh, Fruity, and Flavorful Smoothies for a Healthier You!
+                Fresh, Fruity, and Flavorful thickshakes for a Healthier You!
               </p>
             </div>
 
