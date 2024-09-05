@@ -38,6 +38,7 @@ import Inquiries from './components/inquiry/Inquiries';
 import Admin_contact from './components/admin/contact/Admin_contact';
 import Footer from './components/footer/Footer';
 import TermsnCondition from './components/footer/TermsnCondition';
+import Reviews from './components/footer/Reviews';
 
 function AppContent() {
   const { isLoggedIn, role, isLoading } = useAuth();
@@ -177,6 +178,7 @@ function AppContent() {
             } />
             <Route path="/admin" element={!isLoggedIn ? <Admin /> : <Navigate to={`/${role === 'owner' ? 'admin/product' : role === 'agency' ? 'agency/orders' : 'delivery/orders'}`} replace />} />
             <Route path="/terms" element={<TermsnCondition />} />
+            <Route path="/review" element={<Reviews />} />
             <Route path="/logout" element={<Logout />} />
 
             {/* Admin Routes */}
