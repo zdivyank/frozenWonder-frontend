@@ -7,7 +7,7 @@ function Testimonials() {
 
   const fetchTestimonials = async () => {     
     try {       
-      const response = await fetch(`${CONFIGS.API_BASE_URL}/gettestimonail`, {         
+      const response = await fetch(`${CONFIGS.API_BASE_URL}/getVerifiedtestimonail`, {         
         method: "GET"       
       });       
       const data = await response.json();        
