@@ -135,4 +135,57 @@
 .admin-order-section
 {
   font-size: 12px;
+  /* border: 2px solid aquamarine; */
+}
+.addcust {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  cursor: pointer; /* Show pointer to indicate it's clickable */
+  max-width: 100px; /* Adjust based on the cell's width */
+  /* border: 2px solid; */
+  margin-left: -35px;
+}
+
+.addcust .show-more {
+  color: blue;
+  cursor: pointer;
+  text-decoration: underline;
+}
+
+/* Ensure the list inside the table is aligned properly */
+.product1-list {
+  padding-left: 0; /* Remove default padding */
+  list-style: none; /* Remove default bullets if unwanted */
+}
+
+.product1-item {
+  padding: 5px 0; /* Add some spacing between products */
+  text-align: left; /* Ensure text is aligned left */
+}
+
+td {
+  padding: 10px; /* Add padding to the table cell if needed */
+  vertical-align: top; /* Align the content at the top */
+  text-align: left; /* Align text to the left */
+  font-size: 12px;
+}
+
+
+/* admin_order.css */
+.custom-select {
+  display: flex;
+  margin: auto;
+  /* align-items: center; */
+  width: 200px; /* Adjust the width as needed */
+  font-size: 0.875rem; /* Adjust the font size for a smaller look */
+}
+
+.text-right {
+  text-align: right;
+}
+
+.custom-select {
+  display: inline-block;
+  width: auto;
 }

@@ -1,11 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { Pagination, Table, Container, Button, Modal } from 'react-bootstrap';
+import { Pagination, Table, Container, Button, Modal, Form } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../../store/Auth';
 import { CONFIGS } from '../../../../config/index';
 import './admin_order.css';
 import { MdDelete } from 'react-icons/md';
-import { FaExchangeAlt } from 'react-icons/fa';
 
 function AdminOrder() {
   const [orders, setOrders] = useState([]);
@@ -14,9 +13,62 @@ function AdminOrder() {
   const [ordersPerPage] = useState(9);
   const [selectedOrderId, setSelectedOrderId] = useState(null);
   const [showModal, setShowModal] = useState(false);
+  const [pincodeData, setPincodeData] = useState([]); // Holds available pincodes
+  const [selectedPincode, setSelectedPincode] = useState(''); // Selected pincode
   const { isLoggedIn } = useAuth();
   const navigate = useNavigate();
 
+  // Fetch all available pincodes
+  const fetchAllPincodes = async () => {
+    setLoading(true);
+    try {
+      const response = await fetch(`${CONFIGS.API_BASE_URL}/allPincode`, {
+        method: "GET",
+      });
+
+      if (!response.ok) {
+        console.log("No Pincode Found");
+        return;
+      }
+
+      const data = await response.json();
+      setPincodeData(data.pincodes || []);
+    } catch (error) {
+      console.log("Error fetching pincodes:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Fetch orders based on selected pincode
+  const fetchOrdersByPincode = async (pincode) => {
+    setLoading(true);
+    try {
+      const response = await fetch(`${CONFIGS.API_BASE_URL}/orderlocation`, {
+        method: "POST",
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ pincode }),
+      });
+
+      if (!response.ok) {
+        console.log('No orders found for selected pincode');
+        return;
+      }
+
+      const data = await response.json();
+      console.log(data);
+      
+      setOrders(data.orders || []);
+    } catch (error) {
+      console.log("Error fetching orders:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Fetch all orders initially
   const fetchOrders = async () => {
     setLoading(true);
     if (!isLoggedIn) {
@@ -35,10 +87,7 @@ function AdminOrder() {
       }
 
       const data = await response.json();
-      console.log(':::::::::::', data.orders);
-
-      const sortedOrders = data.orders.sort((a, b) => new Date(b.order_date) - new Date(a.order_date));
-      setOrders(sortedOrders);
+      setOrders(data.orders);
     } catch (error) {
       console.log('Error fetching orders:', error);
     } finally {
@@ -47,7 +96,8 @@ function AdminOrder() {
   };
 
   useEffect(() => {
-    fetchOrders();
+    fetchAllPincodes(); // Fetch available pincodes
+    fetchOrders(); // Fetch all orders initially
   }, [isLoggedIn, navigate]);
 
   const handleStatusUpdate = async (orderId, currentStatus) => {
@@ -65,14 +115,7 @@ function AdminOrder() {
         const updatedOrders = orders.map(order =>
           order._id === orderId ? { ...order, status: newStatus } : order
         );
-        
-        const sortedOrders = updatedOrders.sort((a, b) => {
-          if (a.status === 'pending' && b.status !== 'pending') return -1;
-          if (a.status !== 'pending' && b.status === 'pending') return 1;
-          return new Date(b.order_date) - new Date(a.order_date);
-        });
-
-        setOrders(sortedOrders);
+        setOrders(updatedOrders);
       } else {
         console.log('Failed to update order status');
       }
@@ -110,17 +153,6 @@ function AdminOrder() {
     }
   };
 
-  const getSelectedAddress = (order) => {
-    if (order.cust_address && Array.isArray(order.cust_address) && order.selected_address !== undefined) {
-      return order.cust_address[order.selected_address] || 'Address not available';
-    } else if (typeof order.cust_address === 'string') {
-      return order.cust_address;
-    } else if (order.cust_addresses && Array.isArray(order.cust_addresses) && order.selected_address !== undefined) {
-      return order.cust_addresses[order.selected_address]?.address || 'Address not available';
-    }
-    return 'Address not available';
-  };
-
   // Calculate current orders
   const indexOfLastOrder = currentPage * ordersPerPage;
   const indexOfFirstOrder = indexOfLastOrder - ordersPerPage;
@@ -129,8 +161,7 @@ function AdminOrder() {
   // Change page
   const paginate = (pageNumber) => setCurrentPage(pageNumber);
 
-
-  const handledownload = async()=>{
+  const handledownload = async () => {
     try {
       const response = await fetch(`${CONFIGS.API_BASE_URL}/downloadexcel`, {
         method: 'GET',
@@ -143,7 +174,6 @@ function AdminOrder() {
         const blob = await response.blob();
         const url = window.URL.createObjectURL(blob);
 
-        // Create a link to trigger the download
         const link = document.createElement('a');
         link.href = url;
         link.setAttribute('download', 'orders.xlsx');
@@ -153,88 +183,101 @@ function AdminOrder() {
       } else {
         console.error('Failed to download file');
       }
-    }catch (error) {
+    } catch (error) {
       console.log(error);
-      
     }
-  }
+  };
+
+  const handlePincodeChange = (e) => {
+    const pincode = e.target.value;
+    setSelectedPincode(pincode);
+    fetchOrdersByPincode(pincode); // Fetch orders by pincode
+  };
+
   return (
     <section className="admin-order-section text-center">
-      <Container>
+      <Container className='text-center'>
         <h1 className="mt-3">Orders List</h1>
+
+
+
+
         <button className='btn btn-dark mt-3 mb-3' onClick={handledownload}>Download excel</button>
+        <div className="mt-3 mb-3 text-right">
+  <h4>Location Filter:</h4>
+  <Form.Control as="select" size="md" value={selectedPincode} onChange={handlePincodeChange} className="custom-select">
+    <option value="">Select Pincode</option>
+    {pincodeData.map((pincode, index) => (
+      <option key={index} value={pincode}>
+        {pincode}
+      </option>
+    ))}
+  </Form.Control>
+</div>
+
         {loading ? (
           <p className="admin-order-loading">Loading...</p>
         ) : (
           <>
             <Table striped bordered hover responsive>
-  <thead>
-    <tr>
-      <th>Name</th>
-      <th>Address</th>
-      <th>Pincode</th>
-      <th>Email</th>
-      <th>Phone No</th>
-      <th>Order Date</th>
-      <th>Time Slot</th>
-      <th>Agency</th>
-      <th>Status</th>
-      <th>Products</th>
-      <th>Qty.</th> {/* New column for Quantity */}
-      <th>Total</th> {/* New column for Total Amount */}
-      <th>Actions</th>
-    </tr>
-  </thead>
-  <tbody>
-    {currentOrders.length > 0 ? (
-      currentOrders.map((order) => (
-        <tr key={order._id}>
-          <td>{order.cust_name}</td>
-          <td>{getSelectedAddress(order)}</td>
-          <td>{order.pincode}</td>
-          <td>{order.cust_number}</td>
-          <td>{order.cust_contact}</td>
-          <td>{new Date(order.order_date).toLocaleDateString()}</td>
-          <td>{order.timeslot}</td>
-          <td>{order.agency_id?.agency_name || 'Agency not available'}</td>
-          <td className={order.status === "pending" ? "text-warning" : "text-success"}>{order.status}</td>
-          <td>
-            {order.order_product.length > 0 ? (
-              <ul>
-                {order.order_product.map((product, index) => (
-                  <li key={`${order._id}-${index}`}>
-                    <div className="d-flex justify-content-between">
-                      <span>{product.name}</span>
-                      {/* <span>RS.{product.price}</span> */}
-                    </div>
-                  </li>
-                ))}
-              </ul>
-            ) : (
-              <p>No products found</p>
-            )}
-          </td>
-          <td>
-            {order.order_product.reduce((total, product) => total + product.quantity, 0)} {/* Sum of quantities */}
-          </td>
-          <td>RS.{order.total_amount}</td> {/* Total amount */}
-          <td>
-            <Button
-              onClick={() => openModal(order._id)}
-              variant="danger"
-            >
-              <MdDelete /> Delete
-            </Button>
-          </td>
-        </tr>
-      ))
-    ) : (
-      <tr>
-        <td colSpan="13" className="text-center">No Orders Available</td> {/* Adjusted colSpan to 13 */}
-      </tr>
-    )}
-  </tbody>
-</Table>
+              <thead>
+                <tr>
+                  <th>Name</th>
+                  <th>Address</th>
+                  <th>Pincode</th>
+                  <th>Phone No</th>
+                  <th>Order Date</th>
+                  <th>Time Slot</th>
+                  <th>Agency</th>
+                  <th>Status</th>
+                  <th>Products</th>
+                  <th>Qty.</th>
+                  <th>Total</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                {currentOrders.length > 0 ? (
+                  currentOrders.map((order) => (
+                    <tr key={order._id}>
+                      <td>{order.cust_name}</td>
+                      <td>{order.cust_address}</td>
+                      <td>{order.pincode}</td>
+                      <td>{order.cust_contact}</td>
+                      <td>{new Date(order.order_date).toLocaleDateString()}</td>
+                      <td>{order.timeslot}</td>
+                      <td>{order.agency_id?.agency_name || 'Agency not available'}</td>
+                      <td className={order.status === "pending" ? "text-warning" : "text-success"}>{order.status}</td>
+                      <td>
+                        {order.order_product.length > 0 ? (
+                          <ul>
+                            {order.order_product.map((product, index) => (
+                              // <li key={`${order._id}-${index}`}>
+                               <p className='addcust'> {product.name}</p>
+                              // </li>
+                            ))}
+                          </ul>
+                        ) : (
+                          <p>No products found</p>
+                        )}
+                      </td>
+                      <td>{order.order_product.reduce((total, product) => total + product.quantity, 0)}</td>
+                      <td>RS.{order.total_amount}</td>
+                      <td>
+                        <Button onClick={() => openModal(order._id)} variant="danger">
+                          <MdDelete />
+                        </Button>
+                      </td>
+                    </tr>
+                  ))
+                ) : (
+                  <tr>
+                    <td colSpan="12" className="text-center">No Orders Available</td>
+                  </tr>
+                )}
+              </tbody>
+            </Table>
+
 
 
             {/* Pagination Controls */}

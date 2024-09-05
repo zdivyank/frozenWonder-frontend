@@ -18,8 +18,8 @@ function AdminSidebar() {
       <ul>
         <li><NavLink to="/admin/product" activeClassName="active"><AiFillProduct className='me-2' /> Products</NavLink></li>
         <li><NavLink to="/admin/order" activeClassName="active"><GoListOrdered className='me-2'/>Order Summary</NavLink></li>
-        <li><NavLink to="/admin/location" activeClassName="active"><FaLocationDot className='me-2'/>
-        Location Filter</NavLink></li>
+        {/* <li><NavLink to="/admin/location" activeClassName="active"><FaLocationDot className='me-2'/> */}
+        {/* Location Filter</NavLink></li> */}
         <li><NavLink to="/admin/testimonail" activeClassName="active"><VscFeedback className='me-2' />
          Success Stories</NavLink></li>
         <li><NavLink to="/admin/user"><FaUsers className='me-2'/>Add User</NavLink></li>
