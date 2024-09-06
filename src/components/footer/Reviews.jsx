@@ -9,7 +9,8 @@ function Reviews() {
     cust_name: '',
     message: '',
     image: null,
-    verify: false
+    verify: false,
+    contact_number:'',
   });
   const [saving, setSaving] = useState(false);
 
@@ -28,6 +29,8 @@ function Reviews() {
       const formData = new FormData();
       formData.append('cust_name', newTestimonial.cust_name);
       formData.append('message', newTestimonial.message);
+      // formData.append('contact_number ', newTestimonial.contact_number);
+      formData.append('contact_number', newTestimonial.contact_number);
       formData.append('verify', newTestimonial.verify);
       if (newTestimonial.image) {
         formData.append('image', newTestimonial.image);
@@ -47,7 +50,8 @@ function Reviews() {
           cust_name: '',
           message: '',
           image: null,
-          verify: false
+          verify: false,
+          contact_number:'',
         });
       } else {
         const result = await response.json();
@@ -62,7 +66,7 @@ function Reviews() {
 
   return (
     <>
-      <h1 className="reviews-title mt-3">Share Your EXperience</h1>
+      <h1 className="reviews-title mt-3">Share Your Review</h1>
     <div className="reviews-container">
       <div className="reviews-img-container">
         <img src="/img/review.svg" alt="Reviews" className="reviews-image" />
@@ -78,6 +82,18 @@ function Reviews() {
             onChange={(e) => handleInputChange('cust_name', e.target.value)}
             />
         </Form.Group>
+      {/* <Form className="reviews-form" onSubmit={handleFormSubmit}> */}
+
+
+        <Form.Group controlId="formCustName">
+          <Form.Label>Customer Number</Form.Label>
+          <Form.Control
+            type="text"
+            placeholder="Enter customer number"
+            value={newTestimonial.contact_number}
+            onChange={(e) => handleInputChange('contact_number', e.target.value)}
+            />
+        </Form.Group>
 
         <Form.Group controlId="formMessage">
           <Form.Label>Message</Form.Label>
@@ -91,7 +107,7 @@ function Reviews() {
         </Form.Group>
 
         <Form.Group controlId="formImage">
-          <Form.Label>Upload Image/Video</Form.Label>
+          <Form.Label>Upload Your Image/Video</Form.Label>
           <Form.Control
             type="file"
             accept="image/*"
@@ -104,7 +120,7 @@ function Reviews() {
         </Button>
       </Form>
     </div>
-            </>
+    </>
   );
 }
 

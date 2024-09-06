@@ -158,9 +158,9 @@ function AppContent() {
 
   const isExcludedRoute = ['/terms', '/review', '/inquiries'].includes(location.pathname);
   const NavBar = () => {
-    const isAdminRoute = location.pathname.startsWith('/admin');
+    // const isAdminRoute = location.pathname.startsWith('/admin');
   
-    if (isAdminRoute || isExcludedRoute) {
+    if ( isExcludedRoute) {
       return null; // Don't render the navbar on admin or excluded routes
     }
   

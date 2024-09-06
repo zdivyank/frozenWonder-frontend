@@ -128,6 +128,7 @@ function AdminTesimonails() {
               <th>Message</th>
               <th>Image/Video</th>
               <th>Verify Status</th>
+              <th>Contact_number</th>
               <th>Actions</th>
             </tr>
           </thead>
@@ -153,6 +154,7 @@ function AdminTesimonails() {
                   )}
                 </td>
                 <td>{testimonial.verify ? 'Verified' : 'Not Verified'}</td>
+                <td>{testimonial.contact_number}</td>
                 <td>
                   <Button
                     variant="outline-primary me-2"
