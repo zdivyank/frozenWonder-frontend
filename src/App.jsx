@@ -118,9 +118,52 @@ function AppContent() {
     setShowCart(false);
   };
 
+  // const NavBar = () => {
+  //   const isAdminRoute = location.pathname.startsWith('/admin');
+
+  //   return (
+  //     <nav className={`navbar ${isNavOpen ? 'open' : ''}`}>
+  //       <div className="navbar-container">
+  //         <Link to="/" className="navbar-logo">
+  //           <img src="/img/logo.png" alt="Logo" />
+  //         </Link>
+  //         <div className="menu-icon" onClick={toggleNav}>
+  //           {isNavOpen ? <FaTimes /> : <FaBars />}
+  //         </div>
+  //         <ul className={`nav-menu ${isNavOpen ? 'active' : ''}`}>
+  //           {!isAdminRoute && (
+  //             <>
+  //               <li className="nav-item">
+  //                 <ScrollLink to="home" smooth={true} duration={500} className="nav-link" onClick={() => setIsNavOpen(false)}>Home</ScrollLink>
+  //               </li>
+  //               <li className="nav-item">
+  //                 <ScrollLink to="products" smooth={true} duration={500} className="nav-link" onClick={() => setIsNavOpen(false)}>Products</ScrollLink>
+  //               </li>
+  //               <li className="nav-item">
+  //                 <ScrollLink to="about" smooth={true} duration={500} className="nav-link" onClick={() => setIsNavOpen(false)}>Our Philosophy</ScrollLink>
+  //               </li>
+  //               <li className="nav-item">
+  //                 <ScrollLink to="testimonials" smooth={true} duration={500} className="nav-link" onClick={() => setIsNavOpen(false)}>Success Stories</ScrollLink>
+  //               </li>
+  //               <li className="nav-item">
+  //                 <ScrollLink to="inquiries" smooth={true} duration={500} className="nav-link" onClick={() => setIsNavOpen(false)}>Trade Inquiry</ScrollLink>
+  //               </li>
+  //             </>
+  //           )}
+  //         </ul>
+  //       </div>
+  //     </nav>
+  //   );
+  // };
+
+  const isExcludedRoute = ['/terms', '/review', '/inquiries'].includes(location.pathname);
   const NavBar = () => {
     const isAdminRoute = location.pathname.startsWith('/admin');
-
+  
+    if (isAdminRoute || isExcludedRoute) {
+      return null; // Don't render the navbar on admin or excluded routes
+    }
+  
     return (
       <nav className={`navbar ${isNavOpen ? 'open' : ''}`}>
         <div className="navbar-container">
@@ -131,36 +174,34 @@ function AppContent() {
             {isNavOpen ? <FaTimes /> : <FaBars />}
           </div>
           <ul className={`nav-menu ${isNavOpen ? 'active' : ''}`}>
-            {!isAdminRoute && (
-              <>
-                <li className="nav-item">
-                  <ScrollLink to="home" smooth={true} duration={500} className="nav-link" onClick={() => setIsNavOpen(false)}>Home</ScrollLink>
-                </li>
-                <li className="nav-item">
-                  <ScrollLink to="products" smooth={true} duration={500} className="nav-link" onClick={() => setIsNavOpen(false)}>Products</ScrollLink>
-                </li>
-                <li className="nav-item">
-                  <ScrollLink to="about" smooth={true} duration={500} className="nav-link" onClick={() => setIsNavOpen(false)}>Our Philosophy</ScrollLink>
-                </li>
-                <li className="nav-item">
-                  <ScrollLink to="testimonials" smooth={true} duration={500} className="nav-link" onClick={() => setIsNavOpen(false)}>Success Stories</ScrollLink>
-                </li>
-                <li className="nav-item">
-                  <ScrollLink to="inquiries" smooth={true} duration={500} className="nav-link" onClick={() => setIsNavOpen(false)}>Trade Inquiry</ScrollLink>
-                </li>
-              </>
-            )}
+            <li className="nav-item">
+              <ScrollLink to="home" smooth={true} duration={500} className="nav-link" onClick={() => setIsNavOpen(false)}>Home</ScrollLink>
+            </li>
+            <li className="nav-item">
+              <ScrollLink to="products" smooth={true} duration={500} className="nav-link" onClick={() => setIsNavOpen(false)}>Products</ScrollLink>
+            </li>
+            <li className="nav-item">
+              <ScrollLink to="about" smooth={true} duration={500} className="nav-link" onClick={() => setIsNavOpen(false)}>Our Philosophy</ScrollLink>
+            </li>
+            <li className="nav-item">
+              <ScrollLink to="testimonials" smooth={true} duration={500} className="nav-link" onClick={() => setIsNavOpen(false)}>Success Stories</ScrollLink>
+            </li>
+            <li className="nav-item">
+              <Link to="/inquiries" smooth={true} duration={500} className="nav-link" onClick={() => setIsNavOpen(false)}>Trade Inquiry</Link>
+            </li>
           </ul>
         </div>
       </nav>
     );
   };
+  
 
   if (isLoading) {
     return <div>Loading...</div>;
   }
 
   return (
+    
     <div className="app-container">
       <AnimatePresence>
         {isLoggedIn ? renderSidebar() : <NavBar />}
@@ -172,13 +213,14 @@ function AppContent() {
                 <Element name="about"><About /></Element>
                 <Element name="products"><Product addToCart={addToCart} cart={cartItems} /></Element>
                 <Element name="testimonials"><Testimonials /></Element>
-                <Element name="inquiries"><Inquiries /></Element>
+                {/* <Element name="inquiries"><Inquiries /></Element> */}
                 <Footer />
               </>
             } />
             <Route path="/admin" element={!isLoggedIn ? <Admin /> : <Navigate to={`/${role === 'owner' ? 'admin/product' : role === 'agency' ? 'agency/orders' : 'delivery/orders'}`} replace />} />
             <Route path="/terms" element={<TermsnCondition />} />
             <Route path="/review" element={<Reviews />} />
+            <Route path="/inquiries" element={<Inquiries />} />
             <Route path="/logout" element={<Logout />} />
 
             {/* Admin Routes */}
@@ -203,10 +245,24 @@ function AppContent() {
 
             <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>
-          {!isLoggedIn && (
+          {/* {!isLoggedIn && (
             <div className="cart-container">
               <div className="cart_icon" onClick={toggleCart}>
                 <HiMiniShoppingCart size={42} className='cart_bottom' />
+                <span className="cart-count">{cartItems.reduce((total, item) => total + item.quantity, 0)}</span>
+              </div>
+              {showCart && (
+                <div className="cart-popup">
+                  <Cart cartItems={cartItems} setCartItems={setCartItems} onClose={closeCart} />
+                </div>
+              )}
+            </div>
+          )} */}
+
+{!isLoggedIn && !isExcludedRoute && (
+            <div className="cart-container">
+              <div className="cart_icon" onClick={toggleCart}>
+                <HiMiniShoppingCart size={42} className="cart_bottom" />
                 <span className="cart-count">{cartItems.reduce((total, item) => total + item.quantity, 0)}</span>
               </div>
               {showCart && (
