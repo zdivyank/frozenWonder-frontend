@@ -23,6 +23,7 @@ function OrderModal({ cartItems, total, onClose, setCartItems }) {
     cust_contact: '',
     pincode: '',
     order_date: null,
+    // order_date: new Date(),
     timeslot: '',
     isNewUser: true,
     otp: ''
@@ -50,11 +51,65 @@ function OrderModal({ cartItems, total, onClose, setCartItems }) {
   const [iscliked, setisliked] = useState(false);
   const [message, setMessage] = useState('');
 
+  const [orders, setOrders] = useState([]); // Initialize orders as an empty array
 
+  const [availableDate, setAvailableDate] = useState(null); // Store the next available date
+  useEffect(() => {
+    // Fetch the next available date from the backend
+    const fetchAvailableDate = async () => {
+      try {
+        const res = await fetch(`${CONFIGS.API_BASE_URL}/available-dates`, {
+          method: 'GET'
+        });
+        const data = await res.json();
+        setAvailableDate(data.nextAvailableDate); // Set the available date from the backend
+        setCustomerInfo(prev => ({
+          ...prev,
+          order_date: data.nextAvailableDate // Automatically set the available date in customer info
+        }));
+      } catch (error) {
+        console.error('Error fetching available date:', error);
+      }
+    };
+
+    fetchAvailableDate();
+  }, []);
+
+  
+
+  const handleDateChange = (date) => {
+    setCustomerInfo((prev) => ({
+      ...prev,
+      order_date: date,
+    }));
+  };
+
+  // Function to disable dates before the next available date
+  // const isDateDisabled = (date) => {
+  //   return date < availableDate; // Disable dates before the available one
+  // };
+
+  const isDateDisabled = (date) => {
+    const formattedDate = moment(date).format('YYYY-MM-DD');
+    const orderCount = orders.filter(order => order.order_date === formattedDate).length;
+    return orderCount >= 15; // Disable if there are 15 or more orders
+  };
+  
+  
+  
   useEffect(() => {
     fetchBlockedDates();
     fetchAvailableCoupons();
   }, []);
+
+  const shouldAllowMaxDate = () => {
+    // If the minDate (current available date) has fewer than 15 orders, don't allow maxDate (next date)
+    const formattedMinDate = moment(availableDate).format('YYYY-MM-DD');
+    const minDateOrderCount = orders.filter(order => order.order_date === formattedMinDate).length;
+  
+    return minDateOrderCount >= 15; // Allow maxDate only if minDate has 15 or more orders
+  };
+  
 
   const fetchAvailableCoupons = async () => {
     try {
@@ -277,6 +332,11 @@ function OrderModal({ cartItems, total, onClose, setCartItems }) {
     e.preventDefault();
     setisliked(true);
 
+    if (!canPlaceOrder()) {
+      toast.error('This date has already reached the maximum order limit of 4. Please choose another date.');
+      return;
+    }
+
     if (customerInfo.cust_addresses.length === 0) {
       toast.error('Please add at least one address');
       return;
@@ -302,7 +362,7 @@ function OrderModal({ cartItems, total, onClose, setCartItems }) {
     const orderData = {
       cust_name: customerInfo.cust_name,
       cust_address: customerInfo.cust_addresses,
-      selected_address: Number(selectedAddress)+1,
+      selected_address: Number(selectedAddress) + 1,
       cust_number: customerInfo.cust_number,
       cust_contact: customerInfo.cust_contact,
       pincode: customerInfo.pincode,
@@ -328,6 +388,8 @@ function OrderModal({ cartItems, total, onClose, setCartItems }) {
         },
         body: JSON.stringify(orderData),
       });
+
+      setOrders([...orders, { date: moment(customerInfo.order_date).format('YYYY-MM-DD'), timeslot: customerInfo.timeslot }]);
 
       if (response.ok) {
         navigate('/');
@@ -465,45 +527,141 @@ function OrderModal({ cartItems, total, onClose, setCartItems }) {
     }
   };
 
-  const handleDateChange = (date) => {
-    setCustomerInfo(prev => ({ ...prev, order_date: date, timeslot: '' }));
+  useEffect(() => {
+    const fetchOrders = async () => {
+      try {
+        const response = await fetch(`${CONFIGS.API_BASE_URL}/vieworders`, {
+          method: "GET"
+        }); // Replace with your actual API endpoint
+        const data = await response.json();
+        setOrders(data.orders);
+        // setOrders(data);
+      } catch (error) {
+        console.error('Error fetching orders:', error);
+        toast.error('Failed to load orders');
+      }
+    };
+
+    fetchOrders();
+  }, []);
+
+
+
+  // const handleDateChange = (date) => {
+  //   setCustomerInfo(prev => ({ ...prev, order_date: date, timeslot: '' }));
+  // };
+
+
+  // working code for disble dates
+
+  // const isDateDisabled = (date) => {
+  //   const formattedDate = moment(date).format('YYYY-MM-DD');
+
+  //   // Check if the date is before 1st September 2024
+  //   const isBeforeSeptember = moment(formattedDate).isBefore('2024-09-01');
+
+  //   // Disable the date if it's before 1st September 2024 or matches the blocked dates and timeslots
+  //   return isBeforeSeptember || blockedDates.some(blockedDate =>
+  //     blockedDate.date === formattedDate &&
+  //     (blockedDate.timeslot === 'fullday' || blockedDate.timeslot === 'all' || blockedDate.timeslot === customerInfo.timeslot)
+  //   );
+  // };
+
+
+  // const getAvailableTimeSlots = () => {
+  //   if (!customerInfo.order_date) return [];
+
+  //   const formattedDate = moment(customerInfo.order_date).format('YYYY-MM-DD');
+  //   const blockedTimeslots = blockedDates
+  //     .filter(blockedDate => blockedDate.date === formattedDate)
+  //     .map(blockedDate => blockedDate.timeslot);
+
+  //   const allTimeSlots = ['morning', 'evening'];
+  //   return allTimeSlots.filter(slot => !blockedTimeslots.includes(slot));
+  // };
+
+  // useEffect(() => {
+  //   // Add the class when the modal opens
+  //   document.body.classList.add('modal-open');
+
+  //   // Remove the class when the modal closes
+  //   return () => {
+  //     document.body.classList.remove('modal-open');
+  //   };
+  // }, []);\
+
+
+
+  // const isDateDisabled = (date) => {
+  //   const formattedDate = moment(date).format('YYYY-MM-DD');
+
+  //   // Find the number of orders placed on the selected date
+  //   const orderCountOnDate = orders.filter(order => order.date === formattedDate).length;
+
+  //   // Check if previous dates have 4 orders
+  //   const prevDatesFull = orders.reduce((prevFull, order) => {
+  //     const orderDate = moment(order.date);
+  //     if (orderDate.isBefore(formattedDate)) {
+  //       const orderCount = orders.filter(o => o.date === order.date).length;
+  //       return prevFull && orderCount >= 4; // Only true if all previous dates are fully booked
+  //     }
+  //     return prevFull;
+  //   }, true); // Start assuming all previous dates are full
+
+  //   // Disable the date if it has 4 or more orders or previous dates are not fully booked
+  //   return orderCountOnDate >= 4 || !prevDatesFull;
+  // };
+
+  const canPlaceOrder = () => {
+    const formattedDate = moment(customerInfo.order_date).format('YYYY-MM-DD');
+
+    // Handle case when `orders` is undefined or not an array
+    if (!orders || !Array.isArray(orders)) {
+      console.error('Orders array is undefined or not an array');
+      return false; // Don't allow order placement if orders are undefined
+    }
+
+    // Check the number of orders for the selected date
+    const orderCountOnDate = orders.filter(order => {
+      const orderDate = moment(order.date).format('YYYY-MM-DD');
+      return orderDate === formattedDate;
+    }).length;
+
+    // Allow placing the order only if there are fewer than 15 orders
+    return orderCountOnDate < 15;
   };
 
-  const isDateDisabled = (date) => {
-    const formattedDate = moment(date).format('YYYY-MM-DD');
+  const getNextAvailableDate = () => {
+    const formattedDate = moment(customerInfo.order_date).format('YYYY-MM-DD');
 
-    // Check if the date is before 1st September 2024
-    const isBeforeSeptember = moment(formattedDate).isBefore('2024-09-01');
+    const orderCountOnDate = orders.filter(order => {
+      const orderDate = moment(order.date).format('YYYY-MM-DD');
+      return orderDate === formattedDate;
+    }).length;
 
-    // Disable the date if it's before 1st September 2024 or matches the blocked dates and timeslots
-    return isBeforeSeptember || blockedDates.some(blockedDate =>
-      blockedDate.date === formattedDate &&
-      (blockedDate.timeslot === 'fullday' || blockedDate.timeslot === 'all' || blockedDate.timeslot === customerInfo.timeslot)
-    );
+    if (orderCountOnDate >= 15) {
+      let nextDate = moment(customerInfo.order_date).add(1, 'days');
+      setCustomerInfo(prev => ({ ...prev, order_date: nextDate.toDate() }));
+    }
   };
+
+  useEffect(() => {
+    getNextAvailableDate(); // Check for next date when order count changes
+  }, [orders, customerInfo.order_date]);
 
 
   const getAvailableTimeSlots = () => {
     if (!customerInfo.order_date) return [];
 
     const formattedDate = moment(customerInfo.order_date).format('YYYY-MM-DD');
-    const blockedTimeslots = blockedDates
-      .filter(blockedDate => blockedDate.date === formattedDate)
-      .map(blockedDate => blockedDate.timeslot);
+
+    const blockedTimeslots = orders
+      .filter(order => order.date === formattedDate)
+      .map(order => order.timeslot);
 
     const allTimeSlots = ['morning', 'evening'];
     return allTimeSlots.filter(slot => !blockedTimeslots.includes(slot));
   };
-
-  useEffect(() => {
-    // Add the class when the modal opens
-    document.body.classList.add('modal-open');
-
-    // Remove the class when the modal closes
-    return () => {
-      document.body.classList.remove('modal-open');
-    };
-  }, []);
 
   const terms = (
     <Popover title="Terms and Conditions" style={{ maxWidth: 300 }}>
@@ -676,9 +834,9 @@ function OrderModal({ cartItems, total, onClose, setCartItems }) {
                       />
                     </div>
 
-                    <div className="form-group">
-                      <label>Order Date:</label>
-                      <DatePicker
+                    {/* <div className="form-group">
+                        <label>Order Date:</label> */}
+                    {/* <DatePicker
                         selected={customerInfo.order_date}
                         onChange={handleDateChange}
                         minDate={new Date()}
@@ -686,8 +844,54 @@ function OrderModal({ cartItems, total, onClose, setCartItems }) {
                         className="order_info"
                         filterDate={date => !isDateDisabled(date)}
                         required
+                      /> */}
+
+                    {/* <DatePicker
+                        selected={customerInfo.order_date}
+                        onChange={handleDateChange}
+                        minDate={new Date()} // Disables past dates
+                        dateFormat="dd/MM/yyyy"
+                        className="order_info"
+                        filterDate={date => !isDateDisabled(date)} // Disable dates with 4 or more orders
+                        required
                       />
-                    </div>
+                    </div> */}
+
+                    {/* <div className="form-group">
+                      <label>Order Date:</label>
+                      {availableDate ? (
+               <DatePicker
+               selected={customerInfo.order_date}
+               onChange={(date) => setCustomerInfo({ ...customerInfo, order_date: date })}
+               minDate={availableDate} // Set the minimum date as the available date
+               maxDate={availableDate} // Only allow the available date
+               dateFormat="dd/MM/yyyy"
+               className="order_info"
+               required
+             />
+                      ) : (
+                        <p>Loading available date...</p> // Show a loading message while the date is being fetched
+                      )}
+                    </div> */}
+
+
+                    <div className="form-group">
+      <label>Order Date:</label>
+      {availableDate ? (
+        <select
+          value={customerInfo.order_date}
+          onChange={(e) =>
+            setCustomerInfo({ ...customerInfo, order_date: e.target.value })
+          }
+          required
+        >
+          {/* Dropdown shows only one available date */}
+          <option value={availableDate}>{availableDate}</option>
+        </select>
+      ) : (
+        <p>Loading available date...</p> // Show a loading message while the date is being fetched
+      )}
+    </div>
 
                     {/* <div className="form-group">
                       <label>Time Slot:</label>
