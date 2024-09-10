@@ -1,7 +1,7 @@
-.admin-sidebar {
+ .admin-sidebar {
     width: 250px;
     height: 100vh;
-    background-color: #495E70;
+    background-color: var(--third);
     color: white;
     position: fixed;
     top: 0;
@@ -10,11 +10,43 @@
     box-shadow: 2px 0 5px rgba(0,0,0,0.1);
     
   }
+
+  /* .toggle_container
+  {
+    background-color: #001e33;
+  } */
+
+  .admin-sidebar {
+    position: fixed;
+    left: -250px;
+    top: 0;
+    bottom: 0;
+    width: 250px;
+    transition: left 0.3s ease-in-out;
+    z-index: 1000;
+    padding: 20px;
+  }
   
+  .admin-sidebar.open {
+    left: 0;
+  }
+  
+  .sidebar-toggle {
+    background-color: rgb(16, 14, 11);
+    position:absolute;
+    left: 10px;
+    top: 10px;
+    z-index: 1001;
+    background: none;
+    border: none;
+    font-size: 24px;
+    cursor: pointer;
+  }
+
   .admin-sidebar h2 {
     font-size: 22px;
     margin-bottom: 20px;
-    color: #ecf0f1;
+    color: var(--black);
     text-align: center;
   }
   
@@ -30,7 +62,7 @@
 }
 
 .admin-sidebar ul li a {
-    color: #ecf0f1;
+    color: var(--black);
     text-decoration: none;
     font-size: 15px;
     display: block;
@@ -40,15 +72,48 @@
   }
   
   .admin-sidebar ul li a:hover {
-    background-color: #34495e;
+    background-color: var(--primary);
+    color: var(--white);
   }
   
   .admin-sidebar ul li a.active {
-    /* background-color: #001e33; */
     border-bottom: 2px solid #001e33;
   }
   
-  /* .admin-sidebar ul li a.logout {
-    color: #e74c3c;
+ 
+
+   
+
+@media (min-width: 769px) {
+  .admin-sidebar {
+    left: 0;
   }
-   */
+
+  .sidebar-toggle {
+    display: none;
+  }
+
+  .toggle_container
+  {
+    background-color: transparent;
+  }
+}
+
+.sidebar-toggle {
+  background: none;
+  border: none;
+  color: var(--black);
+  font-size: 24px;
+  cursor: pointer;
+}
+
+@media (min-width: 769px) {
+  .toggle_container {
+    display: none;
+  }
+
+  .admin-sidebar {
+    left: 0;
+    padding-top: 20px;
+  }
+}

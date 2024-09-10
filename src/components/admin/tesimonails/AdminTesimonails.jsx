@@ -121,7 +121,7 @@ function AdminTesimonails() {
       </Button> */}
       <h1>Our Success Stories</h1>
       {testimonials.length > 0 ? (
-        <Table striped bordered hover className="mt-4">
+        <Table striped bordered responsive hover className="mt-4">
           <thead>
             <tr>
               <th>Customer Name</th>

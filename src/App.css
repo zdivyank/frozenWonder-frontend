@@ -17,7 +17,7 @@
 
 .app-container:has(.admin-sidebar) .main-content {
   width: calc(100% - 250px);
-  margin-left: 250px;
+  margin-left: auto;
 }
 
 /* Navbar styles */
@@ -296,7 +296,7 @@
   }
 }
 
-@media screen and (max-width: 768px) {
+@media screen and (max-width: 769px) {
   
   .navbar-container {
     padding: 0 20px;
@@ -304,6 +304,11 @@
 
   .navbar-logo img {
     height: 50px;
+  }
+
+  .app-container:has(.admin-sidebar) .main-content {
+    width: calc(100% - 0px);
+    margin-left: auto;
   }
 }
 

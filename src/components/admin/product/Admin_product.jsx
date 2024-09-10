@@ -230,7 +230,7 @@ function Admin_product() {
                 <CiCirclePlus size={22} className='me-2' />Add New Products
             </button>
             <h1>Our Products</h1>
-            <Table striped bordered hover>
+            <Table striped bordered responsive hover>
                 <thead>
                     <tr>
                         <th>Name</th>

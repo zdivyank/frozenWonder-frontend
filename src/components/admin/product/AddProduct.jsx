@@ -227,7 +227,7 @@ function AddProduct() {
   };
 
   return (
-    <section className='product_section'>
+    <section className='product_section' >
       <h1>Add New Product</h1>
       <form onSubmit={handleSubmit} encType="multipart/form-data">
         <label>
