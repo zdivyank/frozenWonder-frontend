@@ -68,9 +68,14 @@
   
 
   
-@media only screen and (max-width: 768px) {
+/* @media only screen and (max-width: 768px) {
+
+  .main_container
+{
+  margin-top: 5%;
+}
   .inquiries-container
   {
-    margin: 0px 50px;
+    margin: 10% 50px;
   }
-}
+} */

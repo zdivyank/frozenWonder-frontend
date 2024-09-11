@@ -220,16 +220,16 @@ function Admin_product() {
     };
 
     return (
-        <div className='m-3'>
+        <div className='m-3 text-center'>
             <button
             
-                className='btn btn-success m-3'
+                className='btn btn-success m-3 '
                 onClick={() => navigate('/admin/addproduct')}
             >
                 
                 <CiCirclePlus size={22} className='me-2' />Add New Products
             </button>
-            <h1>Our Products</h1>
+            <h1 className='text-center'>Our Products</h1>
             <Table striped bordered responsive hover>
                 <thead>
                     <tr>

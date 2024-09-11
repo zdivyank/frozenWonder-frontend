@@ -24,3 +24,45 @@
     height: auto;
   }
   
+
+  .testimonial_msg
+  {
+    white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  }
+
+  .toggle-message-btn
+  {
+    background-color: transparent;
+  }
+
+  /* Truncated message styling */
+.testimonial_msg {
+  max-height: 2.5em; /* Limit height to fit only one or two lines */
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  transition: max-height 0.3s ease;
+  position: relative;
+}
+
+/* Expanded message styling */
+.testimonial_msg.expanded {
+  max-height: none; /* Allow it to grow naturally */
+  white-space: normal;
+  text-overflow: clip; /* Show the full message */
+  overflow: visible;
+}
+
+/* Button for toggling message */
+.toggle-message-btn {
+  background: none;
+  border: none;
+  color: blue;
+  cursor: pointer;
+  text-decoration: underline;
+  font-size: 0.9em;
+  padding-left: 0;
+  margin-left: 0.5em;
+}

@@ -2,10 +2,13 @@ import React, { useEffect, useState } from 'react';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { CONFIGS } from '../../../../config';
-import './Admin_contact.css';  // Import the updated CSS file
+import { Table, Pagination } from 'react-bootstrap';
+import './Admin_contact.css';
 
 function Admin_contact() {
   const [inquiries, setInquiries] = useState([]);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [inquiriesPerPage] = useState(15);
 
   useEffect(() => {
     const fetchInquiries = async () => {
@@ -28,7 +31,8 @@ function Admin_contact() {
 
     fetchInquiries();
   }, []);
-  const handledownload = async()=>{
+
+  const handleDownload = async () => {
     try {
       const response = await fetch(`${CONFIGS.API_BASE_URL}/downloadInquiries`, {
         method: 'GET',
@@ -40,8 +44,6 @@ function Admin_contact() {
       if (response.ok) {
         const blob = await response.blob();
         const url = window.URL.createObjectURL(blob);
-
-        // Create a link to trigger the download
         const link = document.createElement('a');
         link.href = url;
         link.setAttribute('download', 'inquiries.xlsx');
@@ -51,31 +53,68 @@ function Admin_contact() {
       } else {
         console.error('Failed to download file');
       }
-    }catch (error) {
+    } catch (error) {
       console.log(error);
-      
     }
-  }
+  };
+
+  // Pagination logic
+  const indexOfLastInquiry = currentPage * inquiriesPerPage;
+  const indexOfFirstInquiry = indexOfLastInquiry - inquiriesPerPage;
+  const currentInquiries = inquiries.slice(indexOfFirstInquiry, indexOfLastInquiry);
+
+  const totalPages = Math.ceil(inquiries.length / inquiriesPerPage);
+
+  const handlePageChange = (pageNumber) => {
+    setCurrentPage(pageNumber);
+  };
 
   return (
     <div className="admin-contact-container text-center">
       <h1 className="admin-contact-title">Inquiries</h1>
-      <button className='text-center btn btn-dark mt-3 mb-3' onClick={handledownload}>Download excel</button>
+      <button className="btn btn-dark mt-3 mb-3" onClick={handleDownload}>Download Excel</button>
 
-      
-      <div className="inquiries-list">
-        {inquiries.map((inquiry, index) => (
-          <div key={index} className="inquiry-card">
-            <div className="inquiry-details">
-              <p><strong>Name:</strong> {inquiry.name}</p>
-              <p><strong>Company Name:</strong> {inquiry.company_name}</p>
-              <p><strong>Phone Number:</strong> {inquiry.user_number}</p>
-              <p><strong>Region:</strong> {inquiry.region}</p>
-              <p><strong>Message:</strong> {inquiry.message}</p>
-            </div>
-          </div>
+      <Table striped bordered responsive hover className="inquiries-table">
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Company Name</th>
+            <th>Phone Number</th>
+            <th>Region</th>
+            <th>Message</th>
+          </tr>
+        </thead>
+        <tbody>
+          {currentInquiries.map((inquiry, index) => (
+            <tr key={index}>
+              <td>{inquiry.name}</td>
+              <td>{inquiry.company_name}</td>
+              <td>{inquiry.user_number}</td>
+              <td>{inquiry.region}</td>
+              <td>{inquiry.message}</td>
+            </tr>
+          ))}
+        </tbody>
+      </Table>
+      {/* Pagination controls */}
+      <Pagination className="justify-content-center">
+        {/* <Pagination.First onClick={() => handlePageChange(1)} disabled={currentPage === 1} /> */}
+        <Pagination.Prev onClick={() => handlePageChange(currentPage - 1)} disabled={currentPage === 1} />
+        
+        {Array.from({ length: totalPages }, (_, index) => (
+          <Pagination.Item
+            key={index + 1}
+            active={index + 1 === currentPage}
+            onClick={() => handlePageChange(index + 1)}
+          >
+            {index + 1}
+          </Pagination.Item>
         ))}
-      </div>
+
+        <Pagination.Next onClick={() => handlePageChange(currentPage + 1)} disabled={currentPage === totalPages} />
+        {/* <Pagination.Last onClick={() => handlePageChange(totalPages)} disabled={currentPage === totalPages} /> */}
+      </Pagination>
+
     </div>
   );
 }

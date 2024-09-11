@@ -95,8 +95,8 @@ function BlockDate() {
   };
 
   return (
-    <div className='blockdate-card'>
-      <h1 className='blockdate-title'>Block Dates</h1>
+    <div className='blockdate-card '>
+      <h1 className='blockdate-title text-center'>Block Dates</h1>
       
       <div className='blockdate-form'>
         <DatePicker

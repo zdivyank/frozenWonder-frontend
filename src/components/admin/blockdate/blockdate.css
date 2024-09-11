@@ -4,7 +4,7 @@
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   padding: 20px;
   max-width: 600px;
-  margin: 20px auto;
+  margin: 30px auto;
 }
 
 .blockdate-title {
@@ -88,4 +88,12 @@
 .blockdate-empty {
   color: #888;
   font-style: italic;
+}
+
+
+
+@media (max-width: 480px) {
+  .blockdate-card {
+   margin-top: 15%;
+  }
 }

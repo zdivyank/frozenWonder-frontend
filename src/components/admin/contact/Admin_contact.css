@@ -65,7 +65,8 @@
   
   @media (max-width: 480px) {
     .admin-contact-container {
-      padding: 15px;
+      margin-top: 15%;
+      padding: 35px;
     }
   
     .admin-contact-title {

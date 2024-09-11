@@ -16,6 +16,7 @@ function AdminTesimonails() {
   });
   const [editTestimonial, setEditTestimonial] = useState(null);
   const [saving, setSaving] = useState(false);
+  const [expandedMessages, setExpandedMessages] = useState({}); // State to manage expanded messages
 
   useEffect(() => {
     fetchTestimonials();
@@ -114,12 +115,27 @@ function AdminTesimonails() {
     });
   };
 
+  const toggleMessage = (id) => {
+    setExpandedMessages((prev) => ({
+      ...prev,
+      [id]: !prev[id], // Toggle the expansion state for each testimonial by ID
+    }));
+  };
+
+  const truncateMessage = (message, wordLimit, isExpanded) => {
+    if (isExpanded) {
+      return message; // Show the full message if expanded
+    }
+    const words = message.split(' ');
+    if (words.length > wordLimit) {
+      return words.slice(0, wordLimit).join(' ') + '...';
+    }
+    return message;
+  };
+
   return (
     <div className="admin-testimonials">
-      {/* <Button className="btn btn-success" onClick={() => setShowAddModal(true)}>
-        <CiCirclePlus className="me-2" size={24} /> Add Testimonial
-      </Button> */}
-      <h1>Our Success Stories</h1>
+      <h1 className='text-center'>Our Success Stories</h1>
       {testimonials.length > 0 ? (
         <Table striped bordered responsive hover className="mt-4">
           <thead>
@@ -136,7 +152,21 @@ function AdminTesimonails() {
             {testimonials.map((testimonial) => (
               <tr key={testimonial._id}>
                 <td>{testimonial.cust_name}</td>
-                <td>{testimonial.message}</td>
+                <td className='testimonial_msg'>
+                  {truncateMessage(
+                    testimonial.message,
+                    10, // Adjust word limit here
+                    expandedMessages[testimonial._id]
+                  )}
+                  {testimonial.message.split(' ').length > 10 && (
+                    <button
+                      className="toggle-message-btn"
+                      onClick={() => toggleMessage(testimonial._id)}
+                    >
+                      {expandedMessages[testimonial._id] ? 'Show Less' : 'Show More'}
+                    </button>
+                  )}
+                </td>
                 <td>
                   {testimonial.image && (
                     testimonial.image.endsWith('.mp4') ? (

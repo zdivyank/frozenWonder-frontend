@@ -228,7 +228,7 @@ function AddProduct() {
 
   return (
     <section className='product_section' >
-      <h1>Add New Product</h1>
+      <h1 className='text-center'>Add New Product</h1>
       <form onSubmit={handleSubmit} encType="multipart/form-data">
         <label>
           Product Name:
