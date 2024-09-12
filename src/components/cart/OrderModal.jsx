@@ -50,6 +50,8 @@ function OrderModal({ cartItems, total, onClose, setCartItems }) {
   const navigate = useNavigate();
   const [iscliked, setisliked] = useState(false);
   const [message, setMessage] = useState('');
+  const [isChecked, setIsChecked] = useState(false);
+
 
   const [orders, setOrders] = useState([]); // Initialize orders as an empty array
 
@@ -75,7 +77,7 @@ function OrderModal({ cartItems, total, onClose, setCartItems }) {
     fetchAvailableDate();
   }, []);
 
-  
+
 
   const handleDateChange = (date) => {
     setCustomerInfo((prev) => ({
@@ -94,9 +96,9 @@ function OrderModal({ cartItems, total, onClose, setCartItems }) {
     const orderCount = orders.filter(order => order.order_date === formattedDate).length;
     return orderCount >= 15; // Disable if there are 15 or more orders
   };
-  
-  
-  
+
+
+
   useEffect(() => {
     fetchBlockedDates();
     fetchAvailableCoupons();
@@ -106,10 +108,10 @@ function OrderModal({ cartItems, total, onClose, setCartItems }) {
     // If the minDate (current available date) has fewer than 15 orders, don't allow maxDate (next date)
     const formattedMinDate = moment(availableDate).format('YYYY-MM-DD');
     const minDateOrderCount = orders.filter(order => order.order_date === formattedMinDate).length;
-  
+
     return minDateOrderCount >= 15; // Allow maxDate only if minDate has 15 or more orders
   };
-  
+
 
   const fetchAvailableCoupons = async () => {
     try {
@@ -876,22 +878,22 @@ function OrderModal({ cartItems, total, onClose, setCartItems }) {
 
 
                     <div className="form-group">
-      <label>Order Date:</label>
-      {availableDate ? (
-        <select
-          value={customerInfo.order_date}
-          onChange={(e) =>
-            setCustomerInfo({ ...customerInfo, order_date: e.target.value })
-          }
-          required
-        >
-          {/* Dropdown shows only one available date */}
-          <option value={availableDate}>{availableDate}</option>
-        </select>
-      ) : (
-        <p>Loading available date...</p> // Show a loading message while the date is being fetched
-      )}
-    </div>
+                      <label>Order Date:</label>
+                      {availableDate ? (
+                        <select
+                          value={customerInfo.order_date}
+                          onChange={(e) =>
+                            setCustomerInfo({ ...customerInfo, order_date: e.target.value })
+                          }
+                          required
+                        >
+                          {/* Dropdown shows only one available date */}
+                          <option value={availableDate}>{availableDate}</option>
+                        </select>
+                      ) : (
+                        <p>Loading available date...</p> // Show a loading message while the date is being fetched
+                      )}
+                    </div>
 
                     {/* <div className="form-group">
                       <label>Time Slot:</label>
@@ -941,13 +943,71 @@ function OrderModal({ cartItems, total, onClose, setCartItems }) {
                         required
                       />
                     </div>
+
+                    <div className="mt-3">
+        <p>
+          <strong>TERMS AND CONDITIONS</strong>
+        </p>
+        <hr />  
+
+        <ul>
+
+        <li>
+          SAMPLES ARE FREE OF COST; ONLY DELIVERY/COURIER CHARGES APPLY.
+        </li>
+        <li>
+          YOU WILL RECEIVE YOUR FREE SAMPLE PACK THROUGH OUR PRESCHEDULED DELIVERIES STARTING FROM 1ST SEPTEMBER ONWARDS.
+        </li>
+        <li>
+          YOU WILL GET A CONFIRMATION CALL BEFORE ANY DELIVERY IS MADE.
+        </li>
+        <li>
+          SAMPLES WILL BE DELIVERED WHICH ARE SUBJECT TO AVAILABILITY.
+        </li>
+        </ul>
+
+        <hr />
+      </div>
+
+                    {/* <div className="mt-3">
+                      <label>
+                        <input
+                          type="checkbox"
+                          checked={isChecked}
+                          onChange={() => setIsChecked(!isChecked)}
+                        />
+                        I agree to the terms and conditions
+                      </label>
+                    </div> */}
+
+                    <div className="mt-3">
+        <label>
+          <input
+            type="checkbox"
+            checked={isChecked}
+            onChange={() => setIsChecked(!isChecked)} // Toggle checkbox state
+            className='me-2'
+          />
+          I AGREE TO - 
+          PAY DELIVERY/COURIER CHARGES  & ALL THE TERMS & CONDITIONS OF THE COMPANY.
+        </label>
+      </div>
+
                     {/* Submit Button */}
                     {!customerInfo.isNewUser ? (
                       <p className="text-danger">Orders are currently limited to 500 unique customers. We apologize for the inconvenience.</p>
                     ) : (
-                      <button type="submit" disabled={iscliked} className="btn btn-primary btn-block mt-3">
-                        Place Order
-                      </button>
+                      // <button type="submit" disabled={iscliked} className="btn btn-primary btn-block mt-3">
+                      //   Place Order
+                      // </button>
+
+                      <button
+                      type="submit"
+                      disabled={!isChecked || iscliked} // Disabled until checkbox is checked
+                      className="btn btn-primary btn-block mt-3"
+                    >
+                      Place Order
+                    </button>
 
                     )}
 
