@@ -11,9 +11,10 @@ function Inquiries() {
     company_name: '',
     user_number: '',
     region: '',
-    message: ''
+    message: '',
+    status: false,  // Set status to false by default
   });
-   const [isclicked,setisclicked] = useState(false);
+  const [isclicked, setisclicked] = useState(false);
 
   const location = useLocation();
   useEffect(() => {
@@ -32,7 +33,7 @@ function Inquiries() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setisclicked(true)
+    setisclicked(true);
 
     try {
       const response = await fetch(`${CONFIGS.API_BASE_URL}/addinquiry`, {
@@ -48,30 +49,38 @@ function Inquiries() {
           position: 'top-center',
           autoClose: 5000,
           hideProgressBar: false,
-          closeOnClick: true,
+          closeOnClick: false,
           pauseOnHover: true,
           draggable: true,
           progress: undefined,
         });
-        setFormData({ name: '', company_name: '', user_number: '', region: '', message: '' });
-        setisclicked(true)
+        // Reset form after successful submission
+        setFormData({
+          name: '',
+          company_name: '',
+          user_number: '',
+          region: '',
+          message: '',
+          status: false, 
+        });
+        setisclicked(false);
       } else {
         const errorData = await response.json();
-        setisclicked(false)
+        setisclicked(false);
         toast.error('Failed to submit inquiry: ' + errorData.Message);
       }
     } catch (error) {
       toast.error('Failed to submit inquiry. Please try again.');
       console.error('Error:', error);
+      setisclicked(false);
     }
   };
 
   return (
     <>
       <div className="main_container">
-
-        <h1 className="inquiries-heading">Trade Inquiry</h1>
-        <div className="inquiries-container" id='inquiries'>
+        <h1 className="inquiries-heading">  Business Inquiry</h1>
+        <div className="inquiries-container" id="inquiries">
           <form onSubmit={handleSubmit} className="inquiries-form">
             <div className="form-group">
               <label className="form-label">Name:</label>
@@ -127,9 +136,8 @@ function Inquiries() {
                 required
               />
             </div>
-            <button type="submit" disabled={isclicked}  className="form-button">Submit</button>
+            <button type="submit" disabled={isclicked} className="form-button">Submit</button>
           </form>
-
         </div>
       </div>
     </>

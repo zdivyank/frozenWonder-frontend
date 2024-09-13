@@ -1,19 +1,19 @@
-import React, { useEffect, useState } from 'react';
-import { toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
-import { CONFIGS } from '../../../../config';
-import { Table, Pagination } from 'react-bootstrap';
-import './Admin_contact.css';
+import React, { useEffect, useState } from 'react'
+import Archive_minibar from './Archive_minibar'
+import { Pagination, Table } from 'react-bootstrap';
 import { AiFillDelete } from 'react-icons/ai';
+import { toast } from 'react-toastify';
+import { CONFIGS } from '../../../../config';
+import { MdOutlineSettingsBackupRestore } from 'react-icons/md';
 
-function Admin_contact() {
-  const [inquiries, setInquiries] = useState([]);
+function Archive_inquiries() {
+    const [inquiries, setInquiries] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [inquiriesPerPage] = useState(15);
 
   const fetchInquiries = async () => {
     try {
-      const response = await fetch(`${CONFIGS.API_BASE_URL}/getinquiry`);
+      const response = await fetch(`${CONFIGS.API_BASE_URL}/getarchivedinquiry`);
       if (response.ok) {
         const data = await response.json();
         // Sort inquiries by _id to get the newest inquiries first
@@ -32,34 +32,10 @@ function Admin_contact() {
   useEffect(() => {
     fetchInquiries(); // Load inquiries when the component mounts
   }, []);
-    const handleDownload = async () => {
-      try {
-        const response = await fetch(`${CONFIGS.API_BASE_URL}/downloadInquiries`, {
-          method: 'GET',
-          headers: {
-            'Content-Type': 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-          },
-        });
 
-        if (response.ok) {
-          const blob = await response.blob();
-          const url = window.URL.createObjectURL(blob);
-          const link = document.createElement('a');
-          link.href = url;
-          link.setAttribute('download', 'inquiries.xlsx');
-          document.body.appendChild(link);
-          link.click();
-          link.remove();
-        } else {
-          console.error('Failed to download file');
-        }
-      } catch (error) {
-        console.log(error);
-      }
-    };
 
-    // Pagination logic
-    const indexOfLastInquiry = currentPage * inquiriesPerPage;
+
+  const indexOfLastInquiry = currentPage * inquiriesPerPage;
     const indexOfFirstInquiry = indexOfLastInquiry - inquiriesPerPage;
     const currentInquiries = inquiries.slice(indexOfFirstInquiry, indexOfLastInquiry);
 
@@ -79,7 +55,7 @@ function Admin_contact() {
             headers: {
               'Content-Type': 'application/json',
             },
-            body: JSON.stringify({ status: true }), // Assuming the API expects a `status` field
+            body: JSON.stringify({ status: false }), // Assuming the API expects a `status` field
           });
   
           const result = await response.json();
@@ -106,16 +82,11 @@ function Admin_contact() {
         }
       }
     };
-    
-    
-    
-
   return (
-    <div className="admin-contact-container text-center">
-      <h1 className="admin-contact-title">Inquiries</h1>
-      <button className="btn btn-dark mt-3 mb-3" onClick={handleDownload}>Download Excel</button>
-
-      <Table striped bordered responsive hover className="inquiries-table">
+    <>
+    <Archive_minibar />
+    <h1 className='text-center'>Archived inquiries</h1>
+    <Table striped bordered responsive hover className="inquiries-table">
         <thead>
           <tr>
             <th>Name</th>
@@ -136,8 +107,9 @@ function Admin_contact() {
               <td>{inquiry.message}</td>
               <td>
               {/* Delete icon with onClick handler */}
-              <AiFillDelete 
+              <MdOutlineSettingsBackupRestore 
                 style={{ cursor: 'pointer', color: 'red' }} 
+                size={24}
                 onClick={() => handleDelete(inquiry._id)} 
               />
             </td>
@@ -163,9 +135,8 @@ function Admin_contact() {
         <Pagination.Next onClick={() => handlePageChange(currentPage + 1)} disabled={currentPage === totalPages} />
         {/* <Pagination.Last onClick={() => handlePageChange(totalPages)} disabled={currentPage === totalPages} /> */}
       </Pagination>
-
-    </div>
-  );
+    </>
+  )
 }
 
-export default Admin_contact;
+export default Archive_inquiries

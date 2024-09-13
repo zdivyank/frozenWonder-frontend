@@ -39,6 +39,8 @@ import Admin_contact from './components/admin/contact/Admin_contact';
 import Footer from './components/footer/Footer';
 import TermsnCondition from './components/footer/TermsnCondition';
 import Reviews from './components/footer/Reviews';
+import Archive from './components/admin/archive/Archive';
+import Archive_inquiries from './components/admin/archive/Archive_inquiries';
 
 function AppContent() {
   const { isLoggedIn, role, isLoading } = useAuth();
@@ -234,6 +236,9 @@ function AppContent() {
             <Route path="/admin/agency" element={isLoggedIn && role === 'owner' ? <Admin_agency /> : <Navigate to="/admin" replace />} />
             <Route path="/admin/date" element={isLoggedIn && role === 'owner' ? <BlockDate /> : <Navigate to="/admin" replace />} />
             <Route path="/admin/contact" element={isLoggedIn && role === 'owner' ? <Admin_contact /> : <Navigate to="/admin" replace />} />
+            <Route path="/admin/archive" element={isLoggedIn && role === 'owner' ? <Archive /> : <Navigate to="/admin" replace />} />
+            {/* <Route path="/admin/archive/order" element={isLoggedIn && role === 'owner' ? <Archive /> : <Navigate to="/admin" replace />} /> */}
+            <Route path="/admin/archive/inquiry" element={isLoggedIn && role === 'owner' ? <Archive_inquiries /> : <Navigate to="/admin" replace />} />
 
             {/* Agency Routes */}
             <Route path="/agency/orders" element={isLoggedIn && role === 'agency' ? <Agency_orders /> : <Navigate to="/admin" replace />} />

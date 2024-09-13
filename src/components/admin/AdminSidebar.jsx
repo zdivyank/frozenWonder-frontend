@@ -8,6 +8,7 @@ import { CiCalendarDate } from 'react-icons/ci';
 import { IoIosContact } from 'react-icons/io';
 import { NavLink } from 'react-router-dom';
 import { IoLogOutOutline } from 'react-icons/io5';
+import { MdOutlineArchive } from 'react-icons/md';
 
 const AdminSidebar = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -79,8 +80,12 @@ const AdminSidebar = () => {
           </li>
           <li>
             <NavLink to="/admin/contact">
-              <IoIosContact className='me-2' />Trade Inquiries
+              <IoIosContact className='me-2' />Bussiness Inquiries
             </NavLink>
+          </li>
+          <li>
+            <NavLink to="/admin/archive">
+              <MdOutlineArchive className='me-2' />Archive Data</NavLink>
           </li>
           <li>
             <NavLink to="/logout" className="logout">

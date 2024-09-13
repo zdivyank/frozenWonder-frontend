@@ -149,7 +149,7 @@ function AdminOrder() {
     }
 
     try {
-      const response = await fetch(`${CONFIGS.API_BASE_URL}/vieworders`, {
+      const response = await fetch(`${CONFIGS.API_BASE_URL}/viewvalidorders`, {
         method: 'GET',
       });
 
@@ -173,21 +173,19 @@ function AdminOrder() {
   }, [isLoggedIn, navigate]);
 
   const handleStatusUpdate = async (orderId, currentStatus) => {
-    const newStatus = currentStatus === "pending" ? "delivered" : "pending";
+    const newStatus = currentStatus === "Pending" ? "archive" : "Pending";
     try {
-      const response = await fetch(`${CONFIGS.API_BASE_URL}/updateorderstatus/${orderId}`, {
+      const response = await fetch(`${CONFIGS.API_BASE_URL}/updateStatus/${orderId}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({ status: newStatus }),
       });
-
+  
       if (response.ok) {
-        const updatedOrders = orders.map(order =>
-          order._id === orderId ? { ...order, status: newStatus } : order
-        );
-        setOrders(updatedOrders);
+        // Fetch updated orders immediately
+        await fetchOrders();
       } else {
         console.log('Failed to update order status');
       }
@@ -195,42 +193,31 @@ function AdminOrder() {
       console.log('Error updating order status:', error);
     }
   };
+  
+  const handleDelete = async () => {
+    if (selectedOrderId) {
+      try {
+        // Update the status of the order to 'archive'
+        await handleStatusUpdate(selectedOrderId, 'Pending');
+        // Fetch updated orders immediately
+        await fetchOrders();
+        closeModal(); // Close the modal after updating the status
+      } catch (error) {
+        console.log('Error updating order status to archive:', error);
+      }
+    }
+  };
+  
 
   const openModal = (orderId) => {
     setSelectedOrderId(orderId);
     setShowModal(true);
-  };
-
-  const closeModal = () => {
-    setShowModal(false);
-    setSelectedOrderId(null);
-  };
-
-  const handleDelete = async () => {
-    if (selectedOrderId) {
-      try {
-        const response = await fetch(`${CONFIGS.API_BASE_URL}/deleteorder/${selectedOrderId}`, {
-          method: 'DELETE',
-        });
-
-        if (response.ok) {
-          setOrders(orders.filter(order => order._id !== selectedOrderId));
-          closeModal();
-        } else {
-          console.log('Failed to delete order');
-        }
-      } catch (error) {
-        console.log('Error deleting order:', error);
-      }
-    }
-  };
-
-  // Calculate current orders
+  };  
+  
   const indexOfLastOrder = currentPage * ordersPerPage;
   const indexOfFirstOrder = indexOfLastOrder - ordersPerPage;
   const currentOrders = orders.slice(indexOfFirstOrder, indexOfLastOrder);
 
-  // Change page
   const paginate = (pageNumber) => setCurrentPage(pageNumber);
 
   const handledownload = async () => {
@@ -266,19 +253,17 @@ function AdminOrder() {
     fetchOrdersByPincode(pincode); // Fetch orders by pincode
   };
 
+  const closeModal = () => {
+    setShowModal(false);
+    setSelectedOrderId(null);
+  };
+
   return (
     <section className="admin-order-section text-center">
       <Container className='text-center'>
         <h1 className="mt-3">Orders List</h1>
 
-        {/* <div>
-        <label>Select Pincode:</label>
-        <input
-          type="text"
-          value={selectedPincode}
-          onChange={(e) => setSelectedPincode(e.target.value)}
-        />
-      </div> */}
+        
 
 <div className='m-3'>
   <label>Select Date Range:</label>
