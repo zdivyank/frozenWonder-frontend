@@ -5,6 +5,10 @@ import { useAuth } from '../../../store/Auth';
 import { CONFIGS } from '../../../../config/index';
 import './admin_order.css';
 import { MdDelete } from 'react-icons/md';
+import DatePicker from 'react-datepicker';
+import 'react-datepicker/dist/react-datepicker.css';
+import { saveAs } from 'file-saver';
+import * as XLSX from 'xlsx';
 
 function AdminOrder() {
   const [orders, setOrders] = useState([]);
@@ -14,10 +18,78 @@ function AdminOrder() {
   const [selectedOrderId, setSelectedOrderId] = useState(null);
   const [showModal, setShowModal] = useState(false);
   const [pincodeData, setPincodeData] = useState([]); // Holds available pincodes
-  const [selectedPincode, setSelectedPincode] = useState(''); // Selected pincode
+  const [selectedPincode, setSelectedPincode] = useState('');
+  const [startDate, setStartDate] = useState(null);
+  const [endDate, setEndDate] = useState(null);
+  // const [selectedPincode, setSelectedPincode] = useState('');
   const { isLoggedIn } = useAuth();
   const navigate = useNavigate();
 
+  
+
+
+  const handleFilter = async () => {
+    try {
+      const queryParams = new URLSearchParams({
+        pincode: selectedPincode,
+        startDate: startDate?.toISOString(),
+        endDate: endDate?.toISOString(),
+      });
+
+      const response = await fetch(`${CONFIGS.API_BASE_URL}/filter-orders?${queryParams.toString()}`);
+      const data = await response.json();
+      setOrders(data);
+    } catch (error) {
+      console.error('Error fetching filtered orders:', error);
+    }
+  };
+
+  const downloadExcel = () => {
+    // Process orders to add serial number, format date, and exclude 'id'
+    const processedOrders = orders.map((order, index) => {
+      const { _id, cust_address, ...restOrder } = order; // Exclude the 'id' field
+  
+      // Handle multiple addresses by joining them into a single string if needed
+      const addressString = Array.isArray(cust_address) ? cust_address.join(', ') : cust_address;
+  
+      const formattedDate = new Date(order.order_date).toLocaleDateString('en-GB'); // Format date as dd/mm/yyyy
+  
+      // Return the fields in the correct order
+      return {
+        serial_no: index + 1,  // Serial number starting from 1
+        cust_name: order.cust_name,
+        cust_number: order.cust_number,
+        cust_address: addressString,  // Address placed right after serial number
+        selected_address: order.selected_address,
+        pincode: order.pincode,
+        order_date: formattedDate,  // Formatted date
+        timeslot: order.timeslot,
+        order_product: order.order_product,
+        status: order.status,
+        total_amount: order.total_amount,
+        agency_id: order.agency_id,
+        coupon_code: order.coupon_code,
+        assigned_delivery_boys: order.assigned_delivery_boys,
+        blocked_dates: order.blocked_dates,
+        // __v: order.__v,
+        cust_contact: order.cust_contact,
+      };
+    });
+  
+    // Create the worksheet from processed orders
+    const worksheet = XLSX.utils.json_to_sheet(processedOrders);
+  
+    // Create a new workbook and append the worksheet
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, "Orders");
+  
+    // Write the workbook to a buffer and trigger download
+    const excelBuffer = XLSX.write(workbook, { bookType: 'xlsx', type: 'array' });
+    const data = new Blob([excelBuffer], { type: 'application/octet-stream' });
+    saveAs(data, 'filtered_orders.xlsx'); // Ensure the file extension is .xlsx
+  };
+  
+  
   // Fetch all available pincodes
   const fetchAllPincodes = async () => {
     setLoading(true);
@@ -199,14 +271,53 @@ function AdminOrder() {
       <Container className='text-center'>
         <h1 className="mt-3">Orders List</h1>
 
+        {/* <div>
+        <label>Select Pincode:</label>
+        <input
+          type="text"
+          value={selectedPincode}
+          onChange={(e) => setSelectedPincode(e.target.value)}
+        />
+      </div> */}
+
+<div className='m-3'>
+  <label>Select Date Range:</label>
+  
+  {/* Start Date Picker */}
+  <DatePicker
+    selected={startDate}
+    onChange={(date) => setStartDate(date)}
+    selectsStart
+    startDate={startDate}
+    endDate={endDate}
+    placeholderText="Start Date"
+  />
+  
+  {/* End Date Picker */}
+  <DatePicker
+    selected={endDate}
+    onChange={(date) => setEndDate(date)}
+    selectsEnd
+    startDate={startDate}
+    endDate={endDate}
+    placeholderText="End Date"
+  />
+  
+  {/* GO Button */}
+  <button 
+    className='btn btn-success mt-3 mb-3 m-3' 
+    onClick={handleFilter}
+  >
+    GO
+  </button>
+</div>
 
 
 
-        <button className='btn btn-dark mt-3 mb-3' onClick={handledownload}>Download excel</button>
-        <div className="mt-3 mb-3 text-right">
-  <h4>Location Filter:</h4>
+        <div className="mt-3 mb-3 ">
+  <h4>Pincode Filter:</h4>
   <Form.Control as="select" size="md" value={selectedPincode} onChange={handlePincodeChange} className="custom-select">
-    <option value="">Select Pincode</option>
+    <option value="">All pincodes</option>
     {pincodeData.map((pincode, index) => (
       <option key={index} value={pincode}>
         {pincode}
@@ -214,6 +325,10 @@ function AdminOrder() {
     ))}
   </Form.Control>
 </div>
+      <button className='btn btn-dark mt-3 mb-3 m-3'  onClick={downloadExcel}>Filter Data Excel</button>
+
+
+        <button className='btn btn-dark mt-3 mb-3 m-3' onClick={handledownload}>All Data excel</button>
 
         {loading ? (
           <p className="admin-order-loading">Loading...</p>
@@ -244,7 +359,7 @@ function AdminOrder() {
                       <td>{order.cust_address}</td>
                       <td>{order.pincode}</td>
                       <td>{order.cust_contact}</td>
-                      <td>{new Date(order.order_date).toLocaleDateString()}</td>
+                      <td>{new Date(order.order_date).toLocaleDateString('en-GB')}</td>
                       <td>{order.timeslot}</td>
                       <td>{order.agency_id?.agency_name || 'Agency not available'}</td>
                       <td className={order.status === "pending" ? "text-warning" : "text-success"}>{order.status}</td>

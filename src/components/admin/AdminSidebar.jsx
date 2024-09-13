@@ -57,6 +57,11 @@ const AdminSidebar = () => {
               <GoListOrdered className='me-2' />Order Summary
             </NavLink>
           </li>
+          {/* <li>
+            <NavLink to="/admin/location">
+              <FaUsers className='me-2' />Loction filter
+            </NavLink>
+          </li> */}
           <li>
             <NavLink to="/admin/testimonail" activeClassName="active">
               <VscFeedback className='me-2' /> Success Stories
