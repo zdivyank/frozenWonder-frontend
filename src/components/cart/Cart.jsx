@@ -127,7 +127,7 @@ function Cart({ cartItems, setCartItems, onClose }) {
                   <td>{item.quantity}</td>
                   <td>{item.product.packs[item.packIndex].price.toFixed(2)}</td>
                   <td>
-                    <MdDelete onClick={() => removeFromCart(item.product._id, item.packIndex)} />
+                    <MdDelete size={25} className='text-danger' onClick={() => removeFromCart(item.product._id, item.packIndex)} />
                   </td>
                 </tr>
               ))}

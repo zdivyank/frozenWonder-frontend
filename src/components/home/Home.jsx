@@ -61,30 +61,35 @@ function Home() {
       className="home-section"
     >
       <div className="home_container">
-        <div className="left_container">
+        <div className="left_container text-center">
           {/* <motion.img
             src="/img/logo.png"
             className="logo text-center"
             alt=""
             variants={itemVariants}
           /> */}
-          <motion.p variants={itemVariants}>
-          DELIGHTS WITH FROZEN WONDERS, A REVOLUTIONARY PRODUCT THAT BRINGS THE FRESHEST, REAL FRUIT FLAVORS STRAIGHT TO YOUR FREEZER. OUR INNOVATIVE PROCESS LOCKS IN THE NATURAL GOODNESS AND VIBRANT TASTE OF FRESH FRUITS, DELIVERING A REFRESHING AND HEALTHY TREAT EVERY TIME.  <button
+          <motion.div variants={itemVariants}>
+          {/* DELIGHTS WITH FROZEN WONDERS, A REVOLUTIONARY PRODUCT THAT BRINGS THE FRESHEST, REAL FRUIT FLAVORS STRAIGHT TO YOUR FREEZER. OUR INNOVATIVE PROCESS LOCKS IN THE NATURAL GOODNESS AND VIBRANT TASTE OF FRESH FRUITS, DELIVERING A REFRESHING AND HEALTHY TREAT EVERY TIME.  */}
+
+          <img src="/img/claim.png" className='claim text-center' alt="" />
+          
+           <button
               onClick={handleClick}
-              className='btn btn-dark '
+              className='btn btn-dark  giftbtn'
               style={{
-                // display: 'inline-block',
-                marginTop: '2rem',
+                display: 'inline-block',
+                // marginTop: '2rem',
                 fontWeight: 'bold',
-                padding: '2rem 1rem', 
+                padding: '1.5rem 0.50rem', 
                 fontSize: '2rem',
-                width: '100%', 
+                width: '70%', 
+                
               }}
             >
-              Claim Your Gift <FiGift className='mb-1' />
+         <FiGift className='mb-1' />    Click Here <FiGift className='mb-1' />
             </button>
 
-          </motion.p>
+          </motion.div>
         </div>
 
         <div className="right_container">

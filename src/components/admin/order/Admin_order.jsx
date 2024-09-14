@@ -25,7 +25,7 @@ function AdminOrder() {
   const { isLoggedIn } = useAuth();
   const navigate = useNavigate();
 
-  
+
 
 
   // const handleFilter = async () => {
@@ -51,7 +51,7 @@ function AdminOrder() {
         startDate: startDate ? startDate.toISOString() : '',
         endDate: endDate ? endDate.toISOString() : '',
       });
-  
+
       const response = await fetch(`${CONFIGS.API_BASE_URL}/filter-orders?${queryParams.toString()}`);
       const data = await response.json();
       setOrders(data);
@@ -64,12 +64,12 @@ function AdminOrder() {
   //   // Process orders to add serial number, format date, and exclude 'id'
   //   const processedOrders = orders.map((order, index) => {
   //     const { _id, cust_address, ...restOrder } = order; // Exclude the 'id' field
-  
+
   //     // Handle multiple addresses by joining them into a single string if needed
   //     const addressString = Array.isArray(cust_address) ? cust_address.join(', ') : cust_address;
-  
+
   //     const formattedDate = new Date(order.order_date).toLocaleDateString('en-GB'); // Format date as dd/mm/yyyy
-  
+
   //     // Return the fields in the correct order
   //     return {
   //       serial_no: index + 1,  // Serial number starting from 1
@@ -91,36 +91,36 @@ function AdminOrder() {
   //       cust_contact: order.cust_contact,
   //     };
   //   });
-  
+
   //   // Create the worksheet from processed orders
   //   const worksheet = XLSX.utils.json_to_sheet(processedOrders);
-  
+
   //   // Create a new workbook and append the worksheet
   //   const workbook = XLSX.utils.book_new();
   //   XLSX.utils.book_append_sheet(workbook, worksheet, "Orders");
-  
+
   //   // Write the workbook to a buffer and trigger download
   //   const excelBuffer = XLSX.write(workbook, { bookType: 'xls', type: 'array' });
   //   const data = new Blob([excelBuffer], { type: 'application/octet-stream' });
   //   saveAs(data, 'filtered_orders.xls'); // Ensure the file extension is .xlsx
   // };
-  
+
 
   const downloadExcel = () => {
     // Process orders to add serial number, format date, and exclude 'id'
     const processedOrders = orders.map((order, index) => {
       const { _id, cust_address, order_product, ...restOrder } = order; // Exclude the 'id' field
-  
+
       // Handle multiple addresses by joining them into a single string if needed
       const addressString = Array.isArray(cust_address) ? cust_address.join(', ') : cust_address;
-  
+
       const formattedDate = new Date(order.order_date).toLocaleDateString('en-GB'); // Format date as dd/mm/yyyy
-  
+
       // Format order_product into a string
-      const productsString = order_product.map(product => 
+      const productsString = order_product.map(product =>
         `${product.name} (Qty: ${product.quantity}, Price: ${product.price})`
       ).join(', ');
-  
+
       // Return the fields in the correct order
       return {
         serial_no: index + 1,  // Serial number starting from 1
@@ -142,21 +142,21 @@ function AdminOrder() {
         unique_code: order.unique_code,
       };
     });
-  
+
     // Create the worksheet from processed orders
     const worksheet = XLSX.utils.json_to_sheet(processedOrders);
-  
+
     // Create a new workbook and append the worksheet
     const workbook = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(workbook, worksheet, "Orders");
-  
+
     // Write the workbook to a buffer and trigger download
     const excelBuffer = XLSX.write(workbook, { bookType: 'xls', type: 'array' });
     const data = new Blob([excelBuffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
     saveAs(data, 'filtered_orders.xls'); // Ensure the file extension is .xlsx
   };
-  
-  
+
+
   // Fetch all available pincodes
   const fetchAllPincodes = async () => {
     setLoading(true);
@@ -198,7 +198,7 @@ function AdminOrder() {
 
       const data = await response.json();
       console.log(data);
-      
+
       setOrders(data.orders || []);
     } catch (error) {
       console.log("Error fetching orders:", error);
@@ -249,7 +249,7 @@ function AdminOrder() {
         },
         body: JSON.stringify({ status: newStatus }),
       });
-  
+
       if (response.ok) {
         // Fetch updated orders immediately
         await fetchOrders();
@@ -260,7 +260,29 @@ function AdminOrder() {
       console.log('Error updating order status:', error);
     }
   };
-  
+
+
+  const handleStatus = async (orderId, selectedStatus) => {
+    try {
+      const response = await fetch(`${CONFIGS.API_BASE_URL}/updateStatus/${orderId}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ status: selectedStatus }), // Use selected status from dropdown
+      });
+
+      if (response.ok) {
+        // Fetch updated orders immediately
+        await fetchOrders();
+      } else {
+        console.log('Failed to update order status');
+      }
+    } catch (error) {
+      console.log('Error updating order status:', error);
+    }
+  };
+
   const handleDelete = async () => {
     if (selectedOrderId) {
       try {
@@ -274,13 +296,13 @@ function AdminOrder() {
       }
     }
   };
-  
+
 
   const openModal = (orderId) => {
     setSelectedOrderId(orderId);
     setShowModal(true);
-  };  
-  
+  };
+
   const indexOfLastOrder = currentPage * ordersPerPage;
   const indexOfFirstOrder = indexOfLastOrder - ordersPerPage;
   const currentOrders = orders.slice(indexOfFirstOrder, indexOfLastOrder);
@@ -330,50 +352,50 @@ function AdminOrder() {
       <Container className='text-center'>
         <h1 className="mt-3">Orders List</h1>
 
-        
 
-<div className='m-3'>
-  <label>Select Date Range:</label>
-  
-  <DatePicker
-  selected={startDate}
-  onChange={(date) => setStartDate(date)}
-  selectsStart
-  startDate={startDate}
-  endDate={endDate}
-  placeholderText="Start Date"
-/>
-<DatePicker
-  selected={endDate}
-  onChange={(date) => setEndDate(date)}
-  selectsEnd
-  startDate={startDate}
-  endDate={endDate}
-  placeholderText="End Date"
-/>
 
-<button 
-  className='btn btn-success mt-3 mb-3 m-3' 
-  onClick={handleFilter}
->
-  GO
-</button>
-</div>
+        <div className='m-3'>
+          <label>Select Date Range:</label>
+
+          <DatePicker
+            selected={startDate}
+            onChange={(date) => setStartDate(date)}
+            selectsStart
+            startDate={startDate}
+            endDate={endDate}
+            placeholderText="Start Date"
+          />
+          <DatePicker
+            selected={endDate}
+            onChange={(date) => setEndDate(date)}
+            selectsEnd
+            startDate={startDate}
+            endDate={endDate}
+            placeholderText="End Date"
+          />
+
+          <button
+            className='btn btn-success mt-3 mb-3 m-3'
+            onClick={handleFilter}
+          >
+            GO
+          </button>
+        </div>
 
 
 
         <div className="mt-3 mb-3 ">
-  <h4>Pincode Filter:</h4>
-  <Form.Control as="select" size="md" value={selectedPincode} onChange={handlePincodeChange} className="custom-select">
-    <option value="">All pincodes</option>
-    {pincodeData.map((pincode, index) => (
-      <option key={index} value={pincode}>
-        {pincode}
-      </option>
-    ))}
-  </Form.Control>
-</div>
-      <button className='btn btn-dark mt-3 mb-3 m-3'  onClick={downloadExcel}>Filter Data Excel</button>
+          <h4>Pincode Filter:</h4>
+          <Form.Control as="select" size="md" value={selectedPincode} onChange={handlePincodeChange} className="custom-select">
+            <option value="">All pincodes</option>
+            {pincodeData.map((pincode, index) => (
+              <option key={index} value={pincode}>
+                {pincode}
+              </option>
+            ))}
+          </Form.Control>
+        </div>
+        <button className='btn btn-dark mt-3 mb-3 m-3' onClick={downloadExcel}>Filter Data Excel</button>
 
 
         <button className='btn btn-dark mt-3 mb-3 m-3' onClick={handledownload}>All Data excel</button>
@@ -385,6 +407,7 @@ function AdminOrder() {
             <Table striped bordered hover responsive>
               <thead>
                 <tr>
+                  <th>Unique code</th>
                   <th>Name</th>
                   <th>Address</th>
                   <th>Pincode</th>
@@ -403,6 +426,15 @@ function AdminOrder() {
                 {currentOrders.length > 0 ? (
                   currentOrders.map((order) => (
                     <tr key={order._id}>
+                        {
+                          order.unique_code?
+                      <td className='text-center'>
+                        {order.unique_code}</td>
+
+                        : <td className='text-center'>-</td>
+
+}
+
                       <td>{order.cust_name}</td>
                       <td>{order.cust_address}</td>
                       <td>{order.pincode}</td>
@@ -410,13 +442,36 @@ function AdminOrder() {
                       <td>{new Date(order.order_date).toLocaleDateString('en-GB')}</td>
                       <td>{order.timeslot}</td>
                       <td>{order.agency_id?.agency_name || 'Agency not available'}</td>
-                      <td className={order.status === "pending" ? "text-warning" : "text-success"}>{order.status}</td>
+                      <td>
+                        <select
+                          className={
+                            order.status === "Pending"
+                              ? "text-warning"
+                              : order.status === "Delivered"
+                                ? "text-success"
+                                : "text-danger"
+                          }
+                          value={order.status}
+                          onChange={(e) => handleStatus(order._id, e.target.value)} // Call function with selected status
+                        >
+                          <option value="Pending" className="text-warning">
+                            Pending
+                          </option>
+                          <option value="Delivered" className="text-success">
+                            Delivered
+                          </option>
+                          <option value="Canceled" className="text-danger">
+                            Canceled
+                          </option>
+                        </select>
+                      </td>
+
                       <td>
                         {order.order_product.length > 0 ? (
                           <ul>
                             {order.order_product.map((product, index) => (
                               // <li key={`${order._id}-${index}`}>
-                               <p className='addcust'> {product.name}</p>
+                              <p className='addcust'> {product.name}</p>
                               // </li>
                             ))}
                           </ul>

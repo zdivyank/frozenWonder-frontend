@@ -681,13 +681,25 @@ function OrderModal({ cartItems, total, onClose, setCartItems }) {
       <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
           <div class="modal-header">
+          {!showOtherFields && !showIndividualFields && (
+            <h5 className="modal-title">OTP VERIFICATION</h5>
+          )}
+          {showOtherFields && showIndividualFields && (
             <h5 className="modal-title">Order Summary</h5>
+          )}
             <button type="button" className="close" onClick={onClose}>
               <span className="text-dark">&times;</span>
             </button>
           </div>
           <div class="modal-body">
+
+            {showOtherFields && showIndividualFields && (
+            <>
             <h3>GIFT HAMPER</h3>
+            <hr />
+            </>
+            // <h5 className="modal-title">OTP VERIFICATION</h5>
+          )}
             {/* {cartItems.map((item, index) => (
             <div key={index}>
               {item.product.name} - {item.product.packs[item.packIndex].ml}ML * {item.product.packs[item.packIndex].unit}
@@ -696,7 +708,6 @@ function OrderModal({ cartItems, total, onClose, setCartItems }) {
           ))}
           <h4>Total: RS.{total}</h4>
           {discountedTotal !== total && <h4>Discounted Total: RS.{discountedTotal.toFixed(2)}</h4>} */}
-            <hr />
             <form onSubmit={handleSubmit}>
               <div className="order_container">
                 {/* Show Email and Send OTP Button */}
