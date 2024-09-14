@@ -28,14 +28,30 @@ function AdminOrder() {
   
 
 
+  // const handleFilter = async () => {
+  //   try {
+  //     const queryParams = new URLSearchParams({
+  //       pincode: selectedPincode,
+  //       startDate: startDate?.toISOString(),
+  //       endDate: endDate?.toISOString(),
+  //     });
+
+  //     const response = await fetch(`${CONFIGS.API_BASE_URL}/filter-orders?${queryParams.toString()}`);
+  //     const data = await response.json();
+  //     setOrders(data);
+  //   } catch (error) {
+  //     console.error('Error fetching filtered orders:', error);
+  //   }
+  // };
   const handleFilter = async () => {
     try {
+      // Convert dates to ISO string format
       const queryParams = new URLSearchParams({
         pincode: selectedPincode,
-        startDate: startDate?.toISOString(),
-        endDate: endDate?.toISOString(),
+        startDate: startDate ? startDate.toISOString() : '',
+        endDate: endDate ? endDate.toISOString() : '',
       });
-
+  
       const response = await fetch(`${CONFIGS.API_BASE_URL}/filter-orders?${queryParams.toString()}`);
       const data = await response.json();
       setOrders(data);
@@ -44,15 +60,66 @@ function AdminOrder() {
     }
   };
 
+  // const downloadExcel = () => {
+  //   // Process orders to add serial number, format date, and exclude 'id'
+  //   const processedOrders = orders.map((order, index) => {
+  //     const { _id, cust_address, ...restOrder } = order; // Exclude the 'id' field
+  
+  //     // Handle multiple addresses by joining them into a single string if needed
+  //     const addressString = Array.isArray(cust_address) ? cust_address.join(', ') : cust_address;
+  
+  //     const formattedDate = new Date(order.order_date).toLocaleDateString('en-GB'); // Format date as dd/mm/yyyy
+  
+  //     // Return the fields in the correct order
+  //     return {
+  //       serial_no: index + 1,  // Serial number starting from 1
+  //       cust_name: order.cust_name,
+  //       cust_number: order.cust_number,
+  //       cust_address: addressString,  // Address placed right after serial number
+  //       selected_address: order.selected_address,
+  //       pincode: order.pincode,
+  //       order_date: formattedDate,  // Formatted date
+  //       timeslot: order.timeslot,
+  //       order_product: order.order_product,
+  //       status: order.status,
+  //       total_amount: order.total_amount,
+  //       agency_id: order.agency_id,
+  //       coupon_code: order.coupon_code,
+  //       assigned_delivery_boys: order.assigned_delivery_boys,
+  //       blocked_dates: order.blocked_dates,
+  //       // __v: order.__v,
+  //       cust_contact: order.cust_contact,
+  //     };
+  //   });
+  
+  //   // Create the worksheet from processed orders
+  //   const worksheet = XLSX.utils.json_to_sheet(processedOrders);
+  
+  //   // Create a new workbook and append the worksheet
+  //   const workbook = XLSX.utils.book_new();
+  //   XLSX.utils.book_append_sheet(workbook, worksheet, "Orders");
+  
+  //   // Write the workbook to a buffer and trigger download
+  //   const excelBuffer = XLSX.write(workbook, { bookType: 'xls', type: 'array' });
+  //   const data = new Blob([excelBuffer], { type: 'application/octet-stream' });
+  //   saveAs(data, 'filtered_orders.xls'); // Ensure the file extension is .xlsx
+  // };
+  
+
   const downloadExcel = () => {
     // Process orders to add serial number, format date, and exclude 'id'
     const processedOrders = orders.map((order, index) => {
-      const { _id, cust_address, ...restOrder } = order; // Exclude the 'id' field
+      const { _id, cust_address, order_product, ...restOrder } = order; // Exclude the 'id' field
   
       // Handle multiple addresses by joining them into a single string if needed
       const addressString = Array.isArray(cust_address) ? cust_address.join(', ') : cust_address;
   
       const formattedDate = new Date(order.order_date).toLocaleDateString('en-GB'); // Format date as dd/mm/yyyy
+  
+      // Format order_product into a string
+      const productsString = order_product.map(product => 
+        `${product.name} (Qty: ${product.quantity}, Price: ${product.price})`
+      ).join(', ');
   
       // Return the fields in the correct order
       return {
@@ -64,15 +131,15 @@ function AdminOrder() {
         pincode: order.pincode,
         order_date: formattedDate,  // Formatted date
         timeslot: order.timeslot,
-        order_product: order.order_product,
+        order_product: productsString,  // Convert array of objects to string
         status: order.status,
         total_amount: order.total_amount,
         agency_id: order.agency_id,
         coupon_code: order.coupon_code,
         assigned_delivery_boys: order.assigned_delivery_boys,
-        blocked_dates: order.blocked_dates,
-        // __v: order.__v,
+        blocked_dates: JSON.stringify(order.blocked_dates), // Optionally stringify blocked_dates
         cust_contact: order.cust_contact,
+        unique_code: order.unique_code,
       };
     });
   
@@ -84,9 +151,9 @@ function AdminOrder() {
     XLSX.utils.book_append_sheet(workbook, worksheet, "Orders");
   
     // Write the workbook to a buffer and trigger download
-    const excelBuffer = XLSX.write(workbook, { bookType: 'xlsx', type: 'array' });
-    const data = new Blob([excelBuffer], { type: 'application/octet-stream' });
-    saveAs(data, 'filtered_orders.xlsx'); // Ensure the file extension is .xlsx
+    const excelBuffer = XLSX.write(workbook, { bookType: 'xls', type: 'array' });
+    const data = new Blob([excelBuffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+    saveAs(data, 'filtered_orders.xls'); // Ensure the file extension is .xlsx
   };
   
   
@@ -268,33 +335,29 @@ function AdminOrder() {
 <div className='m-3'>
   <label>Select Date Range:</label>
   
-  {/* Start Date Picker */}
   <DatePicker
-    selected={startDate}
-    onChange={(date) => setStartDate(date)}
-    selectsStart
-    startDate={startDate}
-    endDate={endDate}
-    placeholderText="Start Date"
-  />
-  
-  {/* End Date Picker */}
-  <DatePicker
-    selected={endDate}
-    onChange={(date) => setEndDate(date)}
-    selectsEnd
-    startDate={startDate}
-    endDate={endDate}
-    placeholderText="End Date"
-  />
-  
-  {/* GO Button */}
-  <button 
-    className='btn btn-success mt-3 mb-3 m-3' 
-    onClick={handleFilter}
-  >
-    GO
-  </button>
+  selected={startDate}
+  onChange={(date) => setStartDate(date)}
+  selectsStart
+  startDate={startDate}
+  endDate={endDate}
+  placeholderText="Start Date"
+/>
+<DatePicker
+  selected={endDate}
+  onChange={(date) => setEndDate(date)}
+  selectsEnd
+  startDate={startDate}
+  endDate={endDate}
+  placeholderText="End Date"
+/>
+
+<button 
+  className='btn btn-success mt-3 mb-3 m-3' 
+  onClick={handleFilter}
+>
+  GO
+</button>
 </div>
 
 
