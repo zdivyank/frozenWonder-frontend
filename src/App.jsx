@@ -189,7 +189,7 @@ function AppContent() {
               <ScrollLink to="testimonials" smooth={true} duration={500} className="nav-link" onClick={() => setIsNavOpen(false)}>Success Stories</ScrollLink>
             </li>
             <li className="nav-item">
-              <Link to="/inquiries" smooth={true} duration={500} className="nav-link" onClick={() => setIsNavOpen(false)}>Trade Inquiry</Link>
+              <Link to="/inquiries" smooth={true} duration={500} className="nav-link" onClick={() => setIsNavOpen(false)}>Business Inquiry</Link>
             </li>
           </ul>
         </div>
