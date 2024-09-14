@@ -86,7 +86,7 @@ background-size: cover;
 /* Animated text */
 .moving_text {
     width: auto;
-    font-family:"SugarpunchDEMO" ;
+    font-family: "Dosis";
     color: var(--product-color);
     display: flex;
     justify-content: center;
