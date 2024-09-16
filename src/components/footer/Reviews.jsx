@@ -80,6 +80,7 @@ function Reviews() {
             <Form.Label>Customer Name</Form.Label>
             <Form.Control
               type="text"
+              required
               placeholder="Enter customer name"
               value={newTestimonial.cust_name}
               onChange={(e) => handleInputChange('cust_name', e.target.value)}
@@ -92,6 +93,7 @@ function Reviews() {
             <Form.Label>Customer Number</Form.Label>
             <Form.Control
               type="text"
+              required
               placeholder="Enter customer number"
               value={newTestimonial.contact_number}
               onChange={(e) => handleInputChange('contact_number', e.target.value)}
@@ -102,6 +104,7 @@ function Reviews() {
             <Form.Label>Message</Form.Label>
             <Form.Control
               as="textarea"
+              required
               rows={3}
               placeholder="Enter testimonial message"
               value={newTestimonial.message}

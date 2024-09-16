@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Pagination, Table, Container, Button, Modal, Form } from 'react-bootstrap';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../../store/Auth';
 import { CONFIGS } from '../../../../config/index';
 import './admin_order.css';
@@ -9,6 +9,7 @@ import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import { saveAs } from 'file-saver';
 import * as XLSX from 'xlsx';
+import { GrDocumentUpdate } from 'react-icons/gr';
 
 function AdminOrder() {
   const [orders, setOrders] = useState([]);
@@ -426,17 +427,22 @@ function AdminOrder() {
                 {currentOrders.length > 0 ? (
                   currentOrders.map((order) => (
                     <tr key={order._id}>
-                        {
-                          order.unique_code?
-                      <td className='text-center'>
-                        {order.unique_code}</td>
+                      {
+                        order.unique_code ?
+                          <td className='text-center'>
+                            {order.unique_code}</td>
 
-                        : <td className='text-center'>-</td>
+                          : <td className='text-center'>-</td>
 
-}
+                      }
 
                       <td>{order.cust_name}</td>
-                      <td>{order.cust_address}</td>
+                      {/* <td>{order.cust_address}</td> */}
+                      <td>
+                        {order.cust_address && order.selected_address !== null
+                          ? order.cust_address[order.selected_address]
+                          : 'No address selected'}
+                      </td>
                       <td>{order.pincode}</td>
                       <td>{order.cust_contact}</td>
                       <td>{new Date(order.order_date).toLocaleDateString('en-GB')}</td>
@@ -481,6 +487,11 @@ function AdminOrder() {
                       </td>
                       <td>{order.order_product.reduce((total, product) => total + product.quantity, 0)}</td>
                       <td>RS.{order.total_amount}</td>
+                      <td>
+                        <Link to={`/admin/order/${order._id}`} variant="danger">
+                          <GrDocumentUpdate />
+                        </Link>
+                      </td>
                       <td>
                         <Button onClick={() => openModal(order._id)} variant="danger">
                           <MdDelete />

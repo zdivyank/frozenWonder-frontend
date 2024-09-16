@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { CONFIGS } from '../../../config';
-import { toast } from 'react-toastify';
+// import { toast } from 'react-toastify';
 import './ordermodal.css';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
@@ -11,6 +11,8 @@ import { FaHome, FaPlus, FaTrash } from 'react-icons/fa';
 import { useNavigate } from 'react-router-dom';
 import { Popover, Whisper, Button, List } from 'rsuite';
 import { IoIosInformationCircleOutline } from 'react-icons/io';
+import swal from 'sweetalert';
+import { toast } from 'react-toastify';
 
 
 
@@ -51,6 +53,7 @@ function OrderModal({ cartItems, total, onClose, setCartItems }) {
   const [iscliked, setisliked] = useState(false);
   const [message, setMessage] = useState('');
   const [isChecked, setIsChecked] = useState(false);
+
 
 
   const [orders, setOrders] = useState([]); // Initialize orders as an empty array
@@ -308,7 +311,7 @@ function OrderModal({ cartItems, total, onClose, setCartItems }) {
             cust_contact: customer.cust_contact || '',
             isNewUser: false,
           }));
-          toast.success('Customer details fetched successfully!');
+          // toast.success('Customer details fetched successfully!');
         } else {
           setCustomerInfo(prev => ({
             ...prev,
@@ -319,14 +322,16 @@ function OrderModal({ cartItems, total, onClose, setCartItems }) {
             cust_contact: '',
             isNewUser: true,
           }));
-          toast.info('No existing customer found. Please fill in your details.');
+          // toast.info('No existing customer found. Please fill in your details.');
         }
       } else {
         throw new Error('Failed to fetch customer details');
       }
     } catch (error) {
-      console.error('Error fetching customer details:', error);
-      toast.error('Failed to fetch customer details. Please try again.');
+      // console.error('Error fetching customer details:', error);
+      swal("Error!", "Error fetching customer details:!", "error");
+
+      // toast.error('Failed to fetch customer details. Please try again.');
     }
   };
 
@@ -397,7 +402,9 @@ function OrderModal({ cartItems, total, onClose, setCartItems }) {
         navigate('/');
         const data = await response.json();
         console.log('Sending order data:', JSON.stringify(orderData, null, 2));
-        toast.success(data.message);
+        // toast.success(data.message);
+        swal("Confirmed!", `${data.message}`, "success");
+
         if (data.order && typeof data.order.selected_address === 'string') {
           data.order.selected_address = Number(data.order.selected_address);
         }
@@ -447,6 +454,8 @@ function OrderModal({ cartItems, total, onClose, setCartItems }) {
   const handleAddAddress = async () => {
     if (newAddress.trim() === '') {
       toast.error('Please enter an address before adding.');
+      setIsEnabled(true);
+      setisliked(true)
       return;
     }
 
@@ -471,17 +480,18 @@ function OrderModal({ cartItems, total, onClose, setCartItems }) {
         });
 
         if (response.ok) {
-          toast.success('Address added successfully');
+          // toast.success('Address added successfully');
+          null
         } else {
           const errorData = await response.json();
           throw new Error(errorData.message || 'Failed to add address');
         }
       } else {
-        toast.success('Address added successfully');
+        // toast.success('Address added successfully');
       }
     } catch (error) {
       console.error('Error adding address:', error);
-      toast.error(`Failed to add address: ${error.message}`);
+      // toast.error(`Failed to add address: ${error.message}`);
     }
 
     setNewAddress('');
@@ -515,17 +525,17 @@ function OrderModal({ cartItems, total, onClose, setCartItems }) {
         });
 
         if (response.ok) {
-          toast.success('Address removed successfully');
+          // toast.success('Address removed successfully');
         } else {
           const errorData = await response.json();
           throw new Error(errorData.message || 'Failed to remove address');
         }
       } else {
-        toast.success('Address removed successfully');
+        // toast.success('Address removed successfully');
       }
     } catch (error) {
       console.error('Error removing address:', error);
-      toast.error(`Failed to remove address: ${error.message}`);
+      // toast.error(`Failed to remove address: ${error.message}`);
     }
   };
 
@@ -540,7 +550,7 @@ function OrderModal({ cartItems, total, onClose, setCartItems }) {
         // setOrders(data);
       } catch (error) {
         console.error('Error fetching orders:', error);
-        toast.error('Failed to load orders');
+        // toast.error('Failed to load orders');
       }
     };
 

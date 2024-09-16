@@ -41,6 +41,7 @@ import TermsnCondition from './components/footer/TermsnCondition';
 import Reviews from './components/footer/Reviews';
 import Archive from './components/admin/archive/Archive';
 import Archive_inquiries from './components/admin/archive/Archive_inquiries';
+import Admin_updateorder from './components/admin/order/Admin_updateorder';
 
 function AppContent() {
   const { isLoggedIn, role, isLoading } = useAuth();
@@ -48,6 +49,9 @@ function AppContent() {
   const [isNavOpen, setIsNavOpen] = useState(false);
 
   const [showCart, setShowCart] = useState(false);
+
+  const [animateCart, setAnimateCart] = useState(false);
+
 
   const [cartItems, setCartItems] = useState(() => {
     const savedCart = localStorage.getItem('cart');
@@ -91,7 +95,6 @@ function AppContent() {
     }
   };
 
-
   const addToCart = (product, packIndex, quantity) => {
     setCartItems(prevItems => {
       const existingItemIndex = prevItems.findIndex(
@@ -106,6 +109,10 @@ function AppContent() {
         return [...prevItems, { product, packIndex, quantity }];
       }
     });
+
+    setAnimateCart(true);
+    const timer = setTimeout(() => setAnimateCart(false), 500); // Reset animation after 0.5s
+    return () => clearTimeout(timer);
   };
   const toggleNav = () => {
     setIsNavOpen(!isNavOpen);
@@ -239,6 +246,7 @@ function AppContent() {
             <Route path="/admin/archive" element={isLoggedIn && role === 'owner' ? <Archive /> : <Navigate to="/admin" replace />} />
             {/* <Route path="/admin/archive/order" element={isLoggedIn && role === 'owner' ? <Archive /> : <Navigate to="/admin" replace />} /> */}
             <Route path="/admin/archive/inquiry" element={isLoggedIn && role === 'owner' ? <Archive_inquiries /> : <Navigate to="/admin" replace />} />
+            <Route path="/admin/order/:_id" element={isLoggedIn && role === 'owner' ? <Admin_updateorder /> : <Navigate to="/admin" replace />} />
 
             {/* Agency Routes */}
             <Route path="/agency/orders" element={isLoggedIn && role === 'agency' ? <Agency_orders /> : <Navigate to="/admin" replace />} />
@@ -264,7 +272,7 @@ function AppContent() {
             </div>
           )} */}
 
-{!isLoggedIn && !isExcludedRoute && (
+{/* {!isLoggedIn && !isExcludedRoute && (
             <div className="cart-container">
               <div className="cart_icon" onClick={toggleCart}>
                 <HiMiniShoppingCart size={42} className="cart_bottom" />
@@ -277,8 +285,26 @@ function AppContent() {
               )}
             </div>
           )}
-        </div>
-         
+        </div> */}
+
+{!isLoggedIn && !isExcludedRoute && (
+          <div className="cart-container">
+            <div 
+              className={`cart_icon ${animateCart ? 'animate' : ''}`} 
+              onClick={toggleCart}
+            >
+              <HiMiniShoppingCart size={62}
+               className={`cart_bottom ${animateCart ? 'animate' : ''}`} />
+              <span className="cart-count">{cartItems.reduce((total, item) => total + item.quantity, 0)}</span>
+            </div>
+            {showCart && (
+              <div className="cart-popup">
+                <Cart cartItems={cartItems} setCartItems={setCartItems} onClose={closeCart} />
+              </div>
+            )}
+          </div>
+        )}
+      </div>         
       </AnimatePresence>
       <ToastContainer position="top-center" autoClose={5000} hideProgressBar={false} newestOnTop={false} closeOnClick rtl={false} pauseOnFocusLoss draggable pauseOnHover />
     </div>
