@@ -28,7 +28,9 @@ function OrderModal({ cartItems, total, onClose, setCartItems }) {
     // order_date: new Date(),
     timeslot: '',
     isNewUser: true,
-    otp: ''
+    otp: '',
+    area:'',
+    landmark:'',
   });
   const [isOrderPlaced, setIsOrderPlaced] = useState(false);
   const [blockedDates, setBlockedDates] = useState([]);
@@ -50,9 +52,11 @@ function OrderModal({ cartItems, total, onClose, setCartItems }) {
   const [isLoadingOTP, setIsLoadingOTP] = useState(false);
   const [isResending, setIsResending] = useState(false);
   const navigate = useNavigate();
-  const [iscliked, setisliked] = useState(false);
+  const [isclicked, setisclicked] = useState(false);
   const [message, setMessage] = useState('');
   const [isChecked, setIsChecked] = useState(false);
+
+  const [showlower, setshowlower] = useState(false);
 
 
 
@@ -307,6 +311,8 @@ function OrderModal({ cartItems, total, onClose, setCartItems }) {
             cust_name: customer.cust_name || '',
             cust_addresses: customer.cust_address ? customer.cust_address.map((address, index) => address) : [],
             selected_address: customer.selected_address ? parseInt(customer.selected_address) : '',
+            area: customer.area || '',
+            landmark: customer.landmark || '',
             pincode: customer.pincode || '',
             cust_contact: customer.cust_contact || '',
             isNewUser: false,
@@ -318,6 +324,8 @@ function OrderModal({ cartItems, total, onClose, setCartItems }) {
             cust_name: '',
             cust_addresses: [],
             selected_address: null,
+            landmark: '',
+            area: '',
             pincode: '',
             cust_contact: '',
             isNewUser: true,
@@ -337,7 +345,7 @@ function OrderModal({ cartItems, total, onClose, setCartItems }) {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setisliked(true);
+
 
     if (!canPlaceOrder()) {
       toast.error('This date has already reached the maximum order limit of 4. Please choose another date.');
@@ -373,6 +381,8 @@ function OrderModal({ cartItems, total, onClose, setCartItems }) {
       cust_number: customerInfo.cust_number,
       cust_contact: customerInfo.cust_contact,
       pincode: customerInfo.pincode,
+      area: customerInfo.area,
+      landmark: customerInfo.landmark,
       order_product: cartItems.map(item => ({
         name: item.product.name,
         quantity: item.quantity,
@@ -388,6 +398,7 @@ function OrderModal({ cartItems, total, onClose, setCartItems }) {
     console.log('Order Data:', orderData);
 
     try {
+      setisclicked(true);
       const response = await fetch(`${CONFIGS.API_BASE_URL}/addorder`, {
         method: 'POST',
         headers: {
@@ -429,7 +440,7 @@ function OrderModal({ cartItems, total, onClose, setCartItems }) {
       } else {
         const errorData = await response.json();
         console.log(errorData);
-        setisliked(false);
+        setisclicked(false);
         throw new Error(errorData.message || 'Failed to create order');
       }
     } catch (error) {
@@ -447,6 +458,7 @@ function OrderModal({ cartItems, total, onClose, setCartItems }) {
 
   const handleNewAddressChange = (e) => {
     const value = e.target.value;  // Extract the value from the event's target
+    // setshowlower(true)
     setNewAddress(value);          // Update the state with the new address
   };
 
@@ -454,11 +466,15 @@ function OrderModal({ cartItems, total, onClose, setCartItems }) {
   const handleAddAddress = async () => {
     if (newAddress.trim() === '') {
       toast.error('Please enter an address before adding.');
+      console.log("Lower non visable");
+      
+      console.log("Lower visable");
       setIsEnabled(true);
-      setisliked(true)
+      setisclicked(true)
       return;
     }
-
+    setshowlower(true)
+    
     try {
       const updatedAddresses = [...customerInfo.cust_addresses, newAddress];  // Add the new address to the existing array
       setCustomerInfo(prev => ({
@@ -691,12 +707,12 @@ function OrderModal({ cartItems, total, onClose, setCartItems }) {
       <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
           <div class="modal-header">
-          {!showOtherFields && !showIndividualFields && (
-            <h5 className="modal-title">OTP VERIFICATION</h5>
-          )}
-          {showOtherFields && showIndividualFields && (
-            <h5 className="modal-title">Order Summary</h5>
-          )}
+            {!showOtherFields && !showIndividualFields && (
+              <h5 className="modal-title">OTP VERIFICATION</h5>
+            )}
+            {showOtherFields && showIndividualFields && (
+              <h5 className="modal-title">Order Summary</h5>
+            )}
             <button type="button" className="close" onClick={onClose}>
               <span className="text-dark">&times;</span>
             </button>
@@ -704,12 +720,12 @@ function OrderModal({ cartItems, total, onClose, setCartItems }) {
           <div class="modal-body">
 
             {showOtherFields && showIndividualFields && (
-            <>
-            <h3>GIFT HAMPER</h3>
-            <hr />
-            </>
-            // <h5 className="modal-title">OTP VERIFICATION</h5>
-          )}
+              <>
+                <h3>GIFT HAMPER</h3>
+                <hr />
+              </>
+              // <h5 className="modal-title">OTP VERIFICATION</h5>
+            )}
             {/* {cartItems.map((item, index) => (
             <div key={index}>
               {item.product.name} - {item.product.packs[item.packIndex].ml}ML * {item.product.packs[item.packIndex].unit}
@@ -780,86 +796,119 @@ function OrderModal({ cartItems, total, onClose, setCartItems }) {
                 {/* Show Additional Fields After OTP Verification */}
                 {showOtherFields && showIndividualFields && (
                   <>
-                    <div className="form-group">
-                      <label>Name:</label>
-                      <input
-                        type="text"
-                        name="cust_name"
-                        value={customerInfo.cust_name}
-                        onChange={handleInputChange}
-                        className="order_info"
-                        required
-                      />
-                    </div>
-                    <div className="form-group">
-                      <label>Phone number:</label>
-                      <input
-                        type="text"
-                        name="cust_contact"
-                        value={customerInfo.cust_contact}
-                        onChange={handleInputChange}
-                        className="order_info"
-                        required
-                      />
-                    </div>
-                    <div className="form-group">
-                      <label>Addresses:</label>
-                      {customerInfo.cust_addresses.length > 0 && (
-                        <div>
-                          {customerInfo.cust_addresses.map((address, index) => (
-                            <div key={index} style={{ display: 'flex', alignItems: 'center', marginBottom: '10px' }}>
-                              <input
-                                type="radio"
-                                name="selected_address"
-                                value={index}
-                                checked={customerInfo.selected_address === index}
-                                onChange={() => handleSelectAddress(index)}
-                              />
-                              <span style={{ marginLeft: '8px', flexGrow: 1 }}>{address}</span>
-                              <button
-                                type="button"
-                                className="btn btn-danger"
-                                onClick={() => handleRemoveAddress(index)}
-                              >
-                                <FaTrash />
-                              </button>
-                            </div>
-                          ))}
+                    {!showlower && (
+                      <>
+                        <div className="form-group">
+                          <label>Name:</label>
+                          <input
+                            type="text"
+                            name="cust_name"
+                            value={customerInfo.cust_name}
+                            onChange={handleInputChange}
+                            className="order_info"
+                            required
+                          />
                         </div>
-                      )}
-                      <div style={{ display: 'flex', alignItems: 'center', marginTop: '10px' }}>
-                        <textarea
-                          rows={2}
-                          placeholder="Enter new address"
-                          value={newAddress}
-                          onChange={handleNewAddressChange}
-                          style={{ flexGrow: 1, marginRight: '10px' }}
-                        />
-                        <button
-                          type="button"
-                          className="btn btn-success"
-                          onClick={handleAddAddress}
-                        >
-                          Select <FaPlus />
-                        </button>
-                      </div>
-                    </div>
+                        <div className="form-group">
+                          <label>Phone number:</label>
+                          <input
+                            type="text"
+                            name="cust_contact"
+                            value={customerInfo.cust_contact}
+                            onChange={handleInputChange}
+                            className="order_info"
+                            required
+                          />
+                        </div>
+                        <div className="form-group">
+                          <label>Addresses:</label>
+                          {customerInfo.cust_addresses.length > 0 && (
+                            <div>
+                              {customerInfo.cust_addresses.map((address, index) => (
+                                <div key={index} style={{ display: 'flex', alignItems: 'center', marginBottom: '10px' }}>
+                                  <input
+                                    type="radio"
+                                    name="selected_address"
+                                    value={index}
+                                    checked={customerInfo.selected_address === index}
+                                    onChange={() => handleSelectAddress(index)}
+                                  />
+                                  <span style={{ marginLeft: '8px', flexGrow: 1 }}>{address}</span>
+                                  <button
+                                    type="button"
+                                    className="btn btn-danger"
+                                    onClick={() => handleRemoveAddress(index)}
+                                  >
+                                    <FaTrash />
+                                  </button>
+                                </div>
+                              ))}
+                            </div>
+                          )}
+                          <div style={{ display: 'flex', alignItems: 'center', marginTop: '10px' }}>
+                            <textarea
+                              rows={2}
+                              placeholder="Enter new address"
+                              value={newAddress}
+                              onChange={handleNewAddressChange}
+                              style={{ flexGrow: 1, marginRight: '10px' }}
+                            />
 
-                    <div className="form-group">
-                      <label>Pincode:</label>
-                      <input
-                        type="text"
-                        name="pincode"
-                        value={customerInfo.pincode}
-                        onChange={handleInputChange}
-                        className="order_info"
-                        required
-                      />
-                    </div>
+                            
+                          </div>
 
-                    {/* <div className="form-group">
+                          <div className="form-group">
+                          <label>area:</label>
+                          <input
+                            type="text"
+                            name="area"
+                            value={customerInfo.area}
+                            onChange={handleInputChange}
+                            className="order_info"
+                            required
+                          />
+                        </div>
+                        <div className="form-group">
+                          <label>Landmark:</label>
+                          <input
+                            type="text"
+                            name="landmark"
+                            value={customerInfo.landmark}
+                            onChange={handleInputChange}
+                            className="order_info"
+                            required
+                          />
+                        </div>
+
+                        <div className="form-group">
+                          <label>Pincode:</label>
+                          <input
+                            type="text"
+                            name="pincode"
+                            value={customerInfo.pincode}
+                            onChange={handleInputChange}
+                            className="order_info"
+                            required
+                          />
+                        </div>
+
+                            <button
+                              type="button"
+                              className="btn btn-success"
+                              onClick={handleAddAddress}
+                            >
+                              Save Address <FaPlus />
+                            </button>
+                        </div>
+                      </>
+                    ) 
+                  }
+                    {showlower && (
+                      <>
+                       
+                        {/* <div className="form-group">
                         <label>Order Date:</label> */}
-                    {/* <DatePicker
+                        {/* <DatePicker
                         selected={customerInfo.order_date}
                         onChange={handleDateChange}
                         minDate={new Date()}
@@ -867,9 +916,9 @@ function OrderModal({ cartItems, total, onClose, setCartItems }) {
                         className="order_info"
                         filterDate={date => !isDateDisabled(date)}
                         required
-                      /> */}
+                       /> */}
 
-                    {/* <DatePicker
+                        {/* <DatePicker
                         selected={customerInfo.order_date}
                         onChange={handleDateChange}
                         minDate={new Date()} // Disables past dates
@@ -877,46 +926,46 @@ function OrderModal({ cartItems, total, onClose, setCartItems }) {
                         className="order_info"
                         filterDate={date => !isDateDisabled(date)} // Disable dates with 4 or more orders
                         required
-                      />
-                    </div> */}
+                        />
+                        </div> */}
 
-                    {/* <div className="form-group">
-                      <label>Order Date:</label>
-                      {availableDate ? (
-               <DatePicker
-               selected={customerInfo.order_date}
-               onChange={(date) => setCustomerInfo({ ...customerInfo, order_date: date })}
-               minDate={availableDate} // Set the minimum date as the available date
-               maxDate={availableDate} // Only allow the available date
-               dateFormat="dd/MM/yyyy"
-               className="order_info"
-               required
-             />
-                      ) : (
-                        <p>Loading available date...</p> // Show a loading message while the date is being fetched
-                      )}
-                    </div> */}
+                          {/* <div className="form-group">
+                        <label>Order Date:</label>
+                                  {availableDate ? (
+                          <DatePicker
+                        selected={customerInfo.order_date}
+                        onChange={(date) => setCustomerInfo({ ...customerInfo, order_date: date })}
+                        minDate={availableDate} // Set the minimum date as the available date
+                        maxDate={availableDate} // Only allow the available date
+                        dateFormat="dd/MM/yyyy"
+                        className="order_info"
+                        required
+                        />
+                          ) : (
+                            <p>Loading available date...</p> // Show a loading message while the date is being fetched
+                          )}
+                        </div> */}
 
 
-                    <div className="form-group">
-                      <label>Order Date:</label>
-                      {availableDate ? (
-                        <select
-                          value={customerInfo.order_date}
-                          onChange={(e) =>
-                            setCustomerInfo({ ...customerInfo, order_date: e.target.value })
-                          }
-                          required
-                        >
-                          {/* Dropdown shows only one available date */}
-                          <option value={availableDate}>{availableDate}</option>
-                        </select>
-                      ) : (
-                        <p>Loading available date...</p> // Show a loading message while the date is being fetched
-                      )}
-                    </div>
+                        <div className="form-group">
+                          <label>Order Date:</label>
+                          {availableDate ? (
+                            <select
+                              value={customerInfo.order_date}
+                              onChange={(e) =>
+                                setCustomerInfo({ ...customerInfo, order_date: e.target.value })
+                              }
+                              required
+                            >
+                              {/* Dropdown shows only one available date */}
+                              <option value={availableDate}>{availableDate}</option>
+                            </select>
+                          ) : (
+                            <p>Loading available date...</p> // Show a loading message while the date is being fetched
+                          )}
+                        </div>
 
-                    {/* <div className="form-group">
+                        {/* <div className="form-group">
                       <label>Time Slot:</label>
                       <select
                         name="timeslot"
@@ -934,7 +983,7 @@ function OrderModal({ cartItems, total, onClose, setCartItems }) {
                       </select>
                     </div> */}
 
-                    {/* <div className="form-group">
+                        {/* <div className="form-group">
                       <label>Coupon Code:</label>
                       <select
                         name="couponCode"
@@ -952,45 +1001,45 @@ function OrderModal({ cartItems, total, onClose, setCartItems }) {
                     </div> */}
 
 
-                    <div className="form-group">
-                      <label>Coupon Code:</label>
-                      <input
-                        type="text"
-                        name="couponCode"
-                        value={couponCode}
-                        onChange={(e) => setCouponCode(e.target.value.toUpperCase())}
-                        className="order_info"
-                        placeholder="Enter coupon code"
-                        required
-                      />
-                    </div>
+                        <div className="form-group">
+                          <label>Coupon Code:</label>
+                          <input
+                            type="text"
+                            name="couponCode"
+                            value={couponCode}
+                            onChange={(e) => setCouponCode(e.target.value.toUpperCase())}
+                            className="order_info"
+                            placeholder="Enter coupon code"
+                            required
+                          />
+                        </div>
 
-                    <div className="mt-3">
-        <p>
-          <strong>TERMS AND CONDITIONS</strong>
-        </p>
-        <hr />  
+                        <div className="mt-3">
+                          <p>
+                            <strong>TERMS AND CONDITIONS</strong>
+                          </p>
+                          <hr />
 
-        <ul>
+                          <ul>
 
-        <li>
-          SAMPLES ARE FREE OF COST; ONLY DELIVERY/COURIER CHARGES APPLY.
-        </li>
-        <li>
-          YOU WILL RECEIVE YOUR FREE SAMPLE PACK THROUGH OUR PRESCHEDULED DELIVERIES STARTING FROM 1ST SEPTEMBER ONWARDS.
-        </li>
-        <li>
-          YOU WILL GET A CONFIRMATION CALL BEFORE ANY DELIVERY IS MADE.
-        </li>
-        <li>
-          SAMPLES WILL BE DELIVERED WHICH ARE SUBJECT TO AVAILABILITY.
-        </li>
-        </ul>
+                            <li>
+                              SAMPLES ARE FREE OF COST; ONLY DELIVERY/COURIER CHARGES APPLY.
+                            </li>
+                            <li>
+                              YOU WILL RECEIVE YOUR FREE SAMPLE PACK THROUGH OUR PRESCHEDULED DELIVERIES STARTING FROM 1ST SEPTEMBER ONWARDS.
+                            </li>
+                            <li>
+                              YOU WILL GET A CONFIRMATION CALL BEFORE ANY DELIVERY IS MADE.
+                            </li>
+                            <li>
+                              SAMPLES WILL BE DELIVERED WHICH ARE SUBJECT TO AVAILABILITY.
+                            </li>
+                          </ul>
 
-        <hr />
-      </div>
+                          <hr />
+                        </div>
 
-                    {/* <div className="mt-3">
+                        {/* <div className="mt-3">
                       <label>
                         <input
                           type="checkbox"
@@ -1001,48 +1050,50 @@ function OrderModal({ cartItems, total, onClose, setCartItems }) {
                       </label>
                     </div> */}
 
-                    <div className="mt-3">
-        <label>
-          <input
-            type="checkbox"
-            checked={isChecked}
-            onChange={() => setIsChecked(!isChecked)} // Toggle checkbox state
-            className='me-2'
-          />
-          I AGREE TO - 
-          PAY DELIVERY/COURIER CHARGES  & ALL THE TERMS & CONDITIONS OF THE COMPANY.
-        </label>
-      </div>
+                        <div className="mt-3">
+                          <label>
+                            <input
+                              type="checkbox"
+                              checked={isChecked}
+                              onChange={() => setIsChecked(!isChecked)} // Toggle checkbox state
+                              className='me-2'
+                            />
+                            I AGREE TO -
+                            PAY DELIVERY/COURIER CHARGES  & ALL THE TERMS & CONDITIONS OF THE COMPANY.
+                          </label>
+                        </div>
 
-                    {/* Submit Button */}
-                    {!customerInfo.isNewUser ? (
-                      <p className="text-danger">Orders are currently limited to 500 unique customers. We apologize for the inconvenience.</p>
-                    ) : (
-                      // <button type="submit" disabled={iscliked} className="btn btn-primary btn-block mt-3">
-                      //   Place Order
-                      // </button>
+                        {/* Submit Button */}
+                        {!customerInfo.isNewUser ? (
+                          <p className="text-danger">Orders are currently limited to 500 unique customers. We apologize for the inconvenience.</p>
+                        ) : (
+                          // <button type="submit" disabled={isclicked} className="btn btn-primary btn-block mt-3">
+                          //   Place Order
+                          // </button>
 
-                      <button
-                      type="submit"
-                      disabled={!isChecked || iscliked} // Disabled until checkbox is checked
-                      className="btn btn-primary btn-block mt-3"
-                    >
-                      Place Order
-                    </button>
+                          <button
+                            type="submit"
+                            disabled={!isChecked || isclicked} // Disabled until checkbox is checked
+                            className="btn btn-primary btn-block mt-3"
+                          >
+                            Place Order
+                          </button>
 
-                    )}
+                        )}
 
-                    <div className=" mt-3">
-                      <Whisper placement="auto" trigger="hover" speaker={terms}>
-                        <span style={{ textDecoration: 'underline', cursor: 'pointer' }}>
-                          <IoIosInformationCircleOutline />
-                          Terms and Conditions*
-                        </span>
-                      </Whisper>
-                    </div>
-                  </>
-                )}
-              </div>
+                        <div className=" mt-3">
+                          <Whisper placement="auto" trigger="hover" speaker={terms}>
+                            <span style={{ textDecoration: 'underline', cursor: 'pointer' }}>
+                              <IoIosInformationCircleOutline />
+                              Terms and Conditions*
+                            </span>
+                          </Whisper>
+                        </div>
+                        </>
+    )}
+  </>
+)}
+</div>
             </form>
           </div>
         </div>

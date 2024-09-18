@@ -129,8 +129,10 @@ function AdminOrder() {
         cust_number: order.cust_number,
         cust_address: addressString,  // Address placed right after serial number
         selected_address: order.selected_address,
+        area: order.area,
+        landmark: order.landmark,
         pincode: order.pincode,
-        order_date: formattedDate,  // Formatted date
+        order_date: formattedDate,  
         timeslot: order.timeslot,
         order_product: productsString,  // Convert array of objects to string
         status: order.status,
@@ -439,10 +441,26 @@ function AdminOrder() {
                       <td>{order.cust_name}</td>
                       {/* <td>{order.cust_address}</td> */}
                       <td>
-                        {order.cust_address && order.selected_address !== null
-                          ? order.cust_address[order.selected_address]
-                          : 'No address selected'}
-                      </td>
+  {order.cust_address && order.selected_address !== null && order.cust_address[order.selected_address] ? (
+    <>
+      {/* Full address */}
+      {order.cust_address[order.selected_address]}
+
+      {/* Area */}
+      {order.area && (
+        <span className="text-primary">, {order.area}</span>
+      )}
+
+      {/* Landmark */}
+      {order.landmark && (
+        <span className="text-danger">, {order.landmark}</span>
+      )}
+    </>
+  ) : (
+    'No address selected'
+  )}
+</td>
+
                       <td>{order.pincode}</td>
                       <td>{order.cust_contact}</td>
                       <td>{new Date(order.order_date).toLocaleDateString('en-GB')}</td>

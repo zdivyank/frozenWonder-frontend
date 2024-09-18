@@ -293,9 +293,9 @@ function AppContent() {
               className={`cart_icon ${animateCart ? 'animate' : ''}`} 
               onClick={toggleCart}
             >
-              <HiMiniShoppingCart size={62}
+              <HiMiniShoppingCart size={52}
                className={`cart_bottom ${animateCart ? 'animate' : ''}`} />
-              <span className="cart-count">{cartItems.reduce((total, item) => total + item.quantity, 0)}</span>
+              <span className={`cart-count  ${animateCart ? 'animate' : ''}`}>{cartItems.reduce((total, item) => total + item.quantity, 0)}</span>
             </div>
             {showCart && (
               <div className="cart-popup">
