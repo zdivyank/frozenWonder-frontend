@@ -29,8 +29,8 @@ function OrderModal({ cartItems, total, onClose, setCartItems }) {
     timeslot: '',
     isNewUser: true,
     otp: '',
-    area:'',
-    landmark:'',
+    area: '',
+    landmark: '',
   });
   const [isOrderPlaced, setIsOrderPlaced] = useState(false);
   const [blockedDates, setBlockedDates] = useState([]);
@@ -43,7 +43,7 @@ function OrderModal({ cartItems, total, onClose, setCartItems }) {
   const [showOtherFields, setShowOtherFields] = useState(false);
   const [otpVerified, setOtpVerified] = useState(false);
   const [showIndividualFields, setShowIndividualFields] = useState(false);
-
+  const [step, setStep] = useState(1); 
 
 
   const [isLoadingVerify, setIsLoadingVerify] = useState(false);
@@ -58,6 +58,8 @@ function OrderModal({ cartItems, total, onClose, setCartItems }) {
 
   const [showlower, setshowlower] = useState(false);
 
+  const [errors, setErrors] = useState({});
+  const [isAddressEnabled, setIsAddressEnabled] = useState(false);
 
 
   const [orders, setOrders] = useState([]); // Initialize orders as an empty array
@@ -84,6 +86,38 @@ function OrderModal({ cartItems, total, onClose, setCartItems }) {
     fetchAvailableDate();
   }, []);
 
+  const handlePhoneBlur = () => {
+    if (customerInfo.cust_contact.length !== 10 || isNaN(customerInfo.cust_contact)) {
+      setPhoneError('Phone number must be exactly 10 digits.');
+    } else {
+      setPhoneError('');
+    }
+  };
+
+  // const [errors, setErrors] = useState({});
+  const handleInputChange = (event) => {
+    const { name, value } = event.target;
+
+    // Trim whitespace from inputs and validate phone number length
+    const trimmedValue = name === 'cust_contact' ? value.trim() : value;
+
+    // Validate phone number
+    if (name === 'cust_contact') {
+      if (trimmedValue.length !== 10 || isNaN(trimmedValue)) {
+        setErrors(prev => ({ ...prev, cust_contact: 'Phone number must be 10 digits long' }));
+        setIsAddressEnabled(false); // Disable address field if phone number is invalid
+      } else {
+        setErrors(prev => ({ ...prev, cust_contact: '' })); // Clear error if valid
+        setIsAddressEnabled(true); // Enable address field if valid phone number
+      }
+    }
+
+    // Update customer information state
+    setCustomerInfo(prev => ({
+      ...prev,
+      [name]: trimmedValue,
+    }));
+  };
 
 
   const handleDateChange = (date) => {
@@ -92,6 +126,15 @@ function OrderModal({ cartItems, total, onClose, setCartItems }) {
       order_date: date,
     }));
   };
+
+  const handleNextStep = () => {
+    if (step < 3) setStep(step + 1); // Move to the next step
+  };
+
+  const handlePreviousStep = () => {
+    if (step > 1) setStep(step - 1); // Move to the previous step
+  };
+
 
   // Function to disable dates before the next available date
   // const isDateDisabled = (date) => {
@@ -172,17 +215,17 @@ function OrderModal({ cartItems, total, onClose, setCartItems }) {
     }
   };
 
-  const handleInputChange = (event) => {
-    const { name, value } = event.target;
+  // const handleInputChange = (event) => {
+  //   const { name, value } = event.target;
 
-    // Trim whitespace from email input
-    const trimmedValue = name === 'cust_number' ? value.trim() : value;
+  //   // Trim whitespace from email input
+  //   const trimmedValue = name === 'cust_number' ? value.trim() : value;
 
-    setCustomerInfo(prev => ({
-      ...prev,
-      [name]: trimmedValue,
-    }));
-  };
+  //   setCustomerInfo(prev => ({
+  //     ...prev,
+  //     [name]: trimmedValue,
+  //   }));
+  // };
 
 
   const startTimer = () => {
@@ -467,14 +510,14 @@ function OrderModal({ cartItems, total, onClose, setCartItems }) {
     if (newAddress.trim() === '') {
       toast.error('Please enter an address before adding.');
       console.log("Lower non visable");
-      
+
       console.log("Lower visable");
       setIsEnabled(true);
       setisclicked(true)
       return;
     }
     setshowlower(true)
-    
+
     try {
       const updatedAddresses = [...customerInfo.cust_addresses, newAddress];  // Add the new address to the existing array
       setCustomerInfo(prev => ({
@@ -816,9 +859,14 @@ function OrderModal({ cartItems, total, onClose, setCartItems }) {
                             name="cust_contact"
                             value={customerInfo.cust_contact}
                             onChange={handleInputChange}
-                            className="order_info"
+                            className={`order_info ${errors.cust_contact ? 'is-invalid' : ''}`}
                             required
                           />
+                          {errors.cust_contact && (
+                            <div className="invalid-feedback">
+                              {errors.cust_contact}
+                            </div>
+                          )}
                         </div>
                         <div className="form-group">
                           <label>Addresses:</label>
@@ -830,6 +878,7 @@ function OrderModal({ cartItems, total, onClose, setCartItems }) {
                                     type="radio"
                                     name="selected_address"
                                     value={index}
+                                    disabled={!isAddressEnabled} 
                                     checked={customerInfo.selected_address === index}
                                     onChange={() => handleSelectAddress(index)}
                                   />
@@ -854,58 +903,59 @@ function OrderModal({ cartItems, total, onClose, setCartItems }) {
                               style={{ flexGrow: 1, marginRight: '10px' }}
                             />
 
-                            
+
                           </div>
 
                           <div className="form-group">
-                          <label>area:</label>
-                          <input
-                            type="text"
-                            name="area"
-                            value={customerInfo.area}
-                            onChange={handleInputChange}
-                            className="order_info"
-                            required
-                          />
-                        </div>
-                        <div className="form-group">
-                          <label>Landmark:</label>
-                          <input
-                            type="text"
-                            name="landmark"
-                            value={customerInfo.landmark}
-                            onChange={handleInputChange}
-                            className="order_info"
-                            required
-                          />
-                        </div>
+                            <label>area:</label>
+                            <input
+                              type="text"
+                              name="area"
+                              value={customerInfo.area}
+                              onChange={handleInputChange}
+                              className="order_info"
+                              required
+                            />
+                          </div>
+                          <div className="form-group">
+                            <label>Landmark:</label>
+                            <input
+                              type="text"
+                              name="landmark"
+                              value={customerInfo.landmark}
+                              onChange={handleInputChange}
+                              className="order_info"
+                              required
+                            />
+                          </div>
 
-                        <div className="form-group">
-                          <label>Pincode:</label>
-                          <input
-                            type="text"
-                            name="pincode"
-                            value={customerInfo.pincode}
-                            onChange={handleInputChange}
-                            className="order_info"
-                            required
-                          />
-                        </div>
+                          <div className="form-group">
+                            <label>Pincode:</label>
+                            <input
+                              type="text"
+                              name="pincode"
+                              value={customerInfo.pincode}
+                              onChange={handleInputChange}
+                              className="order_info"
+                              required
+                            />
+                          </div>
 
-                            <button
-                              type="button"
-                              className="btn btn-success"
-                              onClick={handleAddAddress}
-                            >
-                              Save Address <FaPlus />
-                            </button>
+                          <button
+                            type="button"
+                            className="btn btn-success"
+                            onClick={handleAddAddress}
+                            disabled={!isAddressEnabled}
+                          >
+                            Save Address <FaPlus />
+                          </button>
                         </div>
                       </>
-                    ) 
-                  }
+                    )
+                    }
                     {showlower && (
                       <>
-                       
+
                         {/* <div className="form-group">
                         <label>Order Date:</label> */}
                         {/* <DatePicker
@@ -929,7 +979,7 @@ function OrderModal({ cartItems, total, onClose, setCartItems }) {
                         />
                         </div> */}
 
-                          {/* <div className="form-group">
+                        {/* <div className="form-group">
                         <label>Order Date:</label>
                                   {availableDate ? (
                           <DatePicker
@@ -1089,11 +1139,11 @@ function OrderModal({ cartItems, total, onClose, setCartItems }) {
                             </span>
                           </Whisper>
                         </div>
-                        </>
-    )}
-  </>
-)}
-</div>
+                      </>
+                    )}
+                  </>
+                )}
+              </div>
             </form>
           </div>
         </div>
