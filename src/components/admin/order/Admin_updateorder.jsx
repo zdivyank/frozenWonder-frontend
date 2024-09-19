@@ -480,7 +480,7 @@ const handleSelectAddress = (index) => {
                   </button>
                   <button
                     type="button"
-                    className="btn btn-warning"
+                    className=""
                     onClick={() => handleEditAddress(index)}
                     style={{ marginLeft: '5px' }}
                   >

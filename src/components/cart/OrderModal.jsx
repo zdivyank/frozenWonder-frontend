@@ -458,7 +458,18 @@ function OrderModal({ cartItems, total, onClose, setCartItems }) {
         const data = await response.json();
         console.log('Sending order data:', JSON.stringify(orderData, null, 2));
         // toast.success(data.message);
-        swal("Confirmed!", `${data.message}`, "success");
+        // swal("Confirmed!", `${data.message}`, "success");
+        localStorage.removeItem('cart'); 
+        swal({
+          title: "Order Placed!",
+          text: "Your order has been placed successfully.",
+          icon: "success",
+          button: "OK",
+        }).then(() => {
+          // Reload the page after clicking "OK" button
+          window.location.reload();
+        });
+    
 
         if (data.order && typeof data.order.selected_address === 'string') {
           data.order.selected_address = Number(data.order.selected_address);
@@ -843,7 +854,7 @@ function OrderModal({ cartItems, total, onClose, setCartItems }) {
                     {/* {!showlower && (
                       <> */}
                     <div className="form-group">
-                      <label>Name:</label>
+                      <label>Name*:</label>
                       <input
                         type="text"
                         name="cust_name"
@@ -854,9 +865,9 @@ function OrderModal({ cartItems, total, onClose, setCartItems }) {
                       />
                     </div>
                     <div className="form-group">
-                      <label>Phone number:</label>
+                      <label>Phone number*:</label>
                       <input
-                        type="text"
+                        type="number"
                         name="cust_contact"
                         value={customerInfo.cust_contact}
                         onChange={handleInputChange}
@@ -870,7 +881,7 @@ function OrderModal({ cartItems, total, onClose, setCartItems }) {
                       )}
                     </div>
                     <div className="form-group">
-                      <label>Addresses:</label>
+                      <label>Addresses*:</label>
                       {customerInfo.cust_addresses.length > 0 && (
                         <div>
                           {customerInfo.cust_addresses.map((address, index) => (
@@ -915,7 +926,7 @@ function OrderModal({ cartItems, total, onClose, setCartItems }) {
                           value={customerInfo.area}
                           onChange={handleInputChange}
                           className="order_info"
-                          required
+                          
                         />
                       </div>
                       <div className="form-group">
@@ -926,12 +937,12 @@ function OrderModal({ cartItems, total, onClose, setCartItems }) {
                           value={customerInfo.landmark}
                           onChange={handleInputChange}
                           className="order_info"
-                          required
+                          
                         />
                       </div>
 
                       <div className="form-group">
-                        <label>Pincode:</label>
+                        <label>Pincode*:</label>
                         <input
                           type="text"
                           name="pincode"
@@ -1000,7 +1011,7 @@ function OrderModal({ cartItems, total, onClose, setCartItems }) {
 
 
                         <div className="form-group">
-                          <label>Order Date:</label>
+                          <label>Order Date*:</label>
                           {availableDate ? (
                             <select
                               value={customerInfo.order_date}
@@ -1054,7 +1065,7 @@ function OrderModal({ cartItems, total, onClose, setCartItems }) {
 
 
                         <div className="form-group">
-                          <label>Coupon Code:</label>
+                          <label>Coupon Code*:</label>
                           <input
                             type="text"
                             name="couponCode"
