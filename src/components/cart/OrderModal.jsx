@@ -43,7 +43,7 @@ function OrderModal({ cartItems, total, onClose, setCartItems }) {
   const [showOtherFields, setShowOtherFields] = useState(false);
   const [otpVerified, setOtpVerified] = useState(false);
   const [showIndividualFields, setShowIndividualFields] = useState(false);
-  const [step, setStep] = useState(1); 
+  const [step, setStep] = useState(1);
 
 
   const [isLoadingVerify, setIsLoadingVerify] = useState(false);
@@ -62,8 +62,9 @@ function OrderModal({ cartItems, total, onClose, setCartItems }) {
   const [isAddressEnabled, setIsAddressEnabled] = useState(false);
 
 
-  const [orders, setOrders] = useState([]); // Initialize orders as an empty array
+  const [orders, setOrders] = useState([]); // Initialize orders as an empty  array
 
+  
   const [availableDate, setAvailableDate] = useState(null); // Store the next available date
   useEffect(() => {
     // Fetch the next available date from the backend
@@ -839,120 +840,121 @@ function OrderModal({ cartItems, total, onClose, setCartItems }) {
                 {/* Show Additional Fields After OTP Verification */}
                 {showOtherFields && showIndividualFields && (
                   <>
-                    {!showlower && (
-                      <>
-                        <div className="form-group">
-                          <label>Name:</label>
-                          <input
-                            type="text"
-                            name="cust_name"
-                            value={customerInfo.cust_name}
-                            onChange={handleInputChange}
-                            className="order_info"
-                            required
-                          />
+                    {/* {!showlower && (
+                      <> */}
+                    <div className="form-group">
+                      <label>Name:</label>
+                      <input
+                        type="text"
+                        name="cust_name"
+                        value={customerInfo.cust_name}
+                        onChange={handleInputChange}
+                        className="order_info"
+                        required
+                      />
+                    </div>
+                    <div className="form-group">
+                      <label>Phone number:</label>
+                      <input
+                        type="text"
+                        name="cust_contact"
+                        value={customerInfo.cust_contact}
+                        onChange={handleInputChange}
+                        className={`order_info ${errors.cust_contact ? 'is-invalid' : ''}`}
+                        required
+                      />
+                      {errors.cust_contact && (
+                        <div className="invalid-feedback">
+                          {errors.cust_contact}
                         </div>
-                        <div className="form-group">
-                          <label>Phone number:</label>
-                          <input
-                            type="text"
-                            name="cust_contact"
-                            value={customerInfo.cust_contact}
-                            onChange={handleInputChange}
-                            className={`order_info ${errors.cust_contact ? 'is-invalid' : ''}`}
-                            required
-                          />
-                          {errors.cust_contact && (
-                            <div className="invalid-feedback">
-                              {errors.cust_contact}
+                      )}
+                    </div>
+                    <div className="form-group">
+                      <label>Addresses:</label>
+                      {customerInfo.cust_addresses.length > 0 && (
+                        <div>
+                          {customerInfo.cust_addresses.map((address, index) => (
+                            <div key={index} style={{ display: 'flex', alignItems: 'center', marginBottom: '10px' }}>
+                              <input
+                                type="radio"
+                                name="selected_address"
+                                value={index}
+                                disabled={!isAddressEnabled}
+                                checked={customerInfo.selected_address === index}
+                                onChange={() => handleSelectAddress(index)}
+                              />
+                              <span style={{ marginLeft: '8px', flexGrow: 1 }}>{address}</span>
+                              <button
+                                type="button"
+                                className="btn btn-danger"
+                                onClick={() => handleRemoveAddress(index)}
+                              >
+                                <FaTrash />
+                              </button>
                             </div>
-                          )}
+                          ))}
                         </div>
-                        <div className="form-group">
-                          <label>Addresses:</label>
-                          {customerInfo.cust_addresses.length > 0 && (
-                            <div>
-                              {customerInfo.cust_addresses.map((address, index) => (
-                                <div key={index} style={{ display: 'flex', alignItems: 'center', marginBottom: '10px' }}>
-                                  <input
-                                    type="radio"
-                                    name="selected_address"
-                                    value={index}
-                                    disabled={!isAddressEnabled} 
-                                    checked={customerInfo.selected_address === index}
-                                    onChange={() => handleSelectAddress(index)}
-                                  />
-                                  <span style={{ marginLeft: '8px', flexGrow: 1 }}>{address}</span>
-                                  <button
-                                    type="button"
-                                    className="btn btn-danger"
-                                    onClick={() => handleRemoveAddress(index)}
-                                  >
-                                    <FaTrash />
-                                  </button>
-                                </div>
-                              ))}
-                            </div>
-                          )}
-                          <div style={{ display: 'flex', alignItems: 'center', marginTop: '10px' }}>
-                            <textarea
-                              rows={2}
-                              placeholder="Enter new address"
-                              value={newAddress}
-                              onChange={handleNewAddressChange}
-                              style={{ flexGrow: 1, marginRight: '10px' }}
-                            />
+                      )}
+                      <div style={{ display: 'flex', alignItems: 'center', marginTop: '10px' }}>
+                        <textarea
+                          rows={2}
+                          placeholder="Enter new address"
+                          value={newAddress}
+                          onChange={handleNewAddressChange}
+                          style={{ flexGrow: 1, marginRight: '10px' }}
+                        />
 
 
-                          </div>
+                      </div>
 
-                          <div className="form-group">
-                            <label>area:</label>
-                            <input
-                              type="text"
-                              name="area"
-                              value={customerInfo.area}
-                              onChange={handleInputChange}
-                              className="order_info"
-                              required
-                            />
-                          </div>
-                          <div className="form-group">
-                            <label>Landmark:</label>
-                            <input
-                              type="text"
-                              name="landmark"
-                              value={customerInfo.landmark}
-                              onChange={handleInputChange}
-                              className="order_info"
-                              required
-                            />
-                          </div>
+                      <div className="form-group">
+                        <label>area:</label>
+                        <input
+                          type="text"
+                          name="area"
+                          value={customerInfo.area}
+                          onChange={handleInputChange}
+                          className="order_info"
+                          required
+                        />
+                      </div>
+                      <div className="form-group">
+                        <label>Landmark:</label>
+                        <input
+                          type="text"
+                          name="landmark"
+                          value={customerInfo.landmark}
+                          onChange={handleInputChange}
+                          className="order_info"
+                          required
+                        />
+                      </div>
 
-                          <div className="form-group">
-                            <label>Pincode:</label>
-                            <input
-                              type="text"
-                              name="pincode"
-                              value={customerInfo.pincode}
-                              onChange={handleInputChange}
-                              className="order_info"
-                              required
-                            />
-                          </div>
+                      <div className="form-group">
+                        <label>Pincode:</label>
+                        <input
+                          type="text"
+                          name="pincode"
+                          value={customerInfo.pincode}
+                          onChange={handleInputChange}
+                          className="order_info"
+                          required
+                        />
+                      </div>
 
-                          <button
-                            type="button"
-                            className="btn btn-success"
-                            onClick={handleAddAddress}
-                            disabled={!isAddressEnabled}
-                          >
-                            Save Address <FaPlus />
-                          </button>
-                        </div>
-                      </>
-                    )
-                    }
+                      <button
+                        type="button"
+                        className="btn btn-success"
+                        onClick={handleAddAddress}
+                        disabled={!isAddressEnabled}
+                      >
+                        Save Address <FaPlus />
+                      </button>
+                    </div>
+                    {/* </>
+                     */}
+                    {/* ) 
+                    } */}
                     {showlower && (
                       <>
 
