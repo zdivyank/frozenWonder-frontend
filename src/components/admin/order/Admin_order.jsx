@@ -424,8 +424,8 @@ function AdminOrder() {
   };
 
   return (
-    <section className="admin-order-section text-center">
-      <Container className='text-center'>
+    <div className="admin-order-section text-center">
+      <div className='text-center m-3'>
         <h1 className="mt-3">Orders List</h1>
 
 
@@ -693,8 +693,8 @@ function AdminOrder() {
             </Modal>
           </>
         )}
-      </Container>
-    </section>
+      </div>
+    </div>
   );
 }
 

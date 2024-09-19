@@ -37,64 +37,119 @@ const AdminSidebar = () => {
   }, [isOpen]);
 
   return (
-    <div>
-      <div className="toggle_container">
-        <button className="sidebar-toggle" onClick={toggleSidebar}>
-          {isOpen ? <FaTimes /> : <FaBars />}
-        </button>
-      </div>
+    // <div>
+    //   <div className="toggle_container">
+    //     <button className="sidebar-toggle" onClick={toggleSidebar}>
+    //       {isOpen ? <FaTimes /> : <FaBars />}
+    //     </button>
+    //   </div>
 
-      <div ref={sidebarRef} className={`admin-sidebar ${isOpen ? 'open' : ''}`}>
-        <h2>Admin Dashboard</h2>
-        <hr />
-        <ul>
-          <li>
-            <NavLink to="/admin/product" activeClassName="active">
-              <AiFillProduct className='me-2' /> Products
-            </NavLink>
-          </li>
-          <li>
-            <NavLink to="/admin/order" activeClassName="active">
-              <GoListOrdered className='me-2' />Order Summary
-            </NavLink>
-          </li>
-          {/* <li>
-            <NavLink to="/admin/location">
-              <FaUsers className='me-2' />Loction filter
-            </NavLink>
-          </li> */}
-          <li>
-            <NavLink to="/admin/testimonail" activeClassName="active">
-              <VscFeedback className='me-2' /> Success Stories
-            </NavLink>
-          </li>
-          <li>
-            <NavLink to="/admin/user">
-              <FaUsers className='me-2' />Add User
-            </NavLink>
-          </li>
-          <li>
-            <NavLink to="/admin/date">
-              <CiCalendarDate className='me-2' />Block Dates
-            </NavLink>
-          </li>
-          <li>
-            <NavLink to="/admin/contact">
-              <IoIosContact className='me-2' />Bussiness Inquiries
-            </NavLink>
-          </li>
-          <li>
-            <NavLink to="/admin/archive">
-              <MdOutlineArchive className='me-2' />Archive Data</NavLink>
-          </li>
-          <li>
-            <NavLink to="/logout" className="logout">
-              <IoLogOutOutline className='me-2' />Logout
-            </NavLink>
-          </li>
-        </ul>
-      </div>
-    </div>
+    //   <div ref={sidebarRef} className={`admin-sidebar ${isOpen ? 'open' : ''}`}>
+    //     <h2>Admin Dashboard</h2>
+    //     <hr />
+    //     <ul>
+    //       <li>
+    //         <NavLink to="/admin/product" activeClassName="active">
+    //           <AiFillProduct className='me-2' /> Products
+    //         </NavLink>
+    //       </li>
+    //       <li>
+    //         <NavLink to="/admin/order" activeClassName="active">
+    //           <GoListOrdered className='me-2' />Order Summary
+    //         </NavLink>
+    //       </li>
+    //       {/* <li>
+    //         <NavLink to="/admin/location">
+    //           <FaUsers className='me-2' />Loction filter
+    //         </NavLink>
+    //       </li> */}
+    //       <li>
+    //         <NavLink to="/admin/testimonail" activeClassName="active">
+    //           <VscFeedback className='me-2' /> Success Stories
+    //         </NavLink>
+    //       </li>
+    //       <li>
+    //         <NavLink to="/admin/user">
+    //           <FaUsers className='me-2' />Add User
+    //         </NavLink>
+    //       </li>
+    //       <li>
+    //         <NavLink to="/admin/date">
+    //           <CiCalendarDate className='me-2' />Block Dates
+    //         </NavLink>
+    //       </li>
+    //       <li>
+    //         <NavLink to="/admin/contact">
+    //           <IoIosContact className='me-2' />Bussiness Inquiries
+    //         </NavLink>
+    //       </li>
+    //       <li>
+    //         <NavLink to="/admin/archive">
+    //           <MdOutlineArchive className='me-2' />Archive Data</NavLink>
+    //       </li>
+    //       <li>
+    //         <NavLink to="/logout" className="logout">
+    //           <IoLogOutOutline className='me-2' />Logout
+    //         </NavLink>
+    //       </li>
+    //     </ul>
+    //   </div>
+    // </div>
+    <div>
+  <div className="toggle_container">
+    <button className="sidebar-toggle" onClick={toggleSidebar}>
+      {isOpen ? <FaTimes /> : <FaBars />}
+    </button>
+  </div>
+
+  <div ref={sidebarRef} className={`admin-sidebar ${isOpen ? 'open' : ''}`}>
+    <h2>Admin Dashboard</h2>
+    <hr />
+    <ul>
+      <li>
+        <NavLink to="/admin/product" activeClassName="active">
+          <AiFillProduct className="me-2" /> Products
+        </NavLink>
+      </li>
+      <li>
+        <NavLink to="/admin/order" activeClassName="active">
+          <GoListOrdered className="me-2" /> Order Summary
+        </NavLink>
+      </li>
+      <li>
+        <NavLink to="/admin/testimonail" activeClassName="active">
+          <VscFeedback className="me-2" /> Success Stories
+        </NavLink>
+      </li>
+      <li>
+        <NavLink to="/admin/user">
+          <FaUsers className="me-2" /> Add User
+        </NavLink>
+      </li>
+      <li>
+        <NavLink to="/admin/date">
+          <CiCalendarDate className="me-2" /> Block Dates
+        </NavLink>
+      </li>
+      <li>
+        <NavLink to="/admin/contact">
+          <IoIosContact className="me-2" /> Business Inquiries
+        </NavLink>
+      </li>
+      <li>
+        <NavLink to="/admin/archive">
+          <MdOutlineArchive className="me-2" /> Archive Data
+        </NavLink>
+      </li>
+      <li>
+        <NavLink to="/logout" className="logout">
+          <IoLogOutOutline className="me-2" /> Logout
+        </NavLink>
+      </li>
+    </ul>
+  </div>
+</div>
+
   );
 };
 

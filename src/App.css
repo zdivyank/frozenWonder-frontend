@@ -11,14 +11,14 @@
   overflow: hidden;
 }
 
-.app-container:not(:has(.admin-sidebar)) .main-content {
+/* .app-container:not(:has(.admin-sidebar)) .main-content {
   width: 100%;
-}
+} */
 
-.app-container:has(.admin-sidebar) .main-content {
+/* .app-container:has(.admin-sidebar) .main-content {
   width: calc(100% - 250px);
   margin-left: auto;
-}
+} */
 
 /* Navbar styles */
 .navbar {
