@@ -17,7 +17,7 @@ function AdminOrder() {
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
-  const [ordersPerPage] = useState(9);
+  const [ordersPerPage] = useState(10);
   const [selectedOrderId, setSelectedOrderId] = useState(null);
   const [showModal, setShowModal] = useState(false);
   const [pincodeData, setPincodeData] = useState([]); // Holds available pincodes
@@ -25,6 +25,9 @@ function AdminOrder() {
   const [startDate, setStartDate] = useState(null);
   const [endDate, setEndDate] = useState(null);
   const [isEditing, setIsEditing] = useState(false);
+
+  const [selectedStatus, setSelectedStatus] = useState('');
+
   // const [editedOrder, setEditedOrder] = useState();
   // const [selectedPincode, setSelectedPincode] = useState('');
   const { isLoggedIn } = useAuth();
@@ -35,36 +38,55 @@ function AdminOrder() {
     pincode: "",
     status: "Pending",
     reason: "",
+    area: "",
+    landmark: "",
   });
-  
 
+
+
+
+  // const handleInputChange = (e) => {
+  //   const { name, value } = e.target;
+
+  //   setEditedOrder((prevOrder) => ({
+  //     ...prevOrder,
+  //     [name]: value, // Dynamically update the field by name
+  //   }));
+  // };
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    
+
+    // Update the state for the corresponding field
     setEditedOrder((prevOrder) => ({
       ...prevOrder,
-      [name]: value, // Dynamically update the field by name
+      [name]: value || "", // If value is empty, set to an empty string
     }));
   };
-  
+
+
+  useEffect(() => {
+    console.log("Edited order updated:", editedOrder);
+  }, [editedOrder]);
+
+
 
   const handleEdit = (order) => {
     setEditedOrder(order); // Set the specific order being edited
     setIsEditing(true);
   };
-  
+
   const handleAddressChange = (e, index) => {
     const { value } = e.target;
-  
+
     setEditedOrder((prevOrder) => ({
       ...prevOrder,
-      cust_address: prevOrder.cust_address.map((address, i) => 
+      cust_address: prevOrder.cust_address.map((address, i) =>
         i === index ? value : address
       )
     }));
   };
-  
+
 
   const handleSave = async () => {
     try {
@@ -79,27 +101,37 @@ function AdminOrder() {
           pincode: editedOrder.pincode,
           status: editedOrder.status,
           reason: editedOrder.reason,
+          area: editedOrder.area,
+          landmark: editedOrder.landmark,
           // Add other fields here if needed
         }),
       });
-  
+
       if (!response.ok) {
         throw new Error('Failed to update the order');
       }
-  
+
       const data = await response.json();
       console.log('Order updated successfully:', data);
-  
+
       // After a successful update, reset the editing state
+      // setIsEditing(false);
+      setEditedOrder({});
+      setOrders((prevOrders) => 
+        prevOrders.map((order) => 
+          order._id === editedOrder._id ? { ...order, ...editedOrder } : order
+        )
+      );
+    
       setIsEditing(false);
       setEditedOrder({});
       // Optionally, you can fetch updated orders here
-      fetchOrders(); 
+      fetchOrders();
     } catch (error) {
       console.error('Error updating order:', error);
     }
   };
-  
+
 
 
   // const handleFilter = async () => {
@@ -124,6 +156,7 @@ function AdminOrder() {
         pincode: selectedPincode,
         startDate: startDate ? startDate.toISOString() : '',
         endDate: endDate ? endDate.toISOString() : '',
+        status: selectedStatus,
       });
 
       const response = await fetch(`${CONFIGS.API_BASE_URL}/filter-orders?${queryParams.toString()}`);
@@ -198,24 +231,25 @@ function AdminOrder() {
       // Return the fields in the correct order
       return {
         serial_no: index + 1,  // Serial number starting from 1
+        unique_code: order.unique_code,
         cust_name: order.cust_name,
-        cust_number: order.cust_number,
         cust_address: addressString,  // Address placed right after serial number
         selected_address: order.selected_address,
         area: order.area,
         landmark: order.landmark,
         pincode: order.pincode,
+        cust_contact: order.cust_contact,
         order_date: formattedDate,
         timeslot: order.timeslot,
-        order_product: productsString,  // Convert array of objects to string
         status: order.status,
+        reason: order.reason,
+        order_product: productsString,  // Convert array of objects to string
         total_amount: order.total_amount,
-        agency_id: order.agency_id,
-        coupon_code: order.coupon_code,
-        assigned_delivery_boys: order.assigned_delivery_boys,
-        blocked_dates: JSON.stringify(order.blocked_dates), // Optionally stringify blocked_dates
-        cust_contact: order.cust_contact,
-        unique_code: order.unique_code,
+        cust_number: order.cust_number,
+        // agency_id: order.agency_id,
+        // coupon_code: order.coupon_code,
+        // assigned_delivery_boys: order.assigned_delivery_boys,
+        // blocked_dates: JSON.stringify(order.blocked_dates), 
       };
     });
 
@@ -379,9 +413,15 @@ function AdminOrder() {
     setShowModal(true);
   };
 
-  const indexOfLastOrder = currentPage * ordersPerPage;
-  const indexOfFirstOrder = indexOfLastOrder - ordersPerPage;
-  const currentOrders = orders.slice(indexOfFirstOrder, indexOfLastOrder);
+  // const indexOfLastOrder = currentPage * ordersPerPage;
+  // const indexOfFirstOrder = indexOfLastOrder - ordersPerPage;
+  // const currentOrders = orders.slice(indexOfFirstOrder, indexOfLastOrder);
+
+  const itemsPerPage = 10; // Define how many items per page
+const indexOfLastOrder = currentPage * itemsPerPage;
+const indexOfFirstOrder = indexOfLastOrder - itemsPerPage;
+const currentOrders = orders.slice(indexOfFirstOrder, indexOfLastOrder);
+
 
   const paginate = (pageNumber) => setCurrentPage(pageNumber);
 
@@ -425,14 +465,13 @@ function AdminOrder() {
 
   return (
     <div className="admin-order-section text-center">
-      <div className='text-center m-3'>
+      <div className='text-center m-3 '>
         <h1 className="mt-3">Orders List</h1>
 
 
 
         <div className='m-3'>
           <label>Select Date Range:</label>
-
           <DatePicker
             selected={startDate}
             onChange={(date) => setStartDate(date)}
@@ -440,6 +479,7 @@ function AdminOrder() {
             startDate={startDate}
             endDate={endDate}
             placeholderText="Start Date"
+            dateFormat="dd/MM/yyyy" // Set date format
           />
           <DatePicker
             selected={endDate}
@@ -448,7 +488,10 @@ function AdminOrder() {
             startDate={startDate}
             endDate={endDate}
             placeholderText="End Date"
+            dateFormat="dd/MM/yyyy" // Set date format
           />
+
+
 
           <button
             className='btn btn-success mt-3 mb-3 m-3'
@@ -471,208 +514,239 @@ function AdminOrder() {
             ))}
           </Form.Control>
         </div>
-        <button className='btn btn-dark mt-3 mb-3 m-3' onClick={downloadExcel}>Filter Data Excel</button>
+
+        {/* <div className="mt-3 mb-3">
+        <h4>Status Filter:</h4>
+        <Form.Control as="select" size="md" value={selectedStatus} onChange={(e) => setSelectedStatus(e.target.value)} className="custom-select">
+          <option value="">All statuses</option>
+          <option value="Pending">Pending</option>
+          <option value="Delivered">Delivered</option>
+          <option value="Canceled">Canceled</option>
+        </Form.Control>
+      </div> */}
+
+        <button className='btn btn-dark mt-3 mb-3 m-3' onClick={downloadExcel}>Filter Data Download</button>
 
 
-        <button className='btn btn-dark mt-3 mb-3 m-3' onClick={handledownload}>All Data excel</button>
+        <button className='btn btn-dark mt-3 mb-3 m-3' onClick={handledownload}>All Data Download</button>
 
         {loading ? (
           <p className="admin-order-loading">Loading...</p>
         ) : (
           <>
-           <Table striped bordered hover responsive>
-  <thead>
-    <tr>
-      <th>Unique code</th>
-      <th>Name</th>
-      <th>Address</th>
-      <th>Pincode</th>
-      <th>Phone No</th>
-      <th>Order Date</th>
-      <th>Time Slot</th>
-      <th>Agency</th>
-      <th>Status</th>
-      <th>Reason</th>
-      <th>Products</th>
-      <th>Qty.</th>
-      <th>Total</th>
-      <th>Edit</th>
-      <th>Delete</th>
-    </tr>
-  </thead>
-  <tbody>
-  {currentOrders.length > 0 ? (
-    currentOrders.map((order) => (
-      <tr key={order._id}>
-        <td className="text-center">
-          {order.unique_code || '-'}
-        </td>
+            <Table striped bordered hover responsive>
+              <thead>
+                <tr>
+                  <th>Unique code</th>
+                  <th>Name</th>
+                  <th>Address</th>
+                  <th>Pincode</th>
+                  <th>Phone No</th>
+                  <th>Order Date</th>
+                  <th>Time Slot</th>
+                  <th>Agency</th>
+                  <th>Status</th>
+                  <th>Reason</th>
+                  <th>Products</th>
+                  <th>Qty.</th>
+                  <th>Total</th>
+                  <th>Edit</th>
+                  <th>Delete</th>
+                </tr>
+              </thead>
+              <tbody>
+                {currentOrders.length > 0 ? (
+                  currentOrders.map((order) => (
+                    <tr key={order._id}>
+                      <td className="text-center">
+                        {order.unique_code || '-'}
+                      </td>
 
-        {/* Editable Name Field */}
-        <td>
-          {isEditing && editedOrder._id === order._id ? (
-            <input
-              type="text"
-              name="cust_name"
-              value={editedOrder.cust_name || ""}
-              onChange={handleInputChange}
-              className="form-control"
-            />
-          ) : (
-            order.cust_name
-          )}
-        </td>
+                      {/* Editable Name Field */}
+                      <td>
+                        {isEditing && editedOrder._id === order._id ? (
+                          <input
+                            type="text"
+                            name="cust_name"
+                            value={editedOrder.cust_name || ""}
+                            onChange={handleInputChange}
+                            className="form-control"
+                          />
+                        ) : (
+                          order.cust_name
+                        )}
+                      </td>
 
-        {/* Editable Address Field */}
-        <td>
-          {isEditing && editedOrder._id === order._id ? (
-            <textarea
-            name={`cust_address_${order.selected_address}`} // Unique name for each address field
-            value={editedOrder.cust_address[order.selected_address] || ""}
-            onChange={(e) => handleAddressChange(e, order.selected_address)} // Use a new handle function for address
-            className="form-control"
-          />
-          
-          ) : (
-            order.cust_address && order.selected_address !== null && order.cust_address[order.selected_address] ? (
-              <>
-                {order.cust_address[order.selected_address]}
-                {order.area && <span className="text-primary">, {order.area}</span>}
-                {order.landmark && <span className="text-danger">, {order.landmark}</span>}
-              </>
-            ) : 'No address selected'
-          )}
-        </td>
+                      {/* Editable Address Field */}
+                      <td>
 
-        {/* Non-editable Pincode */}
-        <td>
-          {order.pincode}
-        </td>
+                        {isEditing && editedOrder._id === order._id ? (
+                          <>
+                            <textarea
+                              name={`cust_address_${order.selected_address}`} // Unique name for each address field
+                              value={editedOrder.cust_address[order.selected_address] || ""}
+                              onChange={(e) => handleAddressChange(e, order.selected_address)} // Use a new handle function for address
+                              className="form-control"
+                            />
+                            <input
+                              type="text"
+                              name="area"
+                              value={editedOrder.area || ""}  // Ensuring controlled input with fallback
+                              onChange={handleInputChange}
+                              className="form-control text-primary"
+                            />
 
-        {/* Non-editable Phone Number */}
-        <td>{order.cust_contact}</td>
+                            <input
+                              type="text"
+                              name="landmark"
+                              value={editedOrder.landmark || ""}  // Ensuring controlled input with fallback
+                              onChange={handleInputChange}
+                              className="form-control text-danger"
+                            />
 
-        {/* Non-editable Order Date */}
-        <td>{new Date(order.order_date).toLocaleDateString('en-GB')}</td>
+                          </>
 
-        {/* Non-editable Time Slot */}
-        <td>{order.timeslot}</td>
+                        ) : (
+                          order.cust_address && order.selected_address !== null && order.cust_address[order.selected_address] ? (
+                            <>
+                              {order.cust_address[order.selected_address]}
+                              {order.area && <span className="text-primary">, {order.area}</span>}
+                              {order.landmark && <span className="text-danger">, {order.landmark}</span>}
+                            </>
+                          ) : 'No address selected'
+                        )}
+                      </td>
 
-        {/* Non-editable Agency */}
-        <td>{order.agency_id?.agency_name || 'Agency not available'}</td>
+                      {/* Non-editable Pincode */}
+                      <td>
+                        {order.pincode}
+                      </td>
 
-        {/* Editable Status */}
-        <td>
-          {isEditing && editedOrder._id === order._id ? (
-             <select
-             className={
-               order.status === "Pending"
-                 ? "text-warning"
-                 : order.status === "Delivered"
-                   ? "text-success"
-                   : "text-danger"
-             }
-             value={order.status}
-             onChange={(e) => handleStatus(order._id, e.target.value)} // Call function with selected status
-           >
-             <option value="Pending" className="text-warning">
-               Pending
-             </option>
-             <option value="Delivered" className="text-success">
-               Delivered
-             </option>
-             <option value="Canceled" className="text-danger">
-               Canceled
-             </option>
-           </select>
-          ) : (
-            <span
-              className={
-                order.status === "Pending"
-                  ? "text-warning"
-                  : order.status === "Delivered"
-                  ? "text-success"
-                  : "text-danger"
-              }
-            >
-              {order.status}
-            </span>
-          )}
-        </td>
+                      {/* Non-editable Phone Number */}
+                      <td>{order.cust_contact}</td>
 
-        {/* Editable Reason Field */}
-        <td>
-          {isEditing && editedOrder._id === order._id ? (
-            <input
-              type="text"
-              name="reason"
-              value={editedOrder.reason || ""}
-              onChange={handleInputChange}
-              className="form-control"
-            />
-          ) : (
-            order.reason || 'N/A'
-          )}
-        </td>
+                      {/* Non-editable Order Date */}
+                      <td>{new Date(order.order_date).toLocaleDateString('en-GB')}</td>
 
-        {/* Products List */}
-        <td>
-          {order.order_product.length > 0 ? (
-            <ul>
-              {order.order_product.map((product, index) => (
-                <p key={index} className="addcust">{product.name}</p>
-              ))}
-            </ul>
-          ) : 'No products found'}
-        </td>
+                      {/* Non-editable Time Slot */}
+                      <td>{order.timeslot}</td>
 
-        {/* Non-editable Quantity */}
-        <td>{order.order_product.reduce((total, product) => total + product.quantity, 0)}</td>
+                      {/* Non-editable Agency */}
+                      <td>{order.agency_id?.agency_name || 'Agency not available'}</td>
 
-        {/* Non-editable Total Amount */}
-        <td>RS. {order.total_amount}</td>
+                      {/* Editable Status */}
+                      <td>
+                        {isEditing && editedOrder._id === order._id ? (
+                          <select
+                            className={
+                              order.status === "Pending"
+                                ? "text-warning"
+                                : order.status === "Delivered"
+                                  ? "text-success"
+                                  : "text-danger"
+                            }
+                            value={order.status}
+                            onChange={(e) => handleStatus(order._id, e.target.value)} // Call function with selected status
+                          >
+                            <option value="Pending" className="text-warning">
+                              Pending
+                            </option>
+                            <option value="Delivered" className="text-success">
+                              Delivered
+                            </option>
+                            <option value="Canceled" className="text-danger">
+                              Canceled
+                            </option>
+                          </select>
+                        ) : (
+                          <span
+                            className={
+                              order.status === "Pending"
+                                ? "text-warning"
+                                : order.status === "Delivered"
+                                  ? "text-success"
+                                  : "text-danger"
+                            }
+                          >
+                            {order.status}
+                          </span>
+                        )}
+                      </td>
 
-        {/* Edit/Save Button */}
-        <td>
-          {isEditing && editedOrder._id === order._id ? (
-            <button onClick={handleSave} className="btn btn-success">
-              Save
-            </button>
-          ) : (
-            // <button onClick={() => handleEdit(order)} className="btn btn-primary">
-              <CiEdit onClick={() => handleEdit(order)} className="text-center text-primary" size={25}/> 
-            // </button>
-          )}
-        </td>
+                      {/* Editable Reason Field */}
+                      <td>
+                        {isEditing && editedOrder._id === order._id ? (
+                          <input
+                            type="text"
+                            name="reason"
+                            value={editedOrder.reason || ""}
+                            onChange={handleInputChange}
+                            className="form-control"
+                          />
+                        ) : (
+                          order.reason || 'N/A'
+                        )}
+                      </td>
 
-        {/* Delete Button */}
-        <td>
-          {/* <Button onClick={() => openModal(order._id)} variant="danger"> */}
-            <MdDelete  onClick={() => openModal(order._id)} size={25} className='text-danger' />
-          {/* </Button> */}
-        </td>
-      </tr>
-    ))
-  ) : (
-    <tr>
-      <td colSpan="12" className="text-center">No Orders Available</td>
-    </tr>
-  )}
-</tbody>
+                      {/* Products List */}
+                      <td>
+                        {order.order_product.length > 0 ? (
+                          <ul>
+                            {order.order_product.map((product, index) => (
+                              <p key={index} className="addcust">{product.name}</p>
+                            ))}
+                          </ul>
+                        ) : 'No products found'}
+                      </td>
 
-</Table>
+                      {/* Non-editable Quantity */}
+                      <td>{order.order_product.reduce((total, product) => total + product.quantity, 0)}</td>
+
+                      {/* Non-editable Total Amount */}
+                      <td>RS. {order.total_amount}</td>
+
+                      {/* Edit/Save Button */}
+                      <td>
+                        {isEditing && editedOrder._id === order._id ? (
+                          <button onClick={handleSave} className="btn btn-success">
+                            Save
+                          </button>
+                        ) : (
+                          // <button onClick={() => handleEdit(order)} className="btn btn-primary">
+                          <CiEdit onClick={() => handleEdit(order)} className="text-center text-primary" size={25} />
+                          // </button>
+                        )}
+                      </td>
+
+                      {/* Delete Button */}
+                      <td>
+                        {/* <Button onClick={() => openModal(order._id)} variant="danger"> */}
+                        <MdDelete onClick={() => openModal(order._id)} size={25} className='text-danger' />
+                        {/* </Button> */}
+                      </td>
+                    </tr>
+                  ))
+                ) : (
+                  <tr>
+                    <td colSpan="12" className="text-center">No Orders Available</td>
+                  </tr>
+                )}
+              </tbody>
+
+            </Table>
 
 
 
 
             {/* Pagination Controls */}
             <Pagination className="admin-order-pagination">
-              {[...Array(Math.ceil(orders.length / ordersPerPage)).keys()].map(number => (
-                <Pagination.Item key={number + 1} active={number + 1 === currentPage} onClick={() => paginate(number + 1)}>
+              {[...Array(Math.ceil(orders.length / itemsPerPage)).keys()].map(number => (
+                <Pagination.Item key={number + 1} active={number + 1 === currentPage} onClick={() => setCurrentPage(number + 1)}>
                   {number + 1}
                 </Pagination.Item>
               ))}
             </Pagination>
+
 
             {/* Delete Confirmation Modal */}
             <Modal show={showModal} onHide={closeModal}>
