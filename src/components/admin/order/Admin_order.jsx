@@ -131,41 +131,54 @@ function AdminOrder() {
       console.error('Error updating order:', error);
     }
   };
+// a
+//   const handleFilter = async () => {
+//     try {
+//       // Convert dates to ISO string format
+//       const queryParams = new URLSearchParams({
+//         pincode: selectedPincode,
+//         startDate: startDate ? startDate.toISOString() : '',
+//         endDate: endDate ? endDate.toISOString() : '',
+//         status: selectedStatus,
+//       });
 
+//       const response = await fetch(`${CONFIGS.API_BASE_URL}/filter-orders?${queryParams.toString()}`);
+//       const data = await response.json();
+//       setOrders(data);
+//     } catch (error) {
+//       console.error('Error fetching filtered orders:', error);
+//     }
+//   };
 
+const handleFilter = async () => {
+  try {
+    const queryParams = new URLSearchParams();
 
-  // const handleFilter = async () => {
-  //   try {
-  //     const queryParams = new URLSearchParams({
-  //       pincode: selectedPincode,
-  //       startDate: startDate?.toISOString(),
-  //       endDate: endDate?.toISOString(),
-  //     });
-
-  //     const response = await fetch(`${CONFIGS.API_BASE_URL}/filter-orders?${queryParams.toString()}`);
-  //     const data = await response.json();
-  //     setOrders(data);
-  //   } catch (error) {
-  //     console.error('Error fetching filtered orders:', error);
-  //   }
-  // };
-  const handleFilter = async () => {
-    try {
-      // Convert dates to ISO string format
-      const queryParams = new URLSearchParams({
-        pincode: selectedPincode,
-        startDate: startDate ? startDate.toISOString() : '',
-        endDate: endDate ? endDate.toISOString() : '',
-        status: selectedStatus,
-      });
-
-      const response = await fetch(`${CONFIGS.API_BASE_URL}/filter-orders?${queryParams.toString()}`);
-      const data = await response.json();
-      setOrders(data);
-    } catch (error) {
-      console.error('Error fetching filtered orders:', error);
+    console.log(":::",queryParams);
+    
+    if (selectedPincode) {
+      queryParams.append('pincode', selectedPincode);
     }
-  };
+    if (startDate) {
+      queryParams.append('startDate', startDate.toISOString().split('T')[0]); // Convert to YYYY-MM-DD
+    }
+    if (endDate) {
+      queryParams.append('endDate', endDate.toISOString().split('T')[0]); // Convert to YYYY-MM-DD
+    }
+    if (selectedStatus) {
+      queryParams.append('status', selectedStatus);
+    }
+
+    const response = await fetch(`${CONFIGS.API_BASE_URL}/filter-orders?${queryParams.toString()}`);
+    const data = await response.json();
+    console.log(data);
+    
+    setOrders(data);
+  } catch (error) {
+    console.error('Error fetching filtered orders:', error);
+  }
+};
+
 
   // const downloadExcel = () => {
   //   // Process orders to add serial number, format date, and exclude 'id'
@@ -299,6 +312,32 @@ function AdminOrder() {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({ pincode }),
+      });
+
+      if (!response.ok) {
+        console.log('No orders found for selected pincode');
+        return;
+      }
+
+      const data = await response.json();
+      console.log(data);
+
+      setOrders(data.orders || []);
+    } catch (error) {
+      console.log("Error fetching orders:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+  const fetchOrdersByStatus = async (status) => {
+    setLoading(true);
+    try {
+      const response = await fetch(`${CONFIGS.API_BASE_URL}/orderstatus`, {
+        method: "POST",
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ status }),
       });
 
       if (!response.ok) {
@@ -457,7 +496,12 @@ const currentOrders = orders.slice(indexOfFirstOrder, indexOfLastOrder);
     setSelectedPincode(pincode);
     fetchOrdersByPincode(pincode); // Fetch orders by pincode
   };
-
+  
+  const handleStatusChange = (e) => {
+    const status = e.target.value;
+    setSelectedStatus(status);
+    fetchOrdersByStatus(status); // Fetch orders by pincode
+  };
   const closeModal = () => {
     setShowModal(false);
     setSelectedOrderId(null);
@@ -505,19 +549,19 @@ const currentOrders = orders.slice(indexOfFirstOrder, indexOfLastOrder);
 
         <div className="mt-3 mb-3 ">
           <h4>Pincode Filter:</h4>
-          <Form.Control as="select" size="md" value={selectedPincode} onChange={handlePincodeChange} className="custom-select">
+          <Form as="select" size="sm" value={selectedPincode} onChange={handlePincodeChange} className="custom-select">
             <option value="">All pincodes</option>
             {pincodeData.map((pincode, index) => (
               <option key={index} value={pincode}>
                 {pincode}
               </option>
             ))}
-          </Form.Control>
+          </Form>
         </div>
 
         {/* <div className="mt-3 mb-3">
         <h4>Status Filter:</h4>
-        <Form.Control as="select" size="md" value={selectedStatus} onChange={(e) => setSelectedStatus(e.target.value)} className="custom-select">
+        <Form.Control as="select" size="md" value={selectedStatus} onChange={handleStatusChange} className="custom-select">
           <option value="">All statuses</option>
           <option value="Pending">Pending</option>
           <option value="Delivered">Delivered</option>
@@ -545,7 +589,13 @@ const currentOrders = orders.slice(indexOfFirstOrder, indexOfLastOrder);
                   <th>Order Date</th>
                   <th>Time Slot</th>
                   <th>Agency</th>
-                  <th>Status</th>
+                  {/* <th>Status</th> */}
+                  <th> <Form as="select" size="sm" value={selectedStatus} onChange={handleStatusChange} className="custom-select">
+          <option value="">status</option>
+          <option value="Pending">Pending</option>
+          <option value="Delivered">Delivered</option>
+          <option value="Canceled">Canceled</option>
+        </Form></th>
                   <th>Reason</th>
                   <th>Products</th>
                   <th>Qty.</th>
