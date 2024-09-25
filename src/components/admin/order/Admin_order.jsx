@@ -117,12 +117,12 @@ function AdminOrder() {
       // After a successful update, reset the editing state
       // setIsEditing(false);
       setEditedOrder({});
-      setOrders((prevOrders) => 
-        prevOrders.map((order) => 
+      setOrders((prevOrders) =>
+        prevOrders.map((order) =>
           order._id === editedOrder._id ? { ...order, ...editedOrder } : order
         )
       );
-    
+
       setIsEditing(false);
       setEditedOrder({});
       // Optionally, you can fetch updated orders here
@@ -131,53 +131,61 @@ function AdminOrder() {
       console.error('Error updating order:', error);
     }
   };
-// a
-//   const handleFilter = async () => {
-//     try {
-//       // Convert dates to ISO string format
-//       const queryParams = new URLSearchParams({
-//         pincode: selectedPincode,
-//         startDate: startDate ? startDate.toISOString() : '',
-//         endDate: endDate ? endDate.toISOString() : '',
-//         status: selectedStatus,
-//       });
+  // a
+  //   const handleFilter = async () => {
+  //     try {
+  //       // Convert dates to ISO string format
+  //       const queryParams = new URLSearchParams({
+  //         pincode: selectedPincode,
+  //         startDate: startDate ? startDate.toISOString() : '',
+  //         endDate: endDate ? endDate.toISOString() : '',
+  //         status: selectedStatus,
+  //       });
 
-//       const response = await fetch(`${CONFIGS.API_BASE_URL}/filter-orders?${queryParams.toString()}`);
-//       const data = await response.json();
-//       setOrders(data);
-//     } catch (error) {
-//       console.error('Error fetching filtered orders:', error);
-//     }
-//   };
+  //       const response = await fetch(`${CONFIGS.API_BASE_URL}/filter-orders?${queryParams.toString()}`);
+  //       const data = await response.json();
+  //       setOrders(data);
+  //     } catch (error) {
+  //       console.error('Error fetching filtered orders:', error);
+  //     }
+  //   };
 
-const handleFilter = async () => {
-  try {
-    const queryParams = new URLSearchParams();
+  const handleFilter = async () => {
+    try {
+      const queryParams = new URLSearchParams();
 
-    console.log(":::",queryParams);
-    
-    if (selectedPincode) {
-      queryParams.append('pincode', selectedPincode);
-    }
-    if (startDate) {
-      queryParams.append('startDate', startDate.toISOString().split('T')[0]); // Convert to YYYY-MM-DD
-    }
-    if (endDate) {
-      queryParams.append('endDate', endDate.toISOString().split('T')[0]); // Convert to YYYY-MM-DD
-    }
-    if (selectedStatus) {
-      queryParams.append('status', selectedStatus);
-    }
+      console.log(":::", queryParams);
 
-    const response = await fetch(`${CONFIGS.API_BASE_URL}/filter-orders?${queryParams.toString()}`);
-    const data = await response.json();
-    console.log(data);
-    
-    setOrders(data);
-  } catch (error) {
-    console.error('Error fetching filtered orders:', error);
-  }
-};
+      if (selectedPincode) {
+        queryParams.append('pincode', selectedPincode);
+      }
+      if (startDate) {
+        queryParams.append('startDate', startDate.toISOString().split('T')[0]); // Convert to YYYY-MM-DD
+      }
+      if (endDate) {
+        queryParams.append('endDate', endDate.toISOString().split('T')[0]); // Convert to YYYY-MM-DD
+      }
+      if (selectedStatus) {
+        queryParams.append('status', selectedStatus);
+      }
+
+      const response = await fetch(`${CONFIGS.API_BASE_URL}/filter-orders?${queryParams.toString()}`);
+      const data = await response.json();
+      console.log(data);
+
+      setOrders(data);
+    } catch (error) {
+      console.error('Error fetching filtered orders:', error);
+    }
+  };
+
+  const handleEndDateChange = (date) => {
+    const selectedEndDate = new Date(date);
+    selectedEndDate.setHours(23, 59, 59, 999); // Adjust the time
+    setEndDate(selectedEndDate);
+    console.log('Start Date:', startDate); // Log start date
+    console.log('End Date:', selectedEndDate); // Log end date
+  };
 
 
   // const downloadExcel = () => {
@@ -457,9 +465,9 @@ const handleFilter = async () => {
   // const currentOrders = orders.slice(indexOfFirstOrder, indexOfLastOrder);
 
   const itemsPerPage = 10; // Define how many items per page
-const indexOfLastOrder = currentPage * itemsPerPage;
-const indexOfFirstOrder = indexOfLastOrder - itemsPerPage;
-const currentOrders = orders.slice(indexOfFirstOrder, indexOfLastOrder);
+  const indexOfLastOrder = currentPage * itemsPerPage;
+  const indexOfFirstOrder = indexOfLastOrder - itemsPerPage;
+  const currentOrders = orders.slice(indexOfFirstOrder, indexOfLastOrder);
 
 
   const paginate = (pageNumber) => setCurrentPage(pageNumber);
@@ -496,7 +504,7 @@ const currentOrders = orders.slice(indexOfFirstOrder, indexOfLastOrder);
     setSelectedPincode(pincode);
     fetchOrdersByPincode(pincode); // Fetch orders by pincode
   };
-  
+
   const handleStatusChange = (e) => {
     const status = e.target.value;
     setSelectedStatus(status);
@@ -525,7 +533,7 @@ const currentOrders = orders.slice(indexOfFirstOrder, indexOfLastOrder);
             placeholderText="Start Date"
             dateFormat="dd/MM/yyyy" // Set date format
           />
-          <DatePicker
+          {/* <DatePicker
             selected={endDate}
             onChange={(date) => setEndDate(date)}
             selectsEnd
@@ -533,8 +541,17 @@ const currentOrders = orders.slice(indexOfFirstOrder, indexOfLastOrder);
             endDate={endDate}
             placeholderText="End Date"
             dateFormat="dd/MM/yyyy" // Set date format
-          />
+          /> */}
 
+          <DatePicker
+            selected={endDate}
+            onChange={handleEndDateChange} // Use the custom handler here
+            selectsEnd
+            startDate={startDate}
+            endDate={endDate}
+            placeholderText="End Date"
+            dateFormat="dd/MM/yyyy"
+          />
 
 
           <button
@@ -591,11 +608,11 @@ const currentOrders = orders.slice(indexOfFirstOrder, indexOfLastOrder);
                   <th>Agency</th>
                   {/* <th>Status</th> */}
                   <th> <Form as="select" size="sm" value={selectedStatus} onChange={handleStatusChange} className="custom-select">
-          <option value="">status</option>
-          <option value="Pending">Pending</option>
-          <option value="Delivered">Delivered</option>
-          <option value="Canceled">Canceled</option>
-        </Form></th>
+                    <option value="">status</option>
+                    <option value="Pending">Pending</option>
+                    <option value="Delivered">Delivered</option>
+                    <option value="Canceled">Canceled</option>
+                  </Form></th>
                   <th>Reason</th>
                   <th>Products</th>
                   <th>Qty.</th>
