@@ -47,7 +47,7 @@ function OrderModal({ cartItems, total, onClose, setCartItems }) {
 
 
   const [isLoadingVerify, setIsLoadingVerify] = useState(false);
-  const [timer, setTimer] = useState(20); // Set initial timer to 20 seconds
+  const [timer, setTimer] = useState(90); // Set initial timer to 20 seconds
   const [isEnabled, setIsEnabled] = useState(false); // Initially disabled
   const [isLoadingOTP, setIsLoadingOTP] = useState(false);
   const [isResending, setIsResending] = useState(false);
@@ -231,7 +231,7 @@ function OrderModal({ cartItems, total, onClose, setCartItems }) {
 
   const startTimer = () => {
     setIsEnabled(false);
-    setTimer(20); // Reset timer to 20 seconds
+    setTimer(90); // Reset timer to 20 seconds
 
     const countdown = setInterval(() => {
       setTimer((prevTimer) => {

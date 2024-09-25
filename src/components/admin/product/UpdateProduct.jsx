@@ -433,7 +433,7 @@ import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { CONFIGS } from '../../../../config';
-import loadingGif from '/public/img/load.gif';
+import loadingGif from '/img/load.gif';
 
 import './updateproduct.css';
 
