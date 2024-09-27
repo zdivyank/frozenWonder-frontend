@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { CONFIGS } from '../../../config';
 // import { toast } from 'react-toastify';
 import './ordermodal.css';
@@ -66,6 +66,10 @@ function OrderModal({ cartItems, total, onClose, setCartItems }) {
 
   
   const [availableDate, setAvailableDate] = useState(null); // Store the next available date
+ 
+  const couponCodeRef = useRef(null);
+
+ 
   useEffect(() => {
     // Fetch the next available date from the backend
     const fetchAvailableDate = async () => {
@@ -93,6 +97,18 @@ function OrderModal({ cartItems, total, onClose, setCartItems }) {
     } else {
       setPhoneError('');
     }
+  };
+
+  const handleAddAddressAndFocusCoupon = () => {
+    // Call the existing function to add address
+    handleAddAddress();
+
+    // Use setTimeout to ensure UI updates before focusing
+    setTimeout(() => {
+      if (couponCodeRef.current) {
+        couponCodeRef.current.focus();
+      }
+    }, 100); // Set a small delay (100ms) to allow for state and rendering updates
   };
 
   // const [errors, setErrors] = useState({});
@@ -570,12 +586,13 @@ function OrderModal({ cartItems, total, onClose, setCartItems }) {
 
   const handleRemoveAddress = async (index) => {
     try {
+      setshowlower(false)
       setCustomerInfo(prev => {
         const updatedAddresses = prev.cust_addresses.filter((_, i) => i !== index);
         const updatedSelectedAddress = prev.selected_address === index ?
           (updatedAddresses.length > 0 ? 0 : null) :
           (prev.selected_address > index ? prev.selected_address - 1 : prev.selected_address);
-
+          
         return {
           ...prev,
           cust_addresses: updatedAddresses,
@@ -664,10 +681,10 @@ function OrderModal({ cartItems, total, onClose, setCartItems }) {
   // };
 
   // useEffect(() => {
-  //   // Add the class when the modal opens
+  //   // Add the className when the modal opens
   //   document.body.classList.add('modal-open');
 
-  //   // Remove the class when the modal closes
+  //   // Remove the className when the modal closes
   //   return () => {
   //     document.body.classList.remove('modal-open');
   //   };
@@ -759,9 +776,9 @@ function OrderModal({ cartItems, total, onClose, setCartItems }) {
 
   return (
     <div className="modal" style={{ display: 'block', backgroundColor: 'rgba(0,0,0,0.5)' }}>
-      <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content">
-          <div class="modal-header">
+      <div className="modal-dialog modal-dialog-centered">
+        <div className="modal-content">
+          <div className="modal-header">
             {!showOtherFields && !showIndividualFields && (
               <h5 className="modal-title">OTP VERIFICATION</h5>
             )}
@@ -772,7 +789,7 @@ function OrderModal({ cartItems, total, onClose, setCartItems }) {
               <span className="text-dark">&times;</span>
             </button>
           </div>
-          <div class="modal-body">
+          <div className="modal-body">
 
             {showOtherFields && showIndividualFields && (
               <>
@@ -956,7 +973,8 @@ function OrderModal({ cartItems, total, onClose, setCartItems }) {
                       <button
                         type="button"
                         className="btn btn-success"
-                        onClick={handleAddAddress}
+                        // onClick={handleAddAddress}
+                        onClick={handleAddAddressAndFocusCoupon}
                         disabled={!isAddressEnabled}
                       >
                         Save Address <FaPlus />
@@ -1073,6 +1091,7 @@ function OrderModal({ cartItems, total, onClose, setCartItems }) {
                             onChange={(e) => setCouponCode(e.target.value.toUpperCase())}
                             className="order_info"
                             placeholder="Enter coupon code"
+                            ref={couponCodeRef}
                             required
                           />
                         </div>
