@@ -47,7 +47,7 @@ function OrderModal({ cartItems, total, onClose, setCartItems }) {
 
 
   const [isLoadingVerify, setIsLoadingVerify] = useState(false);
-  const [timer, setTimer] = useState(90); // Set initial timer to 20 seconds
+  const [timer, setTimer] = useState(90); // Set initial timer to 90 seconds
   const [isEnabled, setIsEnabled] = useState(false); // Initially disabled
   const [isLoadingOTP, setIsLoadingOTP] = useState(false);
   const [isResending, setIsResending] = useState(false);
@@ -247,7 +247,7 @@ function OrderModal({ cartItems, total, onClose, setCartItems }) {
 
   const startTimer = () => {
     setIsEnabled(false);
-    setTimer(90); // Reset timer to 20 seconds
+    setTimer(90); // Reset timer to 90 seconds
 
     const countdown = setInterval(() => {
       setTimer((prevTimer) => {
@@ -262,7 +262,7 @@ function OrderModal({ cartItems, total, onClose, setCartItems }) {
   };
 
   const sendotp = async () => {
-    const trimmedCustNumber = customerInfo.cust_number.trim();
+    const trimmedCustNumber = customerInfo.cust_contact.trim();
     setIsLoadingOTP(true);
     try {
       const response = await fetch(`${CONFIGS.API_BASE_URL}/sendotp`, {
@@ -270,7 +270,7 @@ function OrderModal({ cartItems, total, onClose, setCartItems }) {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ cust_number: trimmedCustNumber }),
+        body: JSON.stringify({ cust_contact: trimmedCustNumber }),
       });
 
       if (response.ok) {
@@ -295,7 +295,7 @@ function OrderModal({ cartItems, total, onClose, setCartItems }) {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ cust_number: customerInfo.cust_number, otp: customerInfo.otp }),
+        body: JSON.stringify({ cust_contact: customerInfo.cust_contact, otp: customerInfo.otp }),
       });
 
       if (response.ok) {
@@ -324,12 +324,12 @@ function OrderModal({ cartItems, total, onClose, setCartItems }) {
     setIsEnabled(false); // Disable the button immediately
 
     try {
-      const response = await fetch(`${CONFIGS.API_BASE_URL}/resendOtp`, {
+      const response = await fetch(`${CONFIGS.API_BASE_URL}/resendotp`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ cust_number: customerInfo.cust_number }),
+        body: JSON.stringify({ cust_contact: customerInfo.cust_contact }),
       });
 
       const data = await response.json();
@@ -343,7 +343,7 @@ function OrderModal({ cartItems, total, onClose, setCartItems }) {
   };
 
   const handleFetchCustomerDetails = async () => {
-    if (!customerInfo.cust_number) {
+    if (!customerInfo.cust_contact) {
       toast.error('Please enter a mobile number');
       return;
     }
@@ -354,7 +354,7 @@ function OrderModal({ cartItems, total, onClose, setCartItems }) {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ cust_number: customerInfo.cust_number }),
+        body: JSON.stringify({ cust_contact: customerInfo.cust_contact }),
       });
 
       console.log('Response status:', response.status); // Log response status
@@ -374,7 +374,7 @@ function OrderModal({ cartItems, total, onClose, setCartItems }) {
             area: customer.area || '',
             landmark: customer.landmark || '',
             pincode: customer.pincode || '',
-            cust_contact: customer.cust_contact || '',
+            cust_number: customer.cust_number || '',
             isNewUser: false,
           }));
           // toast.success('Customer details fetched successfully!');
@@ -387,7 +387,7 @@ function OrderModal({ cartItems, total, onClose, setCartItems }) {
             landmark: '',
             area: '',
             pincode: '',
-            cust_contact: '',
+            cust_number: '',
             isNewUser: true,
           }));
           // toast.info('No existing customer found. Please fill in your details.');
@@ -521,6 +521,7 @@ function OrderModal({ cartItems, total, onClose, setCartItems }) {
   };
 
   const handleSelectAddress = (index) => {
+    setshowlower(true);
     setCustomerInfo(prev => ({
       ...prev,
       selected_address: index
@@ -811,14 +812,22 @@ function OrderModal({ cartItems, total, onClose, setCartItems }) {
                 {/* Show Email and Send OTP Button */}
                 {!showOTPInput && !showIndividualFields && (
                   <div className="form-group">
-                    <label>Email:</label>
+                    <label>Phone Number*:</label>
                     <div className="">
-                      <input
+                      {/* <input
                         type="text"
                         name="cust_number"
                         value={customerInfo.cust_number}
                         onChange={handleInputChange}
                         className="order_info"
+                        required
+                      /> */}
+                      <input
+                        type="number"
+                        name="cust_contact"
+                        value={customerInfo.cust_contact}
+                        onChange={handleInputChange}
+                        className={`order_info ${errors.cust_contact ? 'is-invalid' : ''}`}
                         required
                       />
                       <button
@@ -882,20 +891,21 @@ function OrderModal({ cartItems, total, onClose, setCartItems }) {
                       />
                     </div>
                     <div className="form-group">
-                      <label>Phone number*:</label>
-                      <input
-                        type="number"
-                        name="cust_contact"
-                        value={customerInfo.cust_contact}
+                    <label>Email*:</label>
+                    <input
+                        type="text"
+                        name="cust_number"
+                        value={customerInfo.cust_number}
                         onChange={handleInputChange}
-                        className={`order_info ${errors.cust_contact ? 'is-invalid' : ''}`}
+                        className="order_info"
                         required
                       />
-                      {errors.cust_contact && (
+                      
+                      {/* {errors.cust_contact && (
                         <div className="invalid-feedback">
                           {errors.cust_contact}
                         </div>
-                      )}
+                      )} */}
                     </div>
                     <div className="form-group">
                       <label>Addresses*:</label>
