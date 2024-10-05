@@ -1,46 +1,39 @@
 // cropImage.js
-export default function getCroppedImg(imageSrc, crop, zoom) {
+const getCroppedImg = (imageSrc, crop, zoom) => {
     return new Promise((resolve, reject) => {
       const image = new Image();
       image.src = imageSrc;
       image.onload = () => {
         const canvas = document.createElement('canvas');
+        const scaleX = image.width / image.naturalWidth;
+        const scaleY = image.height / image.naturalHeight;
+  
+        // Calculate the crop area
+        const cropX = crop.x * scaleX;
+        const cropY = crop.y * scaleY;
+        const cropWidth = crop.width * scaleX;
+        const cropHeight = crop.height * scaleY;
+  
+        // Set the canvas dimensions
+        canvas.width = cropWidth;
+        canvas.height = cropHeight;
+  
         const ctx = canvas.getContext('2d');
+        ctx.drawImage(image, cropX, cropY, cropWidth, cropHeight, 0, 0, cropWidth, cropHeight);
   
-        const pixelCrop = {
-          x: crop.x * image.width,
-          y: crop.y * image.height,
-          width: crop.width * image.width,
-          height: crop.height * image.height,
-        };
-  
-        canvas.width = pixelCrop.width;
-        canvas.height = pixelCrop.height;
-  
-        ctx.drawImage(
-          image,
-          pixelCrop.x,
-          pixelCrop.y,
-          pixelCrop.width,
-          pixelCrop.height,
-          0,
-          0,
-          pixelCrop.width,
-          pixelCrop.height
-        );
-  
+        // Convert canvas to Blob
         canvas.toBlob((blob) => {
           if (blob) {
+            blob.name = 'croppedImage.jpg'; // Set the filename
             resolve(blob);
           } else {
-            reject(new Error('Canvas is empty'));
+            reject(new Error('Failed to generate cropped image.'));
           }
         }, 'image/jpeg');
       };
-  
-      image.onerror = (error) => {
-        reject(error);
-      };
+      image.onerror = (error) => reject(error);
     });
-  }
+  };
+  
+  export default getCroppedImg;
   
