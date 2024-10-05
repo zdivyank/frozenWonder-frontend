@@ -45,6 +45,39 @@
   display: block;
 }
 
+/* Testimonials.css */
+
+.card {
+  transition: all 0.3s ease;
+}
+
+@media (max-width: 576px) {
+  .card {
+    height: auto; /* Make the card height automatic */
+    width: 90%; /* Set the width to a percentage for responsiveness */
+    max-width: 350px; /* Set a max width to ensure it doesn't get too wide */
+    margin: auto; /* Center the card */
+  }
+
+  .blockquote {
+    max-height: 120px; /* Limit the max height for the blockquote */
+    overflow-y: auto; /* Allow vertical scrolling */
+    padding-right: 10px; /* Add padding to avoid content being too close to the edge */
+  }
+}
+
+/* Hide scrollbar styles */
+.blockquote::-webkit-scrollbar {
+  display: none; /* Hide scrollbar for Chrome, Safari and Opera */
+}
+
+/* Hide scrollbar for IE, Edge and Firefox */
+.blockquote {
+  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none; /* Firefox */
+}
+
+
 @media (max-width: 600px) {
   .testimonial-card {
     max-width: 100%;
@@ -54,4 +87,5 @@
   .testimonial-card p {
     font-size: 0.9rem;
   }
+
 }
