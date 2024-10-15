@@ -71,9 +71,9 @@ function Home() {
           <motion.div variants={itemVariants}>
           {/* DELIGHTS WITH FROZEN WONDERS, A REVOLUTIONARY PRODUCT THAT BRINGS THE FRESHEST, REAL FRUIT FLAVORS STRAIGHT TO YOUR FREEZER. OUR INNOVATIVE PROCESS LOCKS IN THE NATURAL GOODNESS AND VIBRANT TASTE OF FRESH FRUITS, DELIVERING A REFRESHING AND HEALTHY TREAT EVERY TIME.  */}
 
-          <img src="/img/claim.png" className='claim text-center' alt="" />
+          <img src="/img/claim2.png" className='claim text-center' alt="" />
           
-           <button
+           {/* <button
               onClick={handleClick}
               className='btn btn-dark  giftbtn'
               style={{
@@ -87,7 +87,7 @@ function Home() {
               }}
             >
          <FiGift className='mb-1' />    Click Here <FiGift className='mb-1' />
-            </button>
+            </button> */}
 
           </motion.div>
         </div>
