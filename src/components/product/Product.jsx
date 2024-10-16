@@ -117,9 +117,10 @@ function Product({ addToCart, cart = [] }) {
                         <p>{pack.ml}ML * {pack.unit} - RS.{pack.price}</p>
 */
                       }
-                      <p className="stock-info text-danger">
+                      <p className="stock-info text-light">
                         {getAvailableQuantity(product, index) === 0 
-                          ? 'Out of Stock'
+                          // ? 'Out of Stock'
+                          ? 'Coming Soon'
                           : getAvailableQuantity(product, index) <= 10
                             ? `Hurry up! Only ${getAvailableQuantity(product, index)} left in stock!`
                             : null}
