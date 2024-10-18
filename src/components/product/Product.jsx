@@ -82,15 +82,17 @@ function Product({ addToCart, cart = [] }) {
   <>
 
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 320"><path fill="#F4E869" fill-opacity="1" d="M0,32L40,48C80,64,160,96,240,133.3C320,171,400,213,480,197.3C560,181,640,107,720,80C800,53,880,75,960,96C1040,117,1120,139,1200,133.3C1280,128,1360,96,1400,80L1440,64L1440,320L1400,320C1360,320,1280,320,1200,320C1120,320,1040,320,960,320C880,320,800,320,720,320C640,320,560,320,480,320C400,320,320,320,240,320C160,320,80,320,40,320L0,320Z"></path></svg>
+      
+
     <div className='product_container' id='products'>
-      <h1 className='text-center'>Claim Your gift</h1>
+      <h1 className='text-center mb-4'>OUR PRODUCTS</h1>
       {products.length > 0 ? (
-        <div className="product-list">
+        <div className="product-grid m-4">
           {products.map((product) => (
-            <div 
-            key={product._id} 
-            className={`product-item ${openProductId === product._id ? '' : 'open'}`}
-            style={{"--product-color": productColors[product._id] || 'transparent'}}
+            <div
+              key={product._id}
+              className={`product-item card p-2 border-0 shadow-sm ${openProductId === product._id ? '' : 'hover-shadow'}`}
+              style={{ "--product-color": productColors[product._id] || 'transparent' }}
               onClick={() => toggleProductCard(product._id)}
             >
               <motion.div
@@ -99,56 +101,53 @@ function Product({ addToCart, cart = [] }) {
                   rotate: 2,
                 }}
                 transition={{ duration: 0.1 }}
-                >
-                <img src={product.image} alt={product.name} />
+              >
+                <img className="card-img-top img-fluid mb-2 product-img" src={product.image} alt={product.name} />
               </motion.div>
-              <div className={`content ${openProductId === product._id ? 'show' : 'hide'}`}>
-                <h3>{product.name}</h3>
-                <p>{product.desc}</p>
-                {product.discount > 0 && <p>Discount: {product.discount}%</p>}
+              <div className={`card-body text-center p-2 ${openProductId === product._id ? 'show' : 'hide'}`}>
+                <p className="card-title mb-1">{product.name}</p>
+                <i className="card-text text-muted pro_dec mb-1">{product.desc}</i>
+                {product.discount > 0 && <p className="text-danger small">Discount: {product.discount}%</p>}
 
-                <div className="pack-group">
+                <div className="pack-group mt-2">
                   {product.packs.map((pack, index) => (
-                    <div key={index} className="pack-item">
+                    <div key={index} className="mb-2">
+                      {/* Uncomment this block for pack details */}
+                      {/* <p className="small">{pack.ml}ML * {pack.unit} - RS.{pack.price}</p> */}
                       
-                      
-                      {
-                        /*
-                        <p>{pack.ml}ML * {pack.unit} - RS.{pack.price}</p>
-*/
-                      }
-                      <p className="stock-info text-light">
-                        {getAvailableQuantity(product, index) === 0 
-                          // ? 'Out of Stock'
+                      <p className="stock-info text-muted small">
+                        {getAvailableQuantity(product, index) === 0
                           ? 'Coming Soon'
                           : getAvailableQuantity(product, index) <= 10
                             ? `Hurry up! Only ${getAvailableQuantity(product, index)} left in stock!`
                             : null}
                       </p>
+
                       {getAvailableQuantity(product, index) > 0 && (
                         <div className="quantity-controls">
-                          {/* Commented out quantity selection controls */}
-                          {/* <button 
-                            className='btn btn-dark me-3' 
-                            onClick={() => handleQuantityChange(product._id, index, -1)}
-                            disabled={!quantities[product._id]?.[index]}
+                          {/* Uncomment this block for quantity control buttons */}
+                          {/* <button
+                              className='btn btn-outline-dark btn-sm me-2'
+                              onClick={() => handleQuantityChange(product._id, index, -1)}
+                              disabled={!quantities[product._id]?.[index]}
                             >
-                            -
+                              -
                             </button>
                             <span>{quantities[product._id]?.[index] || 0}</span>
-                            <button 
-                            className='btn btn-dark m-3' 
-                            onClick={() => handleQuantityChange(product._id, index, 1)}
-                            disabled={quantities[product._id]?.[index] >= getAvailableQuantity(product, index)}
-                          >
-                          +
-                          </button> */}
-                          <button 
-                            className='btn btn-dark mb-3' 
+                            <button
+                              className='btn btn-outline-dark btn-sm ms-2'
+                              onClick={() => handleQuantityChange(product._id, index, 1)}
+                              disabled={quantities[product._id]?.[index] >= getAvailableQuantity(product, index)}
+                            >
+                              +
+                            </button> */}
+                          
+                          <button
+                            className="btn btn-dark btn-sm mt-2"
                             onClick={() => handleAddToCart(product, index)}
                             disabled={isProductInCart(product._id)}
-                            >
-                            <IoMdCart />
+                          >
+                            <IoMdCart className="me-1" />
                             {isProductInCart(product._id) ? 'Added to Cart' : 'Add to Cart'}
                           </button>
                         </div>
@@ -161,7 +160,7 @@ function Product({ addToCart, cart = [] }) {
           ))}
         </div>
       ) : (
-        <p>No products available.</p>
+        <p className="text-center text-muted mt-4">No products available.</p>
       )}
     </div>
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 320"><path fill="#f4e869" fill-opacity="1" d="M0,160L48,181.3C96,203,192,245,288,229.3C384,213,480,139,576,117.3C672,96,768,128,864,133.3C960,139,1056,117,1152,122.7C1248,128,1344,160,1392,176L1440,192L1440,0L1392,0C1344,0,1248,0,1152,0C1056,0,960,0,864,0C768,0,672,0,576,0C480,0,384,0,288,0C192,0,96,0,48,0L0,0Z"></path></svg>

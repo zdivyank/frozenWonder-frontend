@@ -25,12 +25,14 @@ body, html {
   margin: 0;
   padding: 0;
   /* font-family: "Kalam", cursive; */
-  font-family: "Poppins", sans-serif;
+  /* font-family: "Poppins", sans-serif; */
+  font-family: "Roboto", sans-serif;
+
   /* font-size: 15px; */
   /* font-family: "HogfishDEMO"; */
-  font-weight: 500;
+  font-weight: 400;
   scroll-behavior: smooth;
-  text-transform: uppercase;
+  /* text-transform: uppercase; */
 }
 
 .App {
